@@ -10,7 +10,7 @@ as_timeseries <- function(data, index = 2, name_col = "V1"){
 
   tdata <- pad_e4(data)
 
-  panel <- xts::xts(tdata[[index]], order.by = tdata[[1]])
+  panel <- xts(tdata[[index]], order.by = tdata[[1]])
   colnames(panel) <- name_col
   return(panel)
 }

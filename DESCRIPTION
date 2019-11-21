@@ -3,6 +3,7 @@ Type: Package
 Title: Tools to Read and Convert E4 Data
 Version: 0.1.0
 Author: Peter
+Imports: xts, lubridate, dplyr
 Maintainer: Peter <yourself@somewhere.net>
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
