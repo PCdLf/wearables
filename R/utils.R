@@ -10,7 +10,7 @@ prepend_time_column <- function(data, timestart, hertz, tz = Sys.timezone()){
 
   datetime <-  as_time(timestart) + (1/hertz) * (1:nrow(data) - 1)
 
-  datetime <- lubridate::with_tz(datetime, tz)
+  datetime <- with_tz(datetime, tz)
 
   out <- cbind(data.frame(DateTime = datetime), data)
 
@@ -29,7 +29,7 @@ rbind_e4 <- function(data){
 
     # retrieve data
     dat <- lapply(data, "[[", name)
-    out[[name]] <- dplyr::bind_rows(dat)
+    out[[name]] <- bind_rows(dat)
 
   }
 
@@ -46,7 +46,7 @@ pad_e4 <- function(x){
                                    by = interval)
   )
 
-dplyr::left_join(out, x, by = "DateTime")
+left_join(out, x, by = "DateTime")
 }
 
 

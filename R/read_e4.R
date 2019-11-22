@@ -68,7 +68,7 @@ read_e4 <- function(zipfile = NULL,
   # For ACC, add the geometric mean acceleration
   data$ACC$V4 <- sqrt(data$ACC$V1^2 + data$ACC$V2^2 + data$ACC$V3^2)
 
-
+class(data) <- "e4data"
 return(data)
 
 }
