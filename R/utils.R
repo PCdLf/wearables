@@ -26,6 +26,7 @@ prepend_time_column <- function(data, timestart, hertz, tz = Sys.timezone()){
   return(out)
 }
 
+#' rbind_e4
 #' @description function to rowbind E4 data
 #' @param data dataframe
 #' @export
@@ -47,6 +48,7 @@ rbind_e4 <- function(data){
 out
 }
 
+#' pad_e4
 #' @description function to combine several e4 files, and have the right length of the axes
 #' @param x --
 #' @export

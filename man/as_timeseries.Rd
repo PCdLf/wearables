@@ -14,5 +14,5 @@ as_timeseries(data, index = 2, name_col = "V1")
 \item{name_col}{Name to give to the timeseries data.}
 }
 \description{
-Longer description of what the function does
+Creates an xts object ordered by time
 }

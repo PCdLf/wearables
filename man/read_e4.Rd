@@ -12,5 +12,5 @@ read_e4(zipfile = NULL, tz = Sys.timezone())
 \item{tz}{The timezone used by the instrument (defaults to user timezone).}
 }
 \description{
-Longer description of what the function does
+Reads in E4 data as a list
 }
