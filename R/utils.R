@@ -1,10 +1,11 @@
+#' @export
 
 # Convert time in seconds to a POSIXct.
 as_time <- function(x){
   as.POSIXct(x, origin = "1970-1-1", tz = "UTC")
 }
 
-
+#' @export
 #' @importFrom lubridate with_tz
 prepend_time_column <- function(data, timestart, hertz, tz = Sys.timezone()){
 
@@ -17,7 +18,7 @@ prepend_time_column <- function(data, timestart, hertz, tz = Sys.timezone()){
   return(out)
 }
 
-
+#' @export
 #' @importFrom dplyr bind_rows
 rbind_e4 <- function(data){
 
@@ -36,6 +37,7 @@ rbind_e4 <- function(data){
 out
 }
 
+#' @export
 #' @importFrom dplyr left_join
 pad_e4 <- function(x){
 
