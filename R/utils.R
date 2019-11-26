@@ -1,11 +1,19 @@
+#' as_time
+#' @description Reads in E4 data as a list
+#' @param x Changes the Unix time to as.POSIXct
 #' @export
-
 # Convert time in seconds to a POSIXct.
 as_time <- function(x){
   as.POSIXct(x, origin = "1970-1-1", tz = "UTC")
 }
 
-#' @export
+#' prepend_time_column
+#' @description Comlumn binds a time_coumn to the dataframe
+#' @param data dataframe
+#' @param timestart the start of the reording
+#' @param hertz hertz in which the E4 data was recorded
+#' @param tz The timezone, defaults to user timezone
+#' @export 
 #' @importFrom lubridate with_tz
 prepend_time_column <- function(data, timestart, hertz, tz = Sys.timezone()){
 
@@ -18,6 +26,8 @@ prepend_time_column <- function(data, timestart, hertz, tz = Sys.timezone()){
   return(out)
 }
 
+#' @description function to rowbind E4 data
+#' @param data dataframe
 #' @export
 #' @importFrom dplyr bind_rows
 rbind_e4 <- function(data){
@@ -37,6 +47,8 @@ rbind_e4 <- function(data){
 out
 }
 
+#' @description function to combine several e4 files, and have the right length of the axes
+#' @param x --
 #' @export
 #' @importFrom dplyr left_join
 pad_e4 <- function(x){

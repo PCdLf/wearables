@@ -1,5 +1,5 @@
 #' Convert an E4 data stream to a timeseries
-#' @description Longer description of what the function does
+#' @description Creates an xts object ordered by time
 #' @param data A dataframe, element of list as output by read_e4
 #' @param index Which column (integer) to use as the data in the timeseries. Default: 2.
 #' @param name_col Name to give to the timeseries data.

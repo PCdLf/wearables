@@ -6,8 +6,8 @@ Author: Peter
 Imports: xts, lubridate, dplyr
 Maintainer: Peter <peterdelooff@gmail.com>
 Description: Package to read Empatica E4 data in a list and perform several transformations on the data.
-    Use four spaces when indenting paragraphs within the Description.
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
+Depends: R (>= 3.6.1)
 RoxygenNote: 7.0.0

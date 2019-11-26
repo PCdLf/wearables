@@ -1,5 +1,5 @@
 #' Read E4 data
-#' @description Longer description of what the function does
+#' @description Reads in E4 data as a list
 #' @param zipfile A zip file as exported by the instrument
 #' @param tz The timezone used by the instrument (defaults to user timezone).
 #'
