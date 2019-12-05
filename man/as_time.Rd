@@ -7,8 +7,12 @@
 as_time(x)
 }
 \arguments{
-\item{x}{Changes the Unix time to as.POSIXct}
+\item{x}{takes a unixtime and converts to as.POSIXct}
+
+\item{origin}{defaults to 1970-1-1}
+
+\item{tz}{defaults to "UTC"}
 }
 \description{
-Reads in E4 data as a list
+Converts Unix time to as.POSIXct
 }

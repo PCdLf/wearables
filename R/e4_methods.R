@@ -1,4 +1,6 @@
-
+#' Show class of object
+#' @description Returns 'object of class'
+#' @param x An e4 data list
 #' @export
 print.e4data <- function(x, ...){
   

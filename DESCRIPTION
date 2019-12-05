@@ -1,11 +1,22 @@
 Package: e4tools
 Type: Package
+Date: 5-12-2019
 Title: Tools to Read and Convert E4 Data
 Version: 0.1.0
-Author: Peter
+Authors@R: c(person("Peter", "de Looff", role = c("aut", "cre"),
+                     email = "peterdelooff@gmail.com"),
+              person("Remko", "Duursma", role = "aut"),
+              person("Saskia", "Koldijk", role = "aut"),
+              person("Kees", "de Schepper", role = "aut"),
+              person("Sara", "Taylor", role = "ctb"))
+Author: Peter de Looff [aut, cre],
+  Remko Duursma [aut],
+  Saskia Koldijk [aut],
+  Kees de Schepper [aut],
+  Sara Taylor [ctb]
 Imports: xts, lubridate, dplyr
 Maintainer: Peter <peterdelooff@gmail.com>
-Description: Package to read Empatica E4 data in a list and perform several transformations on the data.
+Description: Package to read Empatica E4 data in a list, perform several transformations, run batch.
 License: GPL-2
 Encoding: UTF-8
 LazyData: true

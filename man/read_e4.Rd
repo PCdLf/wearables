@@ -12,5 +12,5 @@ read_e4(zipfile = NULL, tz = Sys.timezone())
 \item{tz}{The timezone used by the instrument (defaults to user timezone).}
 }
 \description{
-Reads in E4 data as a list
+Reads in E4 data as a list (with EDA, HR, Temp, ACC, BVP, IBI as dataframes), and prepends timecolumns
 }

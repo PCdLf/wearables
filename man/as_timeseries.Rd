@@ -7,12 +7,12 @@
 as_timeseries(data, index = 2, name_col = "V1")
 }
 \arguments{
-\item{data}{A dataframe, element of list as output by read_e4}
+\item{data}{A dataframe, subelements of list as output by read_e4 function}
 
 \item{index}{Which column (integer) to use as the data in the timeseries. Default: 2.}
 
-\item{name_col}{Name to give to the timeseries data.}
+\item{name_col}{Column name to give to the timeseries data.}
 }
 \description{
-Creates an xts object ordered by time
+Creates an xts object indexed by time
 }

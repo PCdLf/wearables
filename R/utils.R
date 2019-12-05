@@ -1,16 +1,20 @@
+
 #' as_time
-#' @description Reads in E4 data as a list
-#' @param x Changes the Unix time to as.POSIXct
+#' @description Converts Unix time to as.POSIXct 
+#' @param x takes a unixtime and converts to as.POSIXct
+#' @param origin defaults to 1970-1-1
+#' @param tz defaults to "UTC"
 #' @export
 # Convert time in seconds to a POSIXct.
 as_time <- function(x){
   as.POSIXct(x, origin = "1970-1-1", tz = "UTC")
 }
 
+
 #' prepend_time_column
-#' @description Comlumn binds a time_coumn to the dataframe
+#' @description Comlumn binds a time_column to the dataframe
 #' @param data dataframe
-#' @param timestart the start of the reording
+#' @param timestart the start of the recording
 #' @param hertz hertz in which the E4 data was recorded
 #' @param tz The timezone, defaults to user timezone
 #' @export 
@@ -49,8 +53,8 @@ out
 }
 
 #' pad_e4
-#' @description function to combine several e4 files, and have the right length of the axes
-#' @param x --
+#' @description function to combine several e4 files, and sets the length of the x-axis
+#' @param x index of dataframe
 #' @export
 #' @importFrom dplyr left_join
 pad_e4 <- function(x){

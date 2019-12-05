@@ -9,12 +9,12 @@ prepend_time_column(data, timestart, hertz, tz = Sys.timezone())
 \arguments{
 \item{data}{dataframe}
 
-\item{timestart}{the start of the reording}
+\item{timestart}{the start of the recording}
 
 \item{hertz}{hertz in which the E4 data was recorded}
 
 \item{tz}{The timezone, defaults to user timezone}
 }
 \description{
-Comlumn binds a time_coumn to the dataframe
+Comlumn binds a time_column to the dataframe
 }

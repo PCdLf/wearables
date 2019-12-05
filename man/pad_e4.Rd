@@ -7,8 +7,8 @@
 pad_e4(x)
 }
 \arguments{
-\item{x}{--}
+\item{x}{index of dataframe}
 }
 \description{
-function to combine several e4 files, and have the right length of the axes
+function to combine several e4 files, and sets the length of the x-axis
 }
