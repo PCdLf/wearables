@@ -8,10 +8,6 @@ as_time(x)
 }
 \arguments{
 \item{x}{takes a unixtime and converts to as.POSIXct}
-
-\item{origin}{defaults to 1970-1-1}
-
-\item{tz}{defaults to "UTC"}
 }
 \description{
 Converts Unix time to as.POSIXct

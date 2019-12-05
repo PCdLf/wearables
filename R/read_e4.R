@@ -1,5 +1,6 @@
 #' Read E4 data
 #' @description Reads in E4 data as a list (with EDA, HR, Temp, ACC, BVP, IBI as dataframes), and prepends timecolumns
+#' @details Details here
 #' @param zipfile A zip file as exported by the instrument
 #' @param tz The timezone used by the instrument (defaults to user timezone).
 #'

@@ -8,6 +8,8 @@
 }
 \arguments{
 \item{x}{An e4 data list}
+
+\item{\dots}{Further arguments currently ignored.}
 }
 \description{
 Returns 'object of class'

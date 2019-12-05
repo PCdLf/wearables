@@ -14,3 +14,6 @@ read_e4(zipfile = NULL, tz = Sys.timezone())
 \description{
 Reads in E4 data as a list (with EDA, HR, Temp, ACC, BVP, IBI as dataframes), and prepends timecolumns
 }
+\details{
+Details here
+}
