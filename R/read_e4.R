@@ -73,13 +73,13 @@ read_e4 <- function(zipfile = NULL,
   timestart <- c(timestart, list(IBI = ibi_timestart))
 
   ibi <- cbind(data.frame(DateTime = as_time(ibi_timestart) + ibi[[1]]),
-                          IBI = ibi[[2]], 
-                          seconds = ibi[[1]])
+                          seconds = ibi[[1]],
+                          IBI = ibi[[2]])
   data <- c(data, list(IBI = ibi))
 
 
   # For ACC, add the geometric mean acceleration
-  data$ACC$a <- sqrt(data$ACC$x^2 + data$ACC$y^2 + data$ACC$z^2)
+  data$ACC$a <- sqrt(data$ACC$x^2 + data$ACC$y^2 + data$ACC$z^2) / 64
 
 class(data) <- "e4data"
 return(data)
