@@ -155,6 +155,46 @@ compute_features <- function(data){
                       do.call("rbind", lapply(amplitude_chunks, compute_amplitude_features))))
 }
 
+compute_features2 <- function(data){
+  sec_per_chunk <- 5
+  
+  coefficients <- compute_wavelet_coefficients(data)
+  
+  fun_lis <- list(
+    max = max,
+    mean = mean,
+    std = sd,
+    median = median,
+    positive = ~sum(.x > 0)
+  )
+
+  out_1sec <- coefficients$one_second_features %>%
+    mutate(group = rep(seq(1, by=5, length.out = nrow(.)/5), each=5)) %>%
+    group_by(group) %>%
+    summarize(across(.fns = fun_lis), .groups = "drop") %>%
+    select(-group)
+  
+  out_05sec <- coefficients$half_second_features %>%
+    mutate(group = rep(seq(1, by=10, length.out = nrow(.)/10), each=10)) %>%
+    group_by(group) %>%
+    summarize(across(.fns = fun_lis), .groups = "drop") %>%
+    select(-group)
+  
+  amplitude_chunks <- split_in_chunks(data, 8 * sec_per_chunk)
+  
+  timestamps <- data$DateTime[1] + sec_per_chunk * (seq_along(amplitude_chunks) - 1)
+  
+  as.data.frame(cbind(id = timestamps,
+                      out_1sec,
+                      out_05sec))
+                      
+                      # do.call("rbind", lapply(wavelet_one_second_chunks, compute_wavelet_features)),
+                      # do.call("rbind", lapply(wavelet_half_second_chunks, compute_wavelet_features))
+                      #do.call("rbind", lapply(amplitude_chunks, compute_amplitude_features))))
+}
+
+
+
 
 get_kernel <- function(kernel_transformation, sigma, columns){
   kernlab::kernelMatrix(kernlab::rbfdot(sigma = sigma),
