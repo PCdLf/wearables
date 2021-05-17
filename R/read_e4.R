@@ -50,6 +50,18 @@ read_e4 <- function(zipfile = NULL,
 
     data[[d]] <- prepend_time_column(data[[d]], timestart[[d]], hertz[[d]],
                                      tz = tz)
+    
+    
+    if(d %in% c("EDA","TEMP","HR","BVP")){
+      
+      names(data[[d]]) <- c("DateTime", d)
+      
+    } else if(d == "ACC"){
+      
+      names(data[[d]]) <- c("DateTime", "x","y","z")
+      
+    }
+    
   }
 
   # Read IBI data separately (different format)
@@ -61,13 +73,13 @@ read_e4 <- function(zipfile = NULL,
   timestart <- c(timestart, list(IBI = ibi_timestart))
 
   ibi <- cbind(data.frame(DateTime = as_time(ibi_timestart) + ibi[[1]]),
-               ibi[[2]], ibi[[1]]
-  )
+                          IBI = ibi[[2]], 
+                          seconds = ibi[[1]])
   data <- c(data, list(IBI = ibi))
 
 
   # For ACC, add the geometric mean acceleration
-  data$ACC$V4 <- sqrt(data$ACC$V1^2 + data$ACC$V2^2 + data$ACC$V3^2)
+  data$ACC$a <- sqrt(data$ACC$x^2 + data$ACC$y^2 + data$ACC$z^2)
 
 class(data) <- "e4data"
 return(data)
