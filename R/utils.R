@@ -2,8 +2,6 @@
 #' as_time
 #' @description Converts Unix time to as.POSIXct 
 #' @param x takes a unixtime and converts to as.POSIXct
-#' @param origin defaults to 1970-1-1
-#' @param tz defaults to "UTC"
 #' @export
 # Convert time in seconds to a POSIXct.
 as_time <- function(x){
@@ -30,33 +28,14 @@ prepend_time_column <- function(data, timestart, hertz, tz = Sys.timezone()){
   return(out)
 }
 
-#' rbind_e4
-#' @description function to rowbind E4 data
-#' @param data dataframe
-#' @export
-#' @importFrom dplyr bind_rows
-rbind_e4 <- function(data){
-
-  out <- list()
-
-  nms <- names(data[[1]])
-
-  for(name in nms){
-
-    # retrieve data
-    dat <- lapply(data, "[[", name)
-    out[[name]] <- bind_rows(dat)
-
-  }
-
-out
-}
-
 #' pad_e4
 #' @description function to combine several e4 files, and sets the length of the x-axis
 #' @param x index of dataframe
 #' @export
 #' @importFrom dplyr left_join
+#' @importFrom stats median
+#' @importFrom utils unzip
+#' @importFrom utils read.csv
 pad_e4 <- function(x){
 
   interval <- as.numeric(median(diff(x$DateTime)))
