@@ -1,4 +1,6 @@
-get_apex <- function(peak_sign, offset){
+
+get_apex <- function(data, peak_sign, offset){
+  
   is_apex <- integer(length(peak_sign) + 1)
   is_apex[c(FALSE, diff(peak_sign) == -2)] <- 1
   
@@ -13,6 +15,7 @@ get_apex <- function(peak_sign, offset){
   is_apex[i_peaks[!is_drops]] <- 0
   is_apex
 }
+
 
 get_rise_time <- function(peak_sign, peaks, sample_rate, start_WT){ # met start_WT nog window 100 nodig?
   rise_time <- numeric(length(peaks))         
@@ -201,7 +204,8 @@ find_peaks <- function(data, offset = 1, start_WT = 4, end_WT = 4, thres=0,
   
   peak_sign <- sign(EDA_deriv)
   
-  data$peaks <- get_apex(peak_sign, offset)
+  # WARNING: get_apex may not be correct
+  data$peaks <- get_apex(data, peak_sign, offset)
   data$rise_time <- get_rise_time(peak_sign, data$peaks, sample_rate, start_WT)
   data$peak_start <- get_peak_start(data, sample_rate)
   

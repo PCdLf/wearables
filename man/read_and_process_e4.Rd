@@ -2,12 +2,9 @@
 % Please edit documentation in R/read_and_proces_e4.R
 \name{read_and_process_e4}
 \alias{read_and_process_e4}
-\alias{write_processed_e4}
 \title{Read, process and feature extraction of E4 data}
 \usage{
 read_and_process_e4(zipfile, tz = Sys.timezone())
-
-write_processed_e4(obj, out_path = ".")
 }
 \value{
 An object with processed data and analyses, object of class 'e4_analysis'.

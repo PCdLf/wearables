@@ -135,6 +135,7 @@ split_in_chunks <- function(data, rows_per_chunk){
 
 
 #' Compute features
+#' @description Old, slow version
 #' @export
 compute_features <- function(data){
   sec_per_chunk <- 5
@@ -155,6 +156,11 @@ compute_features <- function(data){
                       do.call("rbind", lapply(amplitude_chunks, compute_amplitude_features))))
 }
 
+#' Compute features - fast
+#' @description Fast version
+#' @export
+#' @importFrom magrittr "%>%"
+#' @importFrom dplyr group_by summarize select mutate
 compute_features2 <- function(data){
   sec_per_chunk <- 5
   
@@ -169,16 +175,16 @@ compute_features2 <- function(data){
   )
 
   out_1sec <- coefficients$one_second_features %>%
-    mutate(group = rep(seq(1, by=5, length.out = nrow(.)/5), each=5, length.out = nrow(.))) %>%
-    group_by(group) %>%
-    summarize(across(.fns = fun_lis), .groups = "drop") %>%
-    select(-group)
+    dplyr::mutate(group = rep(seq(1, by=5, length.out = nrow(.)/5), each=5, length.out = nrow(.))) %>%
+    dplyr::group_by(group) %>%
+    dplyr::summarize(across(.fns = fun_lis), .groups = "drop") %>%
+    dplyr::select(-group)
   
   out_05sec <- coefficients$half_second_features %>%
-    mutate(group = rep(seq(1, by=10, length.out = nrow(.)/10), each=10, length.out = nrow(.))) %>%
-    group_by(group) %>%
-    summarize(across(.fns = fun_lis), .groups = "drop") %>%
-    select(-group)
+    dplyr::mutate(group = rep(seq(1, by=10, length.out = nrow(.)/10), each=10, length.out = nrow(.))) %>%
+    dplyr::group_by(group) %>%
+    dplyr::summarize(across(.fns = fun_lis), .groups = "drop") %>%
+    dplyr::select(-group)
   
   amplitude_features <- compute_amplitude_features(data)
   
@@ -207,9 +213,10 @@ get_kernel <- function(kernel_transformation, sigma, columns){
 
 #' Predict binary classifier
 #' @export
-predict_binary_classifier <- function(input){
+predict_binary_classifier <- function(data){
+  
   relevant_columns <-
-    input[c("raw_mean",
+    data[c("raw_mean",
             "raw_derivative_abs_max",
             "raw_second_derivative_max",
             "raw_second_derivative_abs_avg",
@@ -234,7 +241,7 @@ predict_binary_classifier <- function(input){
                      as.integer(sign(sum(config$coefficients * value) + config$intercept))
                    })
 
-  data.frame(id = input$id,
+  data.frame(id = data$id,
              label = labels)
 }
 

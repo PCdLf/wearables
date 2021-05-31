@@ -4,7 +4,7 @@
 \alias{predict_binary_classifier}
 \title{Predict binary classifier}
 \usage{
-predict_binary_classifier(input)
+predict_binary_classifier(data)
 }
 \description{
 Predict binary classifier

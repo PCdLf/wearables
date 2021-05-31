@@ -6,25 +6,40 @@
 read_and_process_e4 <- function(zipfile, tz = Sys.timezone()){
   
   
+  
   data <- read_e4(zipfile, tz)
+  flog.info("Raw data read and converted.")
   
-  ibi <- ibi_analysis(data$IBI)
+  suppressMessages({
+    suppressWarnings({
+      ibi <- ibi_analysis(data$IBI)  
+    })
+  })
+  flog.info("IBI data analyzed.")
+    
+  eda_filt <- e4tools::process_eda(data$EDA)
+  flog.info("EDA data filtered.")
   
-  #eda <- eda_analysis(data)
+  eda_feat <- compute_features2(eda_filt)
+  flog.info("EDA Features computed")
   
+  eda_bin_pred <- predict_binary_classifier(eda_feat)
+  eda_mc_pred  <- predict_multiclass_classifier(eda_feat)
+  flog.info("Model predictions generated.")
   
 structure(list(
   data = data,
   ibi = ibi,
-  eda = NULL
+  eda_bin = eda_bin_pred,
+  eda_mc = eda_mc_pred
 ), 
 class = "e4_analysis")
 }
 
 
-#' @rdname read_and_process_e4
+#' Create output folder for E4 analysis results
 #' @export
-write_processed_e4 <- function(obj, out_path = "."){
+create_e4_output_folder <- function(obj, out_path = "."){
   
   stopifnot(inherits(obj, "e4_analysis"))
   
@@ -35,7 +50,19 @@ write_processed_e4 <- function(obj, out_path = "."){
   out_folder <- file.path(out_path, zipname)
   dir.create(out_folder)
   
-  browser()
+return(invisible(out_folder))
+}
+
+
+#' Write CSV files of the output
+#' @description Slow!
+#' @export
+write_processed_e4 <- function(obj, out_path = "."){
+  
+  stopifnot(inherits(obj, "e4_analysis"))
+  
+  out_folder <- create_e4_output_folder(obj, out_path)
+  
   #write.csv(obj$data$ , file.path(out_folder, ...)
   
   file_out <- function(data, name){
@@ -62,7 +89,11 @@ write_processed_e4 <- function(obj, out_path = "."){
   
   # Vector with summary variables
   ibi_s <- c(obj$ibi$time_analysis, obj$ibi$summary$frequency, obj$ibi$summary$beats)
-  file_out(ibi_a, "IBI_SummaryPars.csv")
+  file_out(ibi_s, "IBI_SummaryPars.csv")
+  
+  # EDA model predictions
+  file_out(obj$eda_bin, "EDA_binary_prediction.csv")
+  file_out(obj$eda_mc, "EDA_multiclass_prediction.csv")
   
 }
 
