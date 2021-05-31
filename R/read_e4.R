@@ -81,7 +81,11 @@ read_e4 <- function(zipfile = NULL,
   # For ACC, add the geometric mean acceleration
   data$ACC$a <- sqrt(data$ACC$x^2 + data$ACC$y^2 + data$ACC$z^2) / 64
 
-class(data) <- "e4data"
-return(data)
+  # Return data, store name of original file in the attributes, which we can read with:
+  # attr(data, "zipfile")
+  structure(data,
+            class = "e4data",
+            zipfile = tools::file_path_sans_ext(zipfile),
+            tz = tz)
 
 }
