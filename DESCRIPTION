@@ -2,7 +2,7 @@ Package: e4tools
 Type: Package
 Date: 2019-5-12
 Title: Tools to Read and Convert E4 Data
-Version: 0.5
+Version: 0.6
 Authors@R: c(person("Peter", "de Looff", role = c("aut", "cre"),
                      email = "peterdelooff@gmail.com"),
               person("Remko", "Duursma", role = "aut"),
