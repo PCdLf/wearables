@@ -1,19 +1,19 @@
 
-get_apex <- function(data, peak_sign, offset){
+get_apex <- function(peak_sign, offset){
   
-  is_apex <- integer(length(peak_sign) + 1)
-  is_apex[c(FALSE, diff(peak_sign) == -2)] <- 1
-  
+  apex <- integer(length(peak_sign) + 1)
+  apex[c(FALSE, diff(peak_sign) == -2)] <- 1
+
   peak_has_drop <- function(i, peak_sign, offset){
-    length_drop <- rle(peak_sign[(i+1):(i+1+offset+1)])$lengths[1] # waarom offset + 1?
-    length_drop > offset
+    length_drop <- rle(peak_sign[i:(i+offset-1)])$lengths[1]
+    length_drop >= offset
   }
   
-  i_peaks <- which(data$peaks == 1)
-  is_drops <- sapply(i_peaks, peak_has_drop, peak_sign, offset)
+  i_apex <- which(apex == 1)
+  has_drops <- sapply(i_apex, peak_has_drop, peak_sign, offset)
   
-  is_apex[i_peaks[!is_drops]] <- 0
-  is_apex
+  apex[i_apex[!has_drops]] <- 0
+  apex
 }
 
 
@@ -205,7 +205,7 @@ find_peaks <- function(data, offset = 1, start_WT = 4, end_WT = 4, thres=0,
   peak_sign <- sign(EDA_deriv)
   
   # WARNING: get_apex may not be correct
-  data$peaks <- get_apex(data, peak_sign, offset)
+  data$peaks <- get_apex(peak_sign, offset)
   data$rise_time <- get_rise_time(peak_sign, data$peaks, sample_rate, start_WT)
   data$peak_start <- get_peak_start(data, sample_rate)
   
