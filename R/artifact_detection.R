@@ -169,24 +169,26 @@ compute_features2 <- function(data){
   )
 
   out_1sec <- coefficients$one_second_features %>%
-    mutate(group = rep(seq(1, by=5, length.out = nrow(.)/5), each=5)) %>%
+    mutate(group = rep(seq(1, by=5, length.out = nrow(.)/5), each=5, length.out = nrow(.))) %>%
     group_by(group) %>%
     summarize(across(.fns = fun_lis), .groups = "drop") %>%
     select(-group)
   
   out_05sec <- coefficients$half_second_features %>%
-    mutate(group = rep(seq(1, by=10, length.out = nrow(.)/10), each=10)) %>%
+    mutate(group = rep(seq(1, by=10, length.out = nrow(.)/10), each=10, length.out = nrow(.))) %>%
     group_by(group) %>%
     summarize(across(.fns = fun_lis), .groups = "drop") %>%
     select(-group)
   
-  amplitude_chunks <- split_in_chunks(data, 8 * sec_per_chunk)
+  amplitude_features <- compute_amplitude_features(data)
   
+  amplitude_chunks <- split_in_chunks(data, 8 * sec_per_chunk)
   timestamps <- data$DateTime[1] + sec_per_chunk * (seq_along(amplitude_chunks) - 1)
   
   as.data.frame(cbind(id = timestamps,
                       out_1sec,
-                      out_05sec))
+                      out_05sec,
+                      amplitude_features))
                       
                       # do.call("rbind", lapply(wavelet_one_second_chunks, compute_wavelet_features)),
                       # do.call("rbind", lapply(wavelet_half_second_chunks, compute_wavelet_features))
