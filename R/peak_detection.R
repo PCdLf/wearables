@@ -1,3 +1,176 @@
+get_apex <- function(peak_sign, offset){
+  is_apex <- integer(length(peak_sign) + 1)
+  is_apex[c(FALSE, diff(peak_sign) == -2)] <- 1
+  
+  peak_has_drop <- function(i, peak_sign, offset){
+    length_drop <- rle(peak_sign[(i+1):(i+1+offset+1)])$lengths[1] # waarom offset + 1?
+    length_drop > offset
+  }
+  
+  i_peaks <- which(data$peaks == 1)
+  is_drops <- sapply(i_peaks, peak_has_drop, peak_sign, offset)
+  
+  is_apex[i_peaks[!is_drops]] <- 0
+  is_apex
+}
+
+get_rise_time <- function(peak_sign, peaks, sample_rate, start_WT){ # met start_WT nog window 100 nodig?
+  rise_time <- numeric(length(peaks))         
+  
+  i_peak <- which(peaks == 1)
+  
+  get_rise_events_for_peak <- function(i, max_lookback){
+    
+    lookback_i <- max(1, i - max_lookback)
+    
+    r <- rle(rev(peak_sign[lookback_i:i - 1]))
+    r$lengths[1]  
+  }
+  
+  rise_time[i_peak] <- 
+    sapply(i_peak, get_rise_events_for_peak, sample_rate * start_WT) / 
+    sample_rate
+  
+  rise_time
+}
+
+get_peak_start <- function(data, sample_rate){
+  i_peak <- which(data$peaks == 1)
+  peak_start <- integer(nrow(data)) 
+  number_rise_events <- sample_rate * data$rise_time[i_peak]
+  peak_start[i_peak - number_rise_events] <- 1
+  peak_start
+}
+
+remove_small_peaks <- function(data, thres){
+  if(thres > 0){
+    i_peak <- which(data$peaks == 1)
+    i_peak_start <- which(data$peak_start ==  1)
+    i_to_remove <- data$filtered_eda[i_peak] - data$filtered_eda[i_peak_start] < thres
+    
+    data$peaks[i_peak][i_to_remove] <- 0
+    data$rise_time[i_peak][i_to_remove] <- 0
+    data$peak_start[i_peak_start][i_to_remove] <- 0
+  }
+  data
+}
+
+get_peak_start_times <- function(data){
+  i_peak <- which(data$peaks == 1)
+  i_peak_start <- which(data$peak_start ==  1)
+  peak_start_times <- as.POSIXct(rep(NA, nrow(data)))
+  peak_start_times[i_peak] <- data$DateTime[i_peak_start]
+  peak_start_times
+}
+
+get_max_deriv <- function(data, EDA_deriv, sample_rate){
+  
+  get_max_deriv_for_event <- function(i){
+    max(EDA_deriv[max(1, i - sample_rate):i])
+  }
+  
+  i_peak <- which(data$peaks == 1)
+  max_deriv <- numeric(nrow(data))
+  
+  max_deriv[i_peak] <-
+    sapply(i_peak, get_max_deriv_for_event) *
+    sample_rate # wel een beetje gek
+  
+  max_deriv
+}
+
+get_amp <- function(data){
+  i_peak <- which(data$peaks == 1)
+  i_peak_start <- which(data$peak_start ==  1)
+  amp <- numeric(nrow(data))
+  apex_amp <- data$filtered_eda[i_peak]
+  start_amp <- data$filtered_eda[i_peak_start]
+  amp[i_peak] <- apex_amp - start_amp
+  amp
+}
+
+get_peak_end <- function(data, max_lookahead){
+  
+  get_peak_end_per_i <- function(i, i_max_peak_end){ 
+    half_amp <- data$filtered_eda[i] - .5 * data$amp[i]
+    i_lookahead <- min(i_max_peak_end, i + max_lookahead)
+    amps_ahead <- data$filtered_eda[(i + 1):(i_lookahead)]
+    length_peak_end <- which(amps_ahead < half_amp)[1]
+    
+    if(is.na(length_peak_end)){
+      i + which.min(amps_ahead)
+    } else {
+      i + length_peak_end
+    }
+  }
+  
+  i_peak <- which(data$peaks == 1)
+  i_peak_start <- which(data$peak_start == 1)
+  i_next_peak_start <- tail(i_peak_start, -1)
+  i_max_peak_end <- c(i_next_peak_start - 1, nrow(data))
+
+  i_peak_end <- mapply(get_peak_end_per_i, i_peak, i_max_peak_end)
+  
+  peak_end <- integer(nrow(data))
+  peak_end[i_peak_end] <- 1
+  
+  peak_end
+}
+
+get_peak_end_times <- function(data){
+  peak_end_times <- as.POSIXct(rep(NA, nrow(data)))
+  i_peak <- which(data$peaks == 1)
+  i_peak_end <- which(data$peak_end == 1)
+  peak_end_times[i_peak] <- data$DateTime[i_peak_end]
+  peak_end_times
+}
+
+get_i_peak_with_decay <- function(data){
+  i_peak <- which(data$peaks == 1)
+  i_peak_end <- which(data$peak_end == 1)
+  half_amp <- data$filtered_eda[i_peak] - .5 * data$amp[i_peak]
+  has_decay <- data$filtered_eda[i_peak_end] < half_amp
+  i_peak[has_decay]
+}
+
+get_decay_time <- function(data, i_peak_with_decay){
+  decay_time <- numeric(nrow(data))
+  decay_time[i_peak_with_decay] <- as.numeric(difftime(
+    data$peak_end_times[i_peak_with_decay], 
+    data$DateTime[i_peak_with_decay], 
+    units="secs"
+  ))
+  decay_time
+}
+
+get_half_rise <- function(data, i_peak_with_decay){
+  
+  get_i_half_rise <- function(i_peak_start, i_peak){
+    half_amp <- data$filtered_eda[i_peak] - .5 * data$amp[i_peak]
+    is_below_amp <- data$filtered_eda[(i_peak - 1):i_peak_start] < half_amp
+    i_peak - which(is_below_amp)[1]
+  }
+  
+  i_peak <- which(data$peaks == 1)
+  has_decay <- i_peak %in% i_peak_with_decay
+  i_peak_start_with_decay <- which(data$peak_start ==  1)[has_decay]
+  
+  i_half_rise <- mapply(get_i_half_rise, i_peak_start_with_decay, i_peak_with_decay)
+  half_rise <- as.POSIXct(rep(NA, nrow(data)))
+  half_rise[i_peak_with_decay] <- data$DateTime[i_half_rise]
+  half_rise
+}
+
+get_SCR_width <- function(data, i_peak_with_decay){
+  SCR_width <- numeric(nrow(data))
+  SCR_width[i_peak_with_decay] <- as.numeric(difftime(
+    data$peak_end_times[i_peak_with_decay], 
+    data$half_rise[i_peak_with_decay], 
+    units="secs"
+  ))
+  SCR_width
+}
+
 
 
 #' This function finds the peaks of an EDA signal and adds basic properties to the datafile.
@@ -6,9 +179,9 @@
 #' @param data:        DataFrame with EDA as one of the columns and indexed by a datetimeIndex
 #' @param offset:      the number of rising samples and falling samples after a peak needed to be counted as a peak
 #' @param start_WT:    maximum number of seconds before the apex of a peak that is the "start" of the peak
-#' @param end_WT:      maximum number of seconds after the apex of a peak that is the "rec.t/2" of the peak, 50% of amp
+#' @param end_WT:      maximum number of seconds after the apex of a peak that is the "end" of the peak, 50% of amp
 #' @param thres:       the minimum microsecond change required to register as a peak, defaults as 0 (i.e. all peaks count)
-#' @param sampleRate:  number of samples per second, default=8
+#' @param sample_rate:  number of samples per second, default=8
 #' @return data$peaks:               list of binary, 1 if apex of SCR
 #' @return data$peak_start:          list of binary, 1 if start of SCR
 #' @return data$peak_start_times:    list of strings, if this index is the apex of an SCR, it contains datetime of start of peak
@@ -17,182 +190,44 @@
 #' @return data$amplitude:           list of floats,  value of EDA at apex - value of EDA at start
 #' @return data$max_deriv:           list of floats, max derivative within 1 second of apex of SCR
 #' @export
-find_peaks <- function(data, offset, start_WT, end_WT, thres=0, sampleRate = getOption("SAMPLE_RATE", 8)){
+find_peaks <- function(data, offset = 1, start_WT = 4, end_WT = 4, thres=0, 
+                       sample_rate = getOption("SAMPLE_RATE", 8)){ # beschrijving vars klopt niet?
   
-  data_cols <- names(data)
+  old_col_names <- names(data)
   
-  EDA_deriv <- data$filtered_eda[2:length(data$filtered_eda)] - data$filtered_eda[1:length(data$filtered_eda)-1] 
-  data$peaks <- 0 #list of 0s (add one 0 extra to match length of data)
+  EDA_deriv <- # alle eda is filtered?
+    data$filtered_eda[2:nrow(data)] - 
+    data$filtered_eda[1:nrow(data)-1] 
+  
   peak_sign <- sign(EDA_deriv)
   
-  d <- diff(peak_sign)
-  data$peaks[d == -2] <- 1
+  data$peaks <- get_apex(peak_sign, offset)
+  data$rise_time <- get_rise_time(peak_sign, data$peaks, sample_rate, start_WT)
+  data$peak_start <- get_peak_start(data, sample_rate)
   
-  # is the peak at index i followed by a drop (derivative = -1) of at least 'offset' nr of observations?
-  peak_has_drop <- function(i){
-    rle(peak_sign[(i+1):(i+1+offset+1)])$lengths[1] > offset
-  }
+  data <- remove_small_peaks(data, thres)
   
-  i_peaks <- which(data$peaks == 1)
-  drops <- sapply(i_peaks, peak_has_drop)
+  data$peak_start_times <- get_peak_start_times(data)
+  data$max_deriv <- get_max_deriv(data, EDA_deriv, sample_rate)
+  data$amp <- get_amp(data)
+  data$peak_end <- get_peak_end(data, end_WT * sample_rate)
+  data$peak_end_times <- get_peak_end_times(data)
   
-  data$peaks[i_peaks[!drops]] <- 0
+  i_peak_with_decay <- get_i_peak_with_decay(data)
   
-  # 
-  # for (i in as.integer(offset) : (as.integer(length(EDA_deriv) - offset)-1)){ #-1 to make end exclusive
-  #   
-  #   if (peak_sign[i] == 1 & peak_sign[i + 1] < 1){
-  #     data$peaks[i] <- 1
-  #     
-  #     for (j in 1 : (as.integer(offset)-1)){ #-1 to make end exclusive
-  #       if (peak_sign[i - j] < 1 | peak_sign[i + j] > -1){
-  #         data$peaks[i] <- 0
-  #         break
-  #       }
-  #     }
-  #     
-  #   }
-  #   
-  # }
+  data$decay_time <- get_decay_time(data, i_peak_with_decay)
+  data$half_rise <- get_half_rise(data, i_peak_with_decay)
+  data$SCR_width <- get_SCR_width(data, i_peak_with_decay)
   
+  new_col_names_ordered <- c('peaks', 'peak_start', 'peak_end',
+                             'peak_start_times', 'peak_end_times',
+                             'half_rise', 'amp', 'max_deriv',
+                             'rise_time', 'decay_time', 'SCR_width')
+  data <- data[, c(old_col_names, new_col_names_ordered)]
   
-  # Finding start of peaks
-  data <- add_peak_starts(data, sampleRate, start_WT, thres, EDA_deriv)
-  
-  # Finding the end of the peak, amplitude of peak
-  data <- add_peak_ends(data, sampleRate, end_WT)
-  
-  data$max_deriv <- data$max_deriv * sampleRate  # now in change in amplitude over change in time form (uS/second)
-  
-  #set in same order as original python package
-  order <- c('peaks', 'peak_start', 'peak_end', 'peak_start_times', 'peak_end_times', 'half_rise',
-             'amp', 'max_deriv', 'rise_time', 'decay_time', 'SCR_width')
-  data <- data[, c(data_cols, order)] 
-  
-  return(data)
+  data
 }
 
-add_peak_starts <- function(data, sampleRate, start_WT, thres, EDA_deriv){
-  
-  # Finding start of peaks
-  data$peak_start <- integer(length(EDA_deriv)+1) #list of 0s (add one 0 extra to match length of data)
-  data$peak_start_times <- as.POSIXct(rep(NA, nrow(data))) #list of empty dates
-  data$max_deriv <- integer(nrow(data))
-  data$rise_time <- integer(nrow(data))         
-  
-  i_peak <- which(data$peaks == 1)
-  peak_sign <- sign(EDA_deriv)
-  
-  rise_time_for_peak <- function(i, max_lookback = sampleRate * 100){
-    
-    max_lookback <- min(max_lookback, i - max_lookback)
-    
-    r <- rle(rev(peak_sign[(i - max_lookback):i]))
-    r$lengths[1]  
-  }
-  
-  data$rise_time[i_peak] <- sapply(i_peak, rise_time_for_peak) / sampleRate
-  
-  # for (i in 1 : (nrow(data)-1)){  
-  #   if (data$peaks[i] == 1){
-  #     
-  #     
-  #     temp_start <- max(1, i - sampleRate) 
-  #     data$max_deriv[i] <- max(EDA_deriv[temp_start:i])
-  #     start_deriv <- .01 * data$max_deriv[i]
-  #     
-  #     found <- FALSE
-  #     find_start <- i
-  #     # has to peak within start_WT seconds
-  #     while (found == FALSE & find_start > (i - start_WT * sampleRate)){
-  #       if (EDA_deriv[find_start] < start_deriv){
-  #         found <- TRUE
-  #         data$peak_start[find_start] <- 1
-  #         data$peak_start_times[i] <- data$DateTime[find_start] 
-  #         data$rise_time[i] <- difftime(data$DateTime[i], data$peak_start_times[i], units="secs") 
-  #       }
-  #       find_start <- find_start - 1
-  #     }
-  #     # If we didn't find a start
-  #     if (found == FALSE){
-  #       data$peak_start[i - start_WT * sampleRate] <- 1
-  #       data$peak_start_times[i] <- data$DateTime[i - start_WT * sampleRate]
-  #       data$rise_time[i] <- start_WT
-  #     }
-  #     # Check if amplitude is too small
-  #     if (thres > 0 & (data$EDA[i] - data$EDA[data$DateTime == data$peak_start_times[i]]) < thres){
-  #       data$peaks[i] <- 0
-  #       data$peak_start[i] <- 0
-  #       data$peak_start_times[i] = as.POSIXct(NA) #set empty date
-  #       data$max_deriv[i] <- 0
-  #       data$rise_time[i] <- 0
-  #     }
-  #   }
-  # }
-  
-  
-  return(data)
-}
-
-add_peak_ends <- function(data, sampleRate, end_WT){
-  
-  
-  
-  # 
-  # Finding the end of the peak, amplitude of peak
-  data$peak_end <- integer(nrow(data))
-  data$peak_end_times <- as.POSIXct(rep(NA, nrow(data))) #list of empty dates
-  data$amp <- integer(nrow(data))
-  data$decay_time <- integer(nrow(data))
-  data$half_rise <- as.POSIXct(rep(NA, nrow(data))) #list of empty dates
-  data$SCR_width <- integer(nrow(data))
-
-  # for (i in 1:(length(data$peaks)-1)){
-  #   if (data$peaks[i] == 1){
-  #     peak_amp <- data$EDA[i]
-  #     start_amp <- data$EDA[data$DateTime == data$peak_start_times[i]]
-  #     data$amp[i] <- peak_amp - start_amp
-  #     
-  #     half_amp <- data$amp[i] * .5 + start_amp
-  #     
-  #     found <- FALSE
-  #     find_end <- i
-  #     # has to decay within end_WT seconds
-  #     while (found == FALSE & find_end < (i + end_WT * sampleRate) & find_end < (length(data$peaks)-1)){
-  #       if (data$EDA[find_end] < half_amp){
-  #         found <- TRUE
-  #         data$peak_end[find_end] <- 1
-  #         data$peak_end_times[i] <- data$DateTime[find_end]
-  #         data$decay_time[i] <- difftime(data$peak_end_times[i], data$DateTime[i], units="secs") 
-  #         
-  #         # Find width
-  #         find_rise <- i
-  #         found_rise <- FALSE
-  #         while (found_rise == FALSE){
-  #           if (data$EDA[find_rise] < half_amp){
-  #             found_rise <- TRUE
-  #             data$half_rise[i] <- data$DateTime[find_rise]
-  #             data$SCR_width[i] <- difftime(data$peak_end_times[i], data$DateTime[find_rise], units="secs")
-  #           }
-  #           find_rise <- find_rise - 1
-  #         }
-  #       } else if (data$peak_start[find_end] == 1){
-  #         found <- TRUE
-  #         data$peak_end[find_end] <- 1
-  #         data$peak_end_times[i] <- data$DateTime[find_end]
-  #       }
-  #       find_end <- find_end + 1
-  #     }
-  #     # If we didn't find an end
-  #     if (found == FALSE){
-  #       min_index <- which.min(data$EDA[i:(i + end_WT * sampleRate)])
-  #       data$peak_end[i + min_index] <- 1
-  #       data$peak_end_times[i] <- data$DateTime[i + min_index]
-  #     }
-  #   }
-  # }
-  return(data)
-}
 
 
 #' Write peak features
