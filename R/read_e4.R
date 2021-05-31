@@ -72,7 +72,7 @@ read_e4 <- function(zipfile = NULL,
   ibi_timestart <- get_timestart(file.path(out_dir, "IBI.csv"))
   timestart <- c(timestart, list(IBI = ibi_timestart))
 
-  ibi <- cbind(data.frame(DateTime = as_time(ibi_timestart) + ibi[[1]]),
+  ibi <- cbind(data.frame(DateTime = as_time(ibi_timestart, tz = tz) + ibi[[1]]),
                           seconds = ibi[[1]],
                           IBI = ibi[[2]])
   data <- c(data, list(IBI = ibi))
@@ -89,3 +89,5 @@ read_e4 <- function(zipfile = NULL,
             tz = tz)
 
 }
+
+

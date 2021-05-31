@@ -4,8 +4,8 @@
 #' @param x takes a unixtime and converts to as.POSIXct
 #' @export
 # Convert time in seconds to a POSIXct.
-as_time <- function(x){
-  as.POSIXct(x, origin = "1970-1-1", tz = "UTC")
+as_time <- function(x, tz = "UTC"){
+  as.POSIXct(x, origin = "1970-1-1", tz = tz)
 }
 
 

@@ -4,7 +4,7 @@
 \alias{as_time}
 \title{as_time}
 \usage{
-as_time(x)
+as_time(x, tz = "UTC")
 }
 \arguments{
 \item{x}{takes a unixtime and converts to as.POSIXct}
