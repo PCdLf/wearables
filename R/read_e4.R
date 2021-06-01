@@ -72,7 +72,7 @@ read_e4 <- function(zipfile = NULL,
   ibi_timestart <- get_timestart(file.path(out_dir, "IBI.csv"))
   timestart <- c(timestart, list(IBI = ibi_timestart))
 
-  ibi <- cbind(data.frame(DateTime = as_time(ibi_timestart) + ibi[[1]]),
+  ibi <- cbind(data.frame(DateTime = as_time(ibi_timestart, tz = tz) + ibi[[1]]),
                           seconds = ibi[[1]],
                           IBI = ibi[[2]])
   data <- c(data, list(IBI = ibi))
@@ -81,7 +81,13 @@ read_e4 <- function(zipfile = NULL,
   # For ACC, add the geometric mean acceleration
   data$ACC$a <- sqrt(data$ACC$x^2 + data$ACC$y^2 + data$ACC$z^2) / 64
 
-class(data) <- "e4data"
-return(data)
+  # Return data, store name of original file in the attributes, which we can read with:
+  # attr(data, "zipfile")
+  structure(data,
+            class = "e4data",
+            zipfile = tools::file_path_sans_ext(zipfile),
+            tz = tz)
 
 }
+
+
