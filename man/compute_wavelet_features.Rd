@@ -6,6 +6,12 @@
 \usage{
 compute_wavelet_features(wavelet_coeffcients)
 }
+\arguments{
+\item{wavelet_coeffcients}{use the wavelet coefficients !!variable name}
+}
 \description{
-Compute wavelet features
+compute wavelet features
+}
+\details{
+
 }

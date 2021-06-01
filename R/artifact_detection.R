@@ -5,6 +5,11 @@ sum <- function(...) base::sum(... , na.rm = TRUE)
 median <- function(...) stats::median(... , na.rm = TRUE)
 sd <- function(...) stats::sd(... , na.rm = TRUE)
 
+#' Get the first derivative
+#' @description  
+#' @details 
+#'         
+#' @param values vector?
 get_derivative <- function(values){
   end <- length(values)
   if(end < 3){
@@ -14,6 +19,11 @@ get_derivative <- function(values){
   }
 }
 
+#' Get the second derivative
+#' @description  
+#' @details 
+#'         
+#' @param values vector?
 get_second_derivative <- function(values){
   end <- length(values)
   if(end < 3){
@@ -23,6 +33,13 @@ get_second_derivative <- function(values){
   }
 }
 
+
+#' Compute derivatives
+#' @description  
+#' @details 
+#'         
+#' @param derivative first dreivative
+#' @param feature_name what is the name of the feature  
 compute_derivative_features <- function(derivative, feature_name){
   features <- list()
 
@@ -36,6 +53,10 @@ compute_derivative_features <- function(derivative, feature_name){
 
 
 #' Compute amplitude features
+#' @description  
+#' @details 
+#'         
+#' @param data vector?
 compute_amplitude_features <- function(data){
   general_features <- data.frame(raw_mean = mean(data$EDA),
                                  filtered_mean = mean(data$filtered_eda))
@@ -54,6 +75,13 @@ compute_amplitude_features <- function(data){
   do.call("cbind", c(general_features, derivative_features))
 }
 
+#' Maximum number of output length
+#' @description  
+#' @details 
+#'         
+#' @param values which values are used
+#' @param n what is the n
+#' @param output_length what is the output length 
 max_per_n <- function(values, n, output_length){
 
   if (n == 1) {
@@ -68,6 +96,11 @@ max_per_n <- function(values, n, output_length){
   }
 }
 
+#' Compute wavelet decomposition
+#' @description compute wavelet decomposition 
+#' @details 
+#'         
+#' @param data vector?
 #' @importFrom waveslim dwt
 compute_wavelet_decomposition <- function(data){
   output_length <- (length(data) %/% 8) * 8
@@ -81,6 +114,10 @@ compute_wavelet_decomposition <- function(data){
 
 
 #' Compute wavelet coefficients
+#' @description compute wavelet coefficients
+#' @details 
+#'         
+#' @param data vector?
 compute_wavelet_coefficients <- function(data){
 
   wavelets <- compute_wavelet_decomposition(data$EDA) 
@@ -103,6 +140,10 @@ compute_wavelet_coefficients <- function(data){
 
 
 #' Compute wavelet features
+#' @description compute wavelet features
+#' @details 
+#'         
+#' @param wavelet_coeffcients use the wavelet coefficients !!variable name
 compute_wavelet_features <- function(wavelet_coeffcients){
   functions <- c(max, mean, sd, median, function(values) sum(values > 0))
   function_names <- c("max", "mean", "std", "median", "positive")
@@ -121,7 +162,12 @@ compute_wavelet_features <- function(wavelet_coeffcients){
 }
 
 
-
+#' Compute wavelet features
+#' @description compute wavelet features
+#' @details 
+#'
+#' @param data vector?               
+#' @param rows_per_chunk number of rows for each window?
 split_in_chunks <- function(data, rows_per_chunk){
   n_rows <- nrow(data)
 

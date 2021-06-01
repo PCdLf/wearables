@@ -6,6 +6,11 @@
 \usage{
 write_peak_features(data_with_peaks, outfile)
 }
+\arguments{
+\item{data_with_peaks}{vector with peaks}
+
+\item{outfile}{where should it be written to}
+}
 \description{
 Write peak features
 }

@@ -6,6 +6,12 @@
 \usage{
 compute_wavelet_coefficients(data)
 }
+\arguments{
+\item{data}{vector?}
+}
 \description{
-Compute wavelet coefficients
+compute wavelet coefficients
+}
+\details{
+
 }

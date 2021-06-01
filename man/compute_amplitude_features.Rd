@@ -6,6 +6,12 @@
 \usage{
 compute_amplitude_features(data)
 }
+\arguments{
+\item{data}{vector?}
+}
 \description{
-Compute amplitude features
+
+}
+\details{
+
 }

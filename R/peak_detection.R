@@ -1,12 +1,32 @@
+#' Get the derivative of the electrodermal activity signal
+#' @description finds the first derivatives of the eda signal
+#' @details 
+#'         
+#' @param eda uses the eda vector to find the first derivatives
+#' 
 get_eda_deriv <- function(eda){
   eda[2:length(eda)] - eda[1:(length(eda)-1)]   
 }
 
+
+#' Get the apex of the electrodermal activity signal
+#' @description finds the apex of the eda signal in a sliding window
+#' @details 
+#'         
+#' @param eda_deriv uses the eda derivative to find the apex
+#' @param offset lookback 
 get_apex <- function(eda_deriv, offset){
   peak_sign <- sign(eda_deriv)
   apex <- integer(length(peak_sign) + 1)
   apex[c(FALSE, diff(peak_sign) == -2)] <- 1
 
+#' Which peak has a drop
+#' @description finds the drop of a peak in a sliding window
+#' @details 
+#'         
+#' @param i which peak
+#' @param peak_sign positive or negative
+#' @param offset lookback  
   peak_has_drop <- function(i, peak_sign, offset){
     length_drop <- rle(peak_sign[i:(i+offset-1)])$lengths[1]
     length_drop >= offset
@@ -19,13 +39,26 @@ get_apex <- function(eda_deriv, offset){
   apex
 }
 
-
+#' Calculates the rise time of a peak
+#' @description Calculates the rise time of a peak
+#' @details 
+#'         
+#' @param eda_deriv uses the first derivative of a peak
+#' @param apices which apices are there
+#' @param sample_rate sample rate of the signal 
+#' @param start_WT start of the wavelet 
 get_rise_time <- function(eda_deriv, apices, sample_rate, start_WT){ 
   peak_sign <- sign(eda_deriv)
   rise_time <- numeric(length(apices))         
   
   i_apex <- which(apices == 1)
-  
+
+  #' Number of rises before peak
+  #' @description Get the number of rises before peak
+  #' @details 
+  #'         
+  #' @param i which peak
+  #' @param max_lookback maximum lookback  
   get_rise_events_for_peak <- function(i, max_lookback){
     
     lookback_i <- max(1, i - max_lookback)
@@ -41,6 +74,12 @@ get_rise_time <- function(eda_deriv, apices, sample_rate, start_WT){
   rise_time
 }
 
+#' Get the start of the peaks
+#' @description Where does a peak start?
+#' @details 
+#'         
+#' @param data vector?
+#' @param sample_rate sample rate of the signal 
 get_peak_start <- function(data, sample_rate){
   i_apex <- which(data$peaks == 1)
   peak_start <- integer(nrow(data)) 
@@ -49,6 +88,12 @@ get_peak_start <- function(data, sample_rate){
   peak_start
 }
 
+#' Remove small peaks
+#' @description Remove small peaks
+#' @details 
+#'         
+#' @param data vector?
+#' @param thres which threshold should be used 
 remove_small_peaks <- function(data, thres){
   if(thres > 0){
     i_apex <- which(data$peaks == 1)
@@ -62,6 +107,11 @@ remove_small_peaks <- function(data, thres){
   data
 }
 
+#' Get the start times of the peaks
+#' @description What are the start times of the peaks?
+#' @details 
+#'         
+#' @param data vector?
 get_peak_start_times <- function(data){
   i_apex <- which(data$peaks == 1)
   i_peak_start <- which(data$peak_start ==  1)
@@ -70,6 +120,13 @@ get_peak_start_times <- function(data){
   peak_start_times
 }
 
+#' Get local maximum?
+#' @description What is the local maximum of the peaks?
+#' @details 
+#'         
+#' @param data vector?
+#' @param eda_deriv uses the derivative to find a local maximum
+#' @param sample_rate sample rate of the signal
 get_max_deriv <- function(data, eda_deriv, sample_rate){
   
   get_max_deriv_for_event <- function(i){
@@ -86,6 +143,11 @@ get_max_deriv <- function(data, eda_deriv, sample_rate){
   max_deriv
 }
 
+#' Get the amplitude of the peaks
+#' @description  Get the amplitude of the peaks
+#' @details 
+#'         
+#' @param data vector?
 get_amp <- function(data){
   i_apex <- which(data$peaks == 1)
   i_peak_start <- which(data$peak_start ==  1)
@@ -96,6 +158,12 @@ get_amp <- function(data){
   amp
 }
 
+#' Get the halftime of the peaks
+#' @description  Get the halftime of the peaks
+#' @details 
+#'         
+#' @param data vector?
+#' @param i which peak?
 get_half_amp <- function(data, i){
   apex_amp <- data$filtered_eda[i] 
   amp_diff <- data$amp[i]
@@ -103,8 +171,21 @@ get_half_amp <- function(data, i){
   half_amp
 }
 
+#' Get the end of the of the peak
+#' @description  Get the end of the peaks
+#' @details 
+#'         
+#' @param data vector?
+#' @param max_lookahead how far should it look forward?
 get_peak_end <- function(data, max_lookahead){
   
+  
+  #' Get the end of the of the peak for each peak
+  #' @description  Get the end of the peak for each individual peak
+  #' @details 
+  #'         
+  #' @param data vector?
+  #' @param i_max_peak_end where does the peak end
   get_peak_end_per_i <- function(i, i_max_peak_end){ 
     half_amp <- get_half_amp(data, i)
     i_lookahead <- min(i_max_peak_end, i + max_lookahead)
@@ -131,6 +212,11 @@ get_peak_end <- function(data, max_lookahead){
   peak_end
 }
 
+#' Get the endtimes of the peaks
+#' @description  Get the endtimes of the peaks
+#' @details 
+#'         
+#' @param data vector?
 get_peak_end_times <- function(data){
   peak_end_times <- as.POSIXct(rep(NA, nrow(data)))
   i_apex <- which(data$peaks == 1)
@@ -139,6 +225,11 @@ get_peak_end_times <- function(data){
   peak_end_times
 }
 
+#' Get the apex to calculate decay times of the peaks
+#' @description  Get the apex to calculate decay times of the peaks
+#' @details 
+#'         
+#' @param data vector?
 get_i_apex_with_decay <- function(data){
   i_apex <- which(data$peaks == 1)
   i_peak_end <- which(data$peak_end == 1)
@@ -147,6 +238,12 @@ get_i_apex_with_decay <- function(data){
   i_apex[has_decay]
 }
 
+#' Get the decay times of the peaks
+#' @description  Get the decay times of the peaks
+#' @details 
+#'         
+#' @param data vector?
+#' @param i_apex_with_decay get apex and decay time
 get_decay_time <- function(data, i_apex_with_decay){
   decay_time <- numeric(nrow(data))
   decay_time[i_apex_with_decay] <- as.numeric(difftime(
@@ -157,8 +254,20 @@ get_decay_time <- function(data, i_apex_with_decay){
   decay_time
 }
 
+#' Get the half rise times of the peaks
+#' @description  Get the half rise times of the peaks
+#' @details 
+#'         
+#' @param data vector?
+#' @param i_apex_with_decay get apex and decay time
 get_half_rise <- function(data, i_apex_with_decay){
   
+  #' Get the half rise times of the peaks
+  #' @description  Get the half rise times of the peaks
+  #' @details 
+  #'         
+  #' @param i_peak_start where does the peak start
+  #' @param i_apex apex of the peak
   get_i_half_rise <- function(i_peak_start, i_apex){
     half_amp <- data$filtered_eda[i_apex] - .5 * data$amp[i_apex]
     is_below_amp <- data$filtered_eda[(i_apex - 1):i_peak_start] < half_amp
@@ -175,6 +284,12 @@ get_half_rise <- function(data, i_apex_with_decay){
   half_rise
 }
 
+#' Get the width of the peaks
+#' @description  Get the width of the peaks
+#' @details 
+#'         
+#' @param data vector?
+#' @param i_apex_with_decay get apex and decay time
 get_SCR_width <- function(data, i_apex_with_decay){
   SCR_width <- numeric(nrow(data))
   SCR_width[i_apex_with_decay] <- as.numeric(difftime(
@@ -184,7 +299,6 @@ get_SCR_width <- function(data, i_apex_with_decay){
   ))
   SCR_width
 }
-
 
 
 #' This function finds the peaks of an EDA signal and adds basic properties to the datafile.
@@ -241,8 +355,8 @@ find_peaks <- function(data, offset = 1, start_WT = 4, end_WT = 4, thres=0,
 
 
 #' Write peak features
-#' @param data_with_peaks
-#' @param outfile
+#' @param data_with_peaks vector with peaks
+#' @param outfile where should it be written to
 #' @export
 write_peak_features <- function(data_with_peaks, outfile){
   
