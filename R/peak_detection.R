@@ -1,9 +1,6 @@
 #' Get the derivative of the electrodermal activity signal
 #' @description finds the first derivatives of the eda signal
-#' @details 
-#'         
 #' @param eda uses the eda vector to find the first derivatives
-#' 
 get_eda_deriv <- function(eda){
   eda[2:length(eda)] - eda[1:(length(eda)-1)]   
 }
@@ -11,8 +8,6 @@ get_eda_deriv <- function(eda){
 
 #' Get the apex of the electrodermal activity signal
 #' @description finds the apex of the eda signal in a sliding window
-#' @details 
-#'         
 #' @param eda_deriv uses the eda derivative to find the apex
 #' @param offset lookback 
 get_apex <- function(eda_deriv, offset){
@@ -22,8 +17,6 @@ get_apex <- function(eda_deriv, offset){
 
 #' Which peak has a drop
 #' @description finds the drop of a peak in a sliding window
-#' @details 
-#'         
 #' @param i which peak
 #' @param peak_sign positive or negative
 #' @param offset lookback  
@@ -41,8 +34,6 @@ get_apex <- function(eda_deriv, offset){
 
 #' Calculates the rise time of a peak
 #' @description Calculates the rise time of a peak
-#' @details 
-#'         
 #' @param eda_deriv uses the first derivative of a peak
 #' @param apices which apices are there
 #' @param sample_rate sample rate of the signal 
@@ -55,8 +46,6 @@ get_rise_time <- function(eda_deriv, apices, sample_rate, start_WT){
 
   #' Number of rises before peak
   #' @description Get the number of rises before peak
-  #' @details 
-  #'         
   #' @param i which peak
   #' @param max_lookback maximum lookback  
   get_rise_events_for_peak <- function(i, max_lookback){
@@ -76,8 +65,6 @@ get_rise_time <- function(eda_deriv, apices, sample_rate, start_WT){
 
 #' Get the start of the peaks
 #' @description Where does a peak start?
-#' @details 
-#'         
 #' @param data vector?
 #' @param sample_rate sample rate of the signal 
 get_peak_start <- function(data, sample_rate){
@@ -90,8 +77,6 @@ get_peak_start <- function(data, sample_rate){
 
 #' Remove small peaks
 #' @description Remove small peaks
-#' @details 
-#'         
 #' @param data vector?
 #' @param thres which threshold should be used 
 remove_small_peaks <- function(data, thres){
@@ -109,8 +94,6 @@ remove_small_peaks <- function(data, thres){
 
 #' Get the start times of the peaks
 #' @description What are the start times of the peaks?
-#' @details 
-#'         
 #' @param data vector?
 get_peak_start_times <- function(data){
   i_apex <- which(data$peaks == 1)
@@ -122,8 +105,6 @@ get_peak_start_times <- function(data){
 
 #' Get local maximum?
 #' @description What is the local maximum of the peaks?
-#' @details 
-#'         
 #' @param data vector?
 #' @param eda_deriv uses the derivative to find a local maximum
 #' @param sample_rate sample rate of the signal
@@ -145,8 +126,6 @@ get_max_deriv <- function(data, eda_deriv, sample_rate){
 
 #' Get the amplitude of the peaks
 #' @description  Get the amplitude of the peaks
-#' @details 
-#'         
 #' @param data vector?
 get_amp <- function(data){
   i_apex <- which(data$peaks == 1)
@@ -160,8 +139,6 @@ get_amp <- function(data){
 
 #' Get the halftime of the peaks
 #' @description  Get the halftime of the peaks
-#' @details 
-#'         
 #' @param data vector?
 #' @param i which peak?
 get_half_amp <- function(data, i){
@@ -173,8 +150,6 @@ get_half_amp <- function(data, i){
 
 #' Get the end of the of the peak
 #' @description  Get the end of the peaks
-#' @details 
-#'         
 #' @param data vector?
 #' @param max_lookahead how far should it look forward?
 get_peak_end <- function(data, max_lookahead){
@@ -182,8 +157,6 @@ get_peak_end <- function(data, max_lookahead){
   
   #' Get the end of the of the peak for each peak
   #' @description  Get the end of the peak for each individual peak
-  #' @details 
-  #'         
   #' @param data vector?
   #' @param i_max_peak_end where does the peak end
   get_peak_end_per_i <- function(i, i_max_peak_end){ 
@@ -214,8 +187,6 @@ get_peak_end <- function(data, max_lookahead){
 
 #' Get the endtimes of the peaks
 #' @description  Get the endtimes of the peaks
-#' @details 
-#'         
 #' @param data vector?
 get_peak_end_times <- function(data){
   peak_end_times <- as.POSIXct(rep(NA, nrow(data)))
@@ -227,8 +198,6 @@ get_peak_end_times <- function(data){
 
 #' Get the apex to calculate decay times of the peaks
 #' @description  Get the apex to calculate decay times of the peaks
-#' @details 
-#'         
 #' @param data vector?
 get_i_apex_with_decay <- function(data){
   i_apex <- which(data$peaks == 1)
@@ -240,8 +209,6 @@ get_i_apex_with_decay <- function(data){
 
 #' Get the decay times of the peaks
 #' @description  Get the decay times of the peaks
-#' @details 
-#'         
 #' @param data vector?
 #' @param i_apex_with_decay get apex and decay time
 get_decay_time <- function(data, i_apex_with_decay){
@@ -256,16 +223,12 @@ get_decay_time <- function(data, i_apex_with_decay){
 
 #' Get the half rise times of the peaks
 #' @description  Get the half rise times of the peaks
-#' @details 
-#'         
 #' @param data vector?
 #' @param i_apex_with_decay get apex and decay time
 get_half_rise <- function(data, i_apex_with_decay){
   
   #' Get the half rise times of the peaks
   #' @description  Get the half rise times of the peaks
-  #' @details 
-  #'         
   #' @param i_peak_start where does the peak start
   #' @param i_apex apex of the peak
   get_i_half_rise <- function(i_peak_start, i_apex){
@@ -286,8 +249,6 @@ get_half_rise <- function(data, i_apex_with_decay){
 
 #' Get the width of the peaks
 #' @description  Get the width of the peaks
-#' @details 
-#'         
 #' @param data vector?
 #' @param i_apex_with_decay get apex and decay time
 get_SCR_width <- function(data, i_apex_with_decay){
@@ -301,13 +262,13 @@ get_SCR_width <- function(data, i_apex_with_decay){
 }
 
 
-#' This function finds the peaks of an EDA signal and adds basic properties to the datafile.
-#' Also, peak_end is assumed to be no later than the start of the next peak. (Is this okay??)
-#' 
+#' Function to find peaks of an EDA datafile
+#' @description This function finds the peaks of an EDA signal and adds basic properties to the datafile.
+#' @details Also, peak_end is assumed to be no later than the start of the next peak. Is that OK?
 #' @param data:        DataFrame with EDA as one of the columns and indexed by a datetimeIndex
 #' @param offset:      the number of rising samples and falling samples after a peak needed to be counted as a peak
 #' @param start_WT:    maximum number of seconds before the apex of a peak that is the "start" of the peak
-#' @param end_WT:      maximum number of seconds after the apex of a peak that is the "end" of the peak, 50% of amp
+#' @param end_WT:      maximum number of seconds after the apex of a peak that is the "end" of the peak 50 percent of amp
 #' @param thres:       the minimum microsecond change required to register as a peak, defaults as 0 (i.e. all peaks count)
 #' @param sample_rate:  number of samples per second, default=8
 #' @return data$peaks:               list of binary, 1 if apex of SCR
@@ -318,7 +279,7 @@ get_SCR_width <- function(data, i_apex_with_decay){
 #' @return data$amplitude:           list of floats,  value of EDA at apex - value of EDA at start
 #' @return data$max_deriv:           list of floats, max derivative within 1 second of apex of SCR
 #' @export
-find_peaks <- function(data, offset = 1, start_WT = 4, end_WT = 4, thres=0, 
+find_peaks <- function(data, offset = 1, start_WT = 4, end_WT = 4, thres = 0, 
                        sample_rate = getOption("SAMPLE_RATE", 8)){ 
   
   old_col_names <- names(data)
@@ -364,7 +325,7 @@ write_peak_features <- function(data_with_peaks, outfile){
   # To write all filtered data, not only information on the peaks, use this line instead
   #featureData <- data_with_peaks
   
-  # Replace 0s with NA, this is where the 50% of the peak was not found, too close to the next peak
+  # Replace 0s with NA, this is where the 50 percent of the peak was not found, too close to the next peak
   featureData[, c('SCR_width','decay_time')][featureData[, c('SCR_width','decay_time')] == 0] <- NA
   featureData['AUC'] <- featureData['amp'] * featureData['SCR_width']
   

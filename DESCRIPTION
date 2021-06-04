@@ -9,7 +9,7 @@ Authors@R: c(person("Peter", "de Looff", role = c("aut", "cre"),
               person("Saskia", "Koldijk", role = "aut"),
               person("Kees", "de Schepper", role = "aut"),
               person("Sara", "Taylor", role = "ctb"))
-Imports: xts, lubridate, dplyr, RHRV, magrittr, signal, waveslim
+Imports: xts, lubridate, dplyr, RHRV, magrittr, signal, waveslim, futile.logger, kernlab, padr
 Maintainer: Peter de Looff <peterdelooff@gmail.com>
 Description: Package to read Empatica E4 data in a list, perform several transformations, run batch.
 License: GPL-2

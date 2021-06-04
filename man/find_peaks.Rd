@@ -2,8 +2,7 @@
 % Please edit documentation in R/peak_detection.R
 \name{find_peaks}
 \alias{find_peaks}
-\title{This function finds the peaks of an EDA signal and adds basic properties to the datafile.
-Also, peak_end is assumed to be no later than the start of the next peak. (Is this okay??)}
+\title{Function to find peaks of an EDA datafile}
 \usage{
 find_peaks(
   data,
@@ -21,7 +20,7 @@ find_peaks(
 
 \item{start_WT:}{maximum number of seconds before the apex of a peak that is the "start" of the peak}
 
-\item{end_WT:}{maximum number of seconds after the apex of a peak that is the "end" of the peak, 50% of amp}
+\item{end_WT:}{maximum number of seconds after the apex of a peak that is the "end" of the peak 50 percent of amp}
 
 \item{thres:}{the minimum microsecond change required to register as a peak, defaults as 0 (i.e. all peaks count)}
 
@@ -44,5 +43,7 @@ data$max_deriv:           list of floats, max derivative within 1 second of apex
 }
 \description{
 This function finds the peaks of an EDA signal and adds basic properties to the datafile.
-Also, peak_end is assumed to be no later than the start of the next peak. (Is this okay??)
+}
+\details{
+Also, peak_end is assumed to be no later than the start of the next peak. Is that OK?
 }

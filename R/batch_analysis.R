@@ -3,6 +3,7 @@
 #' @importFrom futile.logger flog.info
 batch_analysis <- function(path_in = choose.dir(), path_out = "."){
   
+  
   # path <- "C:\\repos2\\e4dashboard\\BVI"
   zips <- list.files(path_in, pattern = "[.]zip$", recursive = TRUE, full.names = TRUE)
   

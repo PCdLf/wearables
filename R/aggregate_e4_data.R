@@ -3,6 +3,7 @@
 #' @export
 aggregate_e4_data <- function(x){
   
+  datetime_1min <- EDA <- y <- z <- a <- TEMP <- HR <- NULL 
   
   x$EDA <- padr::thicken(x$EDA, interval = "1 min", 
                          colname = "datetime_1min") %>%

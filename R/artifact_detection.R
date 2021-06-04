@@ -6,9 +6,7 @@ median <- function(...) stats::median(... , na.rm = TRUE)
 sd <- function(...) stats::sd(... , na.rm = TRUE)
 
 #' Get the first derivative
-#' @description  
-#' @details 
-#'         
+#' @description  First derivative
 #' @param values vector?
 get_derivative <- function(values){
   end <- length(values)
@@ -20,9 +18,6 @@ get_derivative <- function(values){
 }
 
 #' Get the second derivative
-#' @description  
-#' @details 
-#'         
 #' @param values vector?
 get_second_derivative <- function(values){
   end <- length(values)
@@ -35,9 +30,6 @@ get_second_derivative <- function(values){
 
 
 #' Compute derivatives
-#' @description  
-#' @details 
-#'         
 #' @param derivative first dreivative
 #' @param feature_name what is the name of the feature  
 compute_derivative_features <- function(derivative, feature_name){
@@ -53,9 +45,6 @@ compute_derivative_features <- function(derivative, feature_name){
 
 
 #' Compute amplitude features
-#' @description  
-#' @details 
-#'         
 #' @param data vector?
 compute_amplitude_features <- function(data){
   general_features <- data.frame(raw_mean = mean(data$EDA),
@@ -76,9 +65,6 @@ compute_amplitude_features <- function(data){
 }
 
 #' Maximum number of output length
-#' @description  
-#' @details 
-#'         
 #' @param values which values are used
 #' @param n what is the n
 #' @param output_length what is the output length 
@@ -98,8 +84,6 @@ max_per_n <- function(values, n, output_length){
 
 #' Compute wavelet decomposition
 #' @description compute wavelet decomposition 
-#' @details 
-#'         
 #' @param data vector?
 #' @importFrom waveslim dwt
 compute_wavelet_decomposition <- function(data){
@@ -115,8 +99,6 @@ compute_wavelet_decomposition <- function(data){
 
 #' Compute wavelet coefficients
 #' @description compute wavelet coefficients
-#' @details 
-#'         
 #' @param data vector?
 compute_wavelet_coefficients <- function(data){
 
@@ -141,8 +123,6 @@ compute_wavelet_coefficients <- function(data){
 
 #' Compute wavelet features
 #' @description compute wavelet features
-#' @details 
-#'         
 #' @param wavelet_coeffcients use the wavelet coefficients !!variable name
 compute_wavelet_features <- function(wavelet_coeffcients){
   functions <- c(max, mean, sd, median, function(values) sum(values > 0))
@@ -164,8 +144,6 @@ compute_wavelet_features <- function(wavelet_coeffcients){
 
 #' Compute wavelet features
 #' @description compute wavelet features
-#' @details 
-#'
 #' @param data vector?               
 #' @param rows_per_chunk number of rows for each window?
 split_in_chunks <- function(data, rows_per_chunk){
@@ -258,6 +236,7 @@ get_kernel <- function(kernel_transformation, sigma, columns){
 
 
 #' Predict binary classifier
+#' @param data vector?
 #' @export
 predict_binary_classifier <- function(data){
   
@@ -290,6 +269,7 @@ predict_binary_classifier <- function(data){
   data.frame(id = data$id,
              label = labels)
 }
+
 
 choose_between_classes <- function(class_a, class_b, kernels){
   config <- multiclass_classifier_config
