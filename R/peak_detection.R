@@ -159,6 +159,7 @@ get_peak_end <- function(data, max_lookahead){
   #' @description  Get the end of the peak for each individual peak
   #' @param data vector?
   #' @param i_max_peak_end where does the peak end
+  #' @importFrom utils tail
   get_peak_end_per_i <- function(i, i_max_peak_end){ 
     half_amp <- get_half_amp(data, i)
     i_lookahead <- min(i_max_peak_end, i + max_lookahead)
@@ -318,6 +319,7 @@ find_peaks <- function(data, offset = 1, start_WT = 4, end_WT = 4, thres = 0,
 #' Write peak features
 #' @param data_with_peaks vector with peaks
 #' @param outfile where should it be written to
+#' @importFrom utils write.table
 #' @export
 write_peak_features <- function(data_with_peaks, outfile){
   

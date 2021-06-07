@@ -6,6 +6,9 @@
 \usage{
 predict_multiclass_classifier(input)
 }
+\arguments{
+\item{input}{what type of input?}
+}
 \description{
 Predict multiclass classifier
 }

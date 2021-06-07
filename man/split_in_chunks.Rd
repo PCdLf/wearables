@@ -14,6 +14,3 @@ split_in_chunks(data, rows_per_chunk)
 \description{
 compute wavelet features
 }
-\details{
-
-}

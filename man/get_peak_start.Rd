@@ -14,6 +14,3 @@ get_peak_start(data, sample_rate)
 \description{
 Where does a peak start?
 }
-\details{
-
-}

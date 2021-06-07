@@ -25,8 +25,3 @@ Calculates the rise time of a peak
 
 Get the number of rises before peak
 }
-\details{
-
-
-
-}

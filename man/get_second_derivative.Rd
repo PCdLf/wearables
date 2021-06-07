@@ -10,8 +10,5 @@ get_second_derivative(values)
 \item{values}{vector?}
 }
 \description{
-
-}
-\details{
-
+Get the second derivative
 }

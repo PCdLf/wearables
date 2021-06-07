@@ -238,7 +238,7 @@ get_kernel <- function(kernel_transformation, sigma, columns){
 #' Predict binary classifier
 #' @param data vector?
 #' @export
-predict_binary_classifier <- function(data){
+predict_binary_classifier <- function(data, binary_classifier_config){
   
   relevant_columns <-
     data[c("raw_mean",
@@ -271,6 +271,11 @@ predict_binary_classifier <- function(data){
 }
 
 
+#' Which classifier?
+#' @param class_a vector?
+#' @param class_b vector?
+#' @param kernels kernel? 
+#' @export
 choose_between_classes <- function(class_a, class_b, kernels){
   config <- multiclass_classifier_config
 
@@ -297,6 +302,7 @@ choose_between_classes <- function(class_a, class_b, kernels){
 
 
 #' Predict multiclass classifier
+#' @param input what type of input? 
 #' @export
 predict_multiclass_classifier <- function(input){
 

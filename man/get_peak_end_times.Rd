@@ -12,6 +12,3 @@ get_peak_end_times(data)
 \description{
 Get the endtimes of the peaks
 }
-\details{
-
-}

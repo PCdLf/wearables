@@ -14,6 +14,3 @@ get_decay_time(data, i_apex_with_decay)
 \description{
 Get the decay times of the peaks
 }
-\details{
-
-}

@@ -14,6 +14,3 @@ remove_small_peaks(data, thres)
 \description{
 Remove small peaks
 }
-\details{
-
-}

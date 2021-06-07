@@ -20,8 +20,3 @@ finds the apex of the eda signal in a sliding window
 
 finds the drop of a peak in a sliding window
 }
-\details{
-
-
-
-}

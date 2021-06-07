@@ -35,7 +35,7 @@ ibi_analysis <- function(IBI){
                                       interval = 7.8125)
   })
   
-  # We have a lot of missing beats, so frequency analysis is difficult.
+  # We typically have a lot of missing beats with wristbands, so frequency analysis is difficult.
   e4_hrv_data <- RHRV::CreateFreqAnalysis(e4_hrv_data)
   
   e4_hrv_data <- RHRV::CalculatePowerBand(e4_hrv_data , indexFreqAnalysis = 1,

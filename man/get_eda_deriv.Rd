@@ -12,6 +12,3 @@ get_eda_deriv(eda)
 \description{
 finds the first derivatives of the eda signal
 }
-\details{
-
-}

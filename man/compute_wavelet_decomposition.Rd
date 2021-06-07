@@ -12,6 +12,3 @@ compute_wavelet_decomposition(data)
 \description{
 compute wavelet decomposition
 }
-\details{
-
-}

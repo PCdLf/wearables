@@ -12,8 +12,5 @@ compute_derivative_features(derivative, feature_name)
 \item{feature_name}{what is the name of the feature}
 }
 \description{
-
-}
-\details{
-
+Compute derivatives
 }

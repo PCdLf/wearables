@@ -12,6 +12,3 @@ get_peak_start_times(data)
 \description{
 What are the start times of the peaks?
 }
-\details{
-
-}

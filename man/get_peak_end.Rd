@@ -19,8 +19,3 @@ Get the end of the peaks
 
 Get the end of the peak for each individual peak
 }
-\details{
-
-
-
-}

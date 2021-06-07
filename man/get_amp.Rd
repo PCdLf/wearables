@@ -12,6 +12,3 @@ get_amp(data)
 \description{
 Get the amplitude of the peaks
 }
-\details{
-
-}

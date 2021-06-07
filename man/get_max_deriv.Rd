@@ -16,6 +16,3 @@ get_max_deriv(data, eda_deriv, sample_rate)
 \description{
 What is the local maximum of the peaks?
 }
-\details{
-
-}

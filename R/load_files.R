@@ -19,7 +19,10 @@ process_eda <- function(eda_data){
 ######################
 # code to bring signal to 8Hz (currently only supports upsampling)
 ######################
-
+#' Upsample EDA data to 8 Hz
+#' @param eda_data Data read with \code{\link{read_e4}}
+#' @importFrom stats approx
+#' @export
 upsample_data_to_8Hz <- function(eda_data){
   # Upsample
   start <- eda_data$DateTime[[1]]

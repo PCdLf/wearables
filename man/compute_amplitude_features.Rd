@@ -10,8 +10,5 @@ compute_amplitude_features(data)
 \item{data}{vector?}
 }
 \description{
-
-}
-\details{
-
+Compute amplitude features
 }

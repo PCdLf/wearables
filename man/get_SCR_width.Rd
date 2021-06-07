@@ -14,6 +14,3 @@ get_SCR_width(data, i_apex_with_decay)
 \description{
 Get the width of the peaks
 }
-\details{
-
-}

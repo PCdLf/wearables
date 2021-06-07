@@ -4,7 +4,15 @@
 \alias{predict_binary_classifier}
 \title{Predict binary classifier}
 \usage{
-predict_binary_classifier(data)
+predict_binary_classifier(data, binary_classifier_config)
+}
+\arguments{
+\item{data}{vector?}
+
+\item{binary_classifier_config}{what config?}
+}
+\value{
+binary_classifier_config Selects the binary classifier
 }
 \description{
 Predict binary classifier

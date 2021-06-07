@@ -10,8 +10,5 @@ get_derivative(values)
 \item{values}{vector?}
 }
 \description{
-
-}
-\details{
-
+First derivative
 }

@@ -14,6 +14,3 @@ get_half_amp(data, i)
 \description{
 Get the halftime of the peaks
 }
-\details{
-
-}

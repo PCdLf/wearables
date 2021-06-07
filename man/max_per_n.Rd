@@ -14,8 +14,5 @@ max_per_n(values, n, output_length)
 \item{output_length}{what is the output length}
 }
 \description{
-
-}
-\details{
-
+Maximum number of output length
 }

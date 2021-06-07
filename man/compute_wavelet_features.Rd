@@ -12,6 +12,3 @@ compute_wavelet_features(wavelet_coeffcients)
 \description{
 compute wavelet features
 }
-\details{
-
-}

@@ -21,8 +21,3 @@ Get the half rise times of the peaks
 
 Get the half rise times of the peaks
 }
-\details{
-
-
-
-}
