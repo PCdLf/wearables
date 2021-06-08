@@ -1,5 +1,5 @@
 #' Analysis of interbeat interval (IBI)
-#' @param IBI IBI data, component of object read with \code{\link{read_e4}}
+#' @param IBI IBI data, component of object (the number of seconds since the start of the recording) read with \code{\link{read_e4}}
 #' @export
 #' @importFrom RHRV CreateHRVData SetVerbose BuildNIHR FilterNIHR InterpolateNIHR 
 #' @importFrom RHRV CreateTimeAnalysis CreateFreqAnalysis CalculatePowerBand
@@ -10,7 +10,13 @@ ibi_analysis <- function(IBI){
   e4_hrv_data <- RHRV::SetVerbose(e4_hrv_data, TRUE )
   e4_hrv_data$datetime <- as.POSIXlt(IBI$DateTime)[1]
   
+  # There is no 0 added to the Empatica E4 seconds column, therefore, slight deviations
+  # with RHRV are possible. To match RHRV outcome, add 0 to the dataframe.
+  # Reason for not adding the 0 is that Empatica does not contain a valid first
+  # RR interval from the start of the study.
   e4_hrv_data$Beat <- data.frame(Time = IBI$seconds)
+  
+  n_beats_original <- nrow(e4_hrv_data$Beat)
   
   # Then build the non interpolated heart rate series
   e4_hrv_data <- RHRV::BuildNIHR(e4_hrv_data)
@@ -20,7 +26,6 @@ ibi_analysis <- function(IBI){
   
   # Remove too short RR intervals or missed beats
   # This also provides the number of accepted beats
-  n_beats_original <- nrow(e4_hrv_data$Beat)
   
   e4_hrv_data <- RHRV::FilterNIHR(e4_hrv_data)
   
@@ -31,7 +36,7 @@ ibi_analysis <- function(IBI){
   suppressWarnings({
     e4_hrv_data <- RHRV::InterpolateNIHR(e4_hrv_data, freqhr = 4)  
     
-    e4_hrv_data <- RHRV::CreateTimeAnalysis(e4_hrv_data, size = 100,
+    e4_hrv_data <- RHRV::CreateTimeAnalysis(e4_hrv_data, size = 300,
                                       interval = 7.8125)
   })
   
@@ -48,7 +53,7 @@ ibi_analysis <- function(IBI){
   
   list(
     time_analysis = time,
-    freq_analysis = freq,
+    #freq_analysis = freq,
     summary = list(
       time = list(
         SDNN = time$SDNN,
@@ -60,7 +65,8 @@ ibi_analysis <- function(IBI){
         HF = mean(freq$HF),
         LF = mean(freq$LF),
         HFLF = mean(freq$HFLF),
-        VLF = mean(freq$VLF)
+        VLF = mean(freq$VLF),
+        ULF = mean(freq$ULF)
       ),
       beats = list(
         beats_original = n_beats_original,
