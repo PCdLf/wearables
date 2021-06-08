@@ -59,7 +59,10 @@ ibi_analysis <- function(IBI){
         SDNN = time$SDNN,
         pNN50 = time$pNN50,
         SDSD = time$SDSD,
-        rMSSD = time$rMSSD
+        rMSSD = time$rMSSD,
+        HRVi = time$HRVi,
+        SDANN = time$SDANN,
+        TINN = time$TINN
       ),
       frequency = list(
         HF = mean(freq$HF),
