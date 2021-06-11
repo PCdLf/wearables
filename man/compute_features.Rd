@@ -6,6 +6,9 @@
 \usage{
 compute_features(data)
 }
+\arguments{
+\item{data}{data}
+}
 \description{
 Old, slow version
 }

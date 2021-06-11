@@ -2,17 +2,17 @@
 % Please edit documentation in R/artifact_detection.R
 \name{choose_between_classes}
 \alias{choose_between_classes}
-\title{Which classifier?}
+\title{Choice between two classes}
 \usage{
 choose_between_classes(class_a, class_b, kernels)
 }
 \arguments{
-\item{class_a}{vector?}
+\item{class_a}{Number by which class a is indicated}
 
-\item{class_b}{vector?}
+\item{class_b}{Number by which class b is indicated}
 
-\item{kernels}{kernel?}
+\item{kernels}{Kernel values from SVM}
 }
 \description{
-Which classifier?
+Make choice between two classes based on kernel values
 }

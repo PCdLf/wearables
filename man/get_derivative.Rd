@@ -2,13 +2,13 @@
 % Please edit documentation in R/artifact_detection.R
 \name{get_derivative}
 \alias{get_derivative}
-\title{Get the first derivative}
+\title{First derivative}
 \usage{
 get_derivative(values)
 }
 \arguments{
-\item{values}{vector?}
+\item{values}{vector of numbers}
 }
 \description{
-First derivative
+Get the first derivative.
 }

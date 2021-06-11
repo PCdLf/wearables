@@ -10,5 +10,5 @@ compute_wavelet_features(wavelet_coeffcients)
 \item{wavelet_coeffcients}{use the wavelet coefficients !!variable name}
 }
 \description{
-compute wavelet features
+Old, slow version
 }

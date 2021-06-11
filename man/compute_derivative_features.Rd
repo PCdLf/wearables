@@ -2,15 +2,15 @@
 % Please edit documentation in R/artifact_detection.R
 \name{compute_derivative_features}
 \alias{compute_derivative_features}
-\title{Compute derivatives}
+\title{Derivative features}
 \usage{
 compute_derivative_features(derivative, feature_name)
 }
 \arguments{
-\item{derivative}{first dreivative}
+\item{derivative}{vector of derivatives}
 
-\item{feature_name}{what is the name of the feature}
+\item{feature_name}{name of feature}
 }
 \description{
-Compute derivatives
+Compute derivative features.
 }

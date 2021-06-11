@@ -2,10 +2,10 @@
 % Please edit documentation in R/artifact_detection.R
 \name{compute_features2}
 \alias{compute_features2}
-\title{Compute features - fast}
+\title{Features computation}
 \usage{
 compute_features2(data)
 }
 \description{
-Fast version
+Compute features for SVM (fast version).
 }

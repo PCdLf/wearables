@@ -2,13 +2,13 @@
 % Please edit documentation in R/artifact_detection.R
 \name{compute_wavelet_decomposition}
 \alias{compute_wavelet_decomposition}
-\title{Compute wavelet decomposition}
+\title{Wavelet decomposition}
 \usage{
 compute_wavelet_decomposition(data)
 }
 \arguments{
-\item{data}{vector?}
+\item{data}{vector of values}
 }
 \description{
-compute wavelet decomposition
+Compute wavelet decomposition.
 }

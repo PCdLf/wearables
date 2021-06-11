@@ -2,10 +2,15 @@
 % Please edit documentation in R/artifact_detection.R
 \name{plot_artifacts}
 \alias{plot_artifacts}
-\title{Plot artifacts}
+\title{Artifact plots}
 \usage{
 plot_artifacts(labels, eda_data)
 }
+\arguments{
+\item{labels}{labels with artifact classification}
+
+\item{eda_data}{data upon which the labels are plotted}
+}
 \description{
-Plot artifacts
+Plot artifacts after eda_data is classified
 }

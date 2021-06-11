@@ -2,15 +2,15 @@
 % Please edit documentation in R/artifact_detection.R
 \name{split_in_chunks}
 \alias{split_in_chunks}
-\title{Compute wavelet features}
+\title{Chunk splitting}
 \usage{
 split_in_chunks(data, rows_per_chunk)
 }
 \arguments{
-\item{data}{vector?}
+\item{data}{vector of values}
 
-\item{rows_per_chunk}{number of rows for each window?}
+\item{rows_per_chunk}{number of values bundled per chunk}
 }
 \description{
-compute wavelet features
+Split into chunks of equal length.
 }

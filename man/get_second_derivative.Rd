@@ -2,13 +2,13 @@
 % Please edit documentation in R/artifact_detection.R
 \name{get_second_derivative}
 \alias{get_second_derivative}
-\title{Get the second derivative}
+\title{Second derivative}
 \usage{
 get_second_derivative(values)
 }
 \arguments{
-\item{values}{vector?}
+\item{values}{vector of numbers}
 }
 \description{
-Get the second derivative
+Get the second derivative.
 }

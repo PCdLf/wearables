@@ -2,17 +2,17 @@
 % Please edit documentation in R/artifact_detection.R
 \name{max_per_n}
 \alias{max_per_n}
-\title{Maximum number of output length}
+\title{Max value per segment of length n}
 \usage{
 max_per_n(values, n, output_length)
 }
 \arguments{
-\item{values}{which values are used}
+\item{values}{array of numbers}
 
-\item{n}{what is the n}
+\item{n}{length of each segment}
 
-\item{output_length}{what is the output length}
+\item{output_length}{argument to adjust for final segment not being full}
 }
 \description{
-Maximum number of output length
+Give the maximum value of a vector of values per segment of length n.
 }
