@@ -13,9 +13,9 @@ sd <- function(...) stats::sd(... , na.rm = TRUE)
 get_derivative <- function(values){
   end <- length(values)
   if(end < 3){
-    NaN
+    list(NaN)
   } else {
-    (values[2:(end-1)] + values[3:end]) / 2 - (values[2:(end-1)] + values[1:(end-2)]) / 2
+    list((values[2:(end-1)] + values[3:end]) / 2 - (values[2:(end-1)] + values[1:(end-2)]) / 2)
   }
 }
 
@@ -27,9 +27,9 @@ get_derivative <- function(values){
 get_second_derivative <- function(values){
   end <- length(values)
   if(end < 3){
-    NaN
+    list(NaN)
   } else {
-    values[3:end] - 2 * values[2:(end-1)] + values[1:(end-2)]
+    list(values[3:end] - 2 * values[2:(end-1)] + values[1:(end-2)])
   }
 }
 
@@ -58,21 +58,24 @@ compute_derivative_features <- function(derivative, feature_name){
 #' 
 #' @param data vector of amplitude values
 compute_amplitude_features <- function(data){
-  general_features <- data.frame(raw_mean = mean(data$EDA),
-                                 filtered_mean = mean(data$filtered_eda))
   
-  derivatives <- list(raw_derivative = get_derivative(data$EDA),
-                      raw_second_derivative = get_second_derivative(data$EDA),
-                      filtered_derivative = get_derivative(data$filtered_eda),
-                      filtered_second_derivative = get_second_derivative(data$filtered_eda))
+  data %>% 
+    group_by(group) %>% 
+    mutate(raw_derivative = get_derivative(EDA),
+           raw_second_derivative = get_second_derivative(EDA),
+           filtered_derivative = get_derivative(filtered_eda),
+           filtered_second_derivative = get_second_derivative(filtered_eda)) %>% 
+    summarize(raw_mean = mean(EDA),
+              filtered_mean = mean(filtered_eda),
+              across(c(raw_derivative, raw_second_derivative,
+                       filtered_derivative, filtered_second_derivative),
+                     list(max = ~max(unlist(.x)),
+                          min = ~min(unlist(.x)),
+                          abs_max = ~max(abs(unlist(.x))),
+                          abs_avg = ~mean(abs(unlist(.x))))),
+              .groups = "drop") %>%
+    select(-group)
   
-  derivative_features <- lapply(seq_along(derivatives),
-                                function(index){
-                                  compute_derivative_features(derivatives[[index]],
-                                                              names(derivatives)[[index]])
-                                })
-  
-  do.call("cbind", c(general_features, derivative_features))
 }
 
 #' Max value per segment of length n
@@ -253,10 +256,8 @@ compute_features2 <- function(data){
   amplitude_features <- 
     data %>% 
     add_chunk_group(8 * sec_per_chunk) %>% 
-    dplyr::group_by(group) %>% 
-    dplyr::group_map(~compute_amplitude_features(.x)) %>% 
-    bind_rows()
-  
+    compute_amplitude_features()
+
   timestamps <- 
     data$DateTime[1] + 
     sec_per_chunk * (1:nrow(amplitude_features) - 1)
