@@ -2,15 +2,15 @@
 % Please edit documentation in R/peak_detection.R
 \name{get_SCR_width}
 \alias{get_SCR_width}
-\title{Get the width of the peaks}
+\title{Peak width}
 \usage{
 get_SCR_width(data, i_apex_with_decay)
 }
 \arguments{
-\item{data}{vector?}
+\item{data}{df with peak info}
 
-\item{i_apex_with_decay}{get apex and decay time}
+\item{i_apex_with_decay}{relevant apices}
 }
 \description{
-Get the width of the peaks
+Get the width of the peak (in seconds, from halfway the rise until the end)
 }

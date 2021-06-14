@@ -2,21 +2,17 @@
 % Please edit documentation in R/peak_detection.R
 \name{get_apex}
 \alias{get_apex}
-\title{Get the apex of the electrodermal activity signal}
+\title{et the eda apex of the signal}
 \usage{
-get_apex(eda_deriv, offset)
+get_apex(eda_deriv, offset = 1)
 }
 \arguments{
 \item{eda_deriv}{uses the eda derivative to find the apex}
 
-\item{offset}{lookback}
-
-\item{i}{which peak}
-
-\item{peak_sign}{positive or negative}
+\item{offset}{minimum number of downward measurements after the apex,
+in order to be considered a peak (default 1 means no restrictions)}
 }
 \description{
-finds the apex of the eda signal in a sliding window
-
-finds the drop of a peak in a sliding window
+finds the apex of electrodermal activity eda signal 
+  within an optional time window
 }

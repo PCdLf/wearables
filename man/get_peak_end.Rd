@@ -2,20 +2,15 @@
 % Please edit documentation in R/peak_detection.R
 \name{get_peak_end}
 \alias{get_peak_end}
-\title{Get the end of the of the peak}
+\title{Peak end}
 \usage{
 get_peak_end(data, max_lookahead)
 }
 \arguments{
-\item{data}{vector?}
+\item{data}{df with peak info}
 
-\item{max_lookahead}{how far should it look forward?
-Get the end of the of the peak for each peak}
-
-\item{i_max_peak_end}{where does the peak end}
+\item{max_lookahead}{max distance from apex to search for end}
 }
 \description{
-Get the end of the peaks
-
-Get the end of the peak for each individual peak
+Find the end of the peaks, with some restrictions on the search
 }

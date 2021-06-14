@@ -2,13 +2,13 @@
 % Please edit documentation in R/peak_detection.R
 \name{get_eda_deriv}
 \alias{get_eda_deriv}
-\title{Get the derivative of the electrodermal activity signal}
+\title{Electrodermal activity signal derivative}
 \usage{
 get_eda_deriv(eda)
 }
 \arguments{
-\item{eda}{uses the eda vector to find the first derivatives}
+\item{eda}{eda vector}
 }
 \description{
-finds the first derivatives of the eda signal
+Finds the first derivatives of the eda signal
 }

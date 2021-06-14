@@ -2,15 +2,15 @@
 % Please edit documentation in R/peak_detection.R
 \name{get_decay_time}
 \alias{get_decay_time}
-\title{Get the decay times of the peaks}
+\title{Decay time}
 \usage{
 get_decay_time(data, i_apex_with_decay)
 }
 \arguments{
-\item{data}{vector?}
+\item{data}{df with peak info}
 
-\item{i_apex_with_decay}{get apex and decay time}
+\item{i_apex_with_decay}{indexes of relevant peaks}
 }
 \description{
-Get the decay times of the peaks
+Get the time (in seconds) it takes to decay for each peak
 }

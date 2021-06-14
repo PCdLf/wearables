@@ -27,19 +27,18 @@ find_peaks(
 \item{sample_rate:}{number of samples per second, default=8}
 }
 \value{
-data$peaks:               list of binary, 1 if apex of SCR
-
-data$peak_start:          list of binary, 1 if start of SCR
-
-data$peak_start_times:    list of strings, if this index is the apex of an SCR, it contains datetime of start of peak
-
-data$peak_end:            list of binary, 1 if rec.t/2 of SCR
-
-data$peak_end_times:      list of strings, if this index is the apex of an SCR, it contains datetime of rec.t/2
-
-data$amplitude:           list of floats,  value of EDA at apex - value of EDA at start
-
-data$max_deriv:           list of floats, max derivative within 1 second of apex of SCR
+data frame with several columns
+  peaks               1 if apex
+  peak_start          1 if start of peak
+  peak_end            1 if end of preak
+  peak_start_times    if apex then corresponding start timestamp
+  peak_end_times      if apex then corresponding end timestamp
+  half_rise           if sharp decaying apex then time to halfway point in rise
+  amp                 if apex then value of EDA at apex - value of EDA at start
+  max_deriv           if apex then max derivative within 1 second of apex
+  rise_time           if apex then time from start to apex
+  decay_time          if sharp decaying apex then time from apex to end
+  SCR_width           if sharp decaying apex then time from half rise to end
 }
 \description{
 This function finds the peaks of an EDA signal and adds basic properties to the datafile.

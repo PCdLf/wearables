@@ -2,13 +2,13 @@
 % Please edit documentation in R/peak_detection.R
 \name{get_peak_end_times}
 \alias{get_peak_end_times}
-\title{Get the endtimes of the peaks}
+\title{Peak end times}
 \usage{
 get_peak_end_times(data)
 }
 \arguments{
-\item{data}{vector?}
+\item{data}{df with peak info}
 }
 \description{
-Get the endtimes of the peaks
+Get the end timstamp of the peaks
 }

@@ -2,13 +2,13 @@
 % Please edit documentation in R/peak_detection.R
 \name{get_peak_start_times}
 \alias{get_peak_start_times}
-\title{Get the start times of the peaks}
+\title{Peak start times}
 \usage{
 get_peak_start_times(data)
 }
 \arguments{
-\item{data}{vector?}
+\item{data}{df with peak info}
 }
 \description{
-What are the start times of the peaks?
+Get the start times of the peaks
 }

@@ -2,17 +2,17 @@
 % Please edit documentation in R/peak_detection.R
 \name{get_max_deriv}
 \alias{get_max_deriv}
-\title{Get local maximum?}
+\title{Maximum derivative}
 \usage{
 get_max_deriv(data, eda_deriv, sample_rate)
 }
 \arguments{
-\item{data}{vector?}
+\item{data}{df with info on the peaks}
 
-\item{eda_deriv}{uses the derivative to find a local maximum}
+\item{eda_deriv}{derivative of the signal}
 
 \item{sample_rate}{sample rate of the signal}
 }
 \description{
-What is the local maximum of the peaks?
+Get the largest slope before apex, interpolated to seconds
 }

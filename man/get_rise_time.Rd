@@ -2,26 +2,19 @@
 % Please edit documentation in R/peak_detection.R
 \name{get_rise_time}
 \alias{get_rise_time}
-\title{Calculates the rise time of a peak}
+\title{Rise time of peaks}
 \usage{
 get_rise_time(eda_deriv, apices, sample_rate, start_WT)
 }
 \arguments{
-\item{eda_deriv}{uses the first derivative of a peak}
+\item{eda_deriv}{first derivative of signal}
 
-\item{apices}{which apices are there}
+\item{apices}{apex status per measurement (0 or 1)}
 
 \item{sample_rate}{sample rate of the signal}
 
-\item{start_WT}{start of the wavelet 
-Number of rises before peak}
-
-\item{i}{which peak}
-
-\item{max_lookback}{maximum lookback}
+\item{start_WT}{window within which to look for rise time (in seconds)}
 }
 \description{
-Calculates the rise time of a peak
-
-Get the number of rises before peak
+Calculates the rise time of all peaks
 }

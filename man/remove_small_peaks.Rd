@@ -2,15 +2,16 @@
 % Please edit documentation in R/peak_detection.R
 \name{remove_small_peaks}
 \alias{remove_small_peaks}
-\title{Remove small peaks}
+\title{Small peaks removal}
 \usage{
-remove_small_peaks(data, thres)
+remove_small_peaks(data, thres = 0)
 }
 \arguments{
-\item{data}{vector?}
+\item{data}{df with info on peaks}
 
-\item{thres}{which threshold should be used}
+\item{thres}{threshold of amplitude difference in order to be removed
+(default 0 means no removals)}
 }
 \description{
-Remove small peaks
+Remove peaks with a small rise from start to apex are removed
 }

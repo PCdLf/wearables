@@ -6,6 +6,9 @@
 \usage{
 compute_features2(data)
 }
+\arguments{
+\item{data}{df with eda, filtered eda and timestamp columns}
+}
 \description{
-Compute features for SVM (fast version).
+Compute features for SVM
 }

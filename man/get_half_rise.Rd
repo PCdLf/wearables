@@ -2,22 +2,15 @@
 % Please edit documentation in R/peak_detection.R
 \name{get_half_rise}
 \alias{get_half_rise}
-\title{Get the half rise times of the peaks}
+\title{Half rise time}
 \usage{
 get_half_rise(data, i_apex_with_decay)
 }
 \arguments{
-\item{data}{vector?}
+\item{data}{df with peak info}
 
-\item{i_apex_with_decay}{get apex and decay time
-Get the half rise times of the peaks}
-
-\item{i_peak_start}{where does the peak start}
-
-\item{i_apex}{apex of the peak}
+\item{i_apex_with_decay}{relevant apices}
 }
 \description{
-Get the half rise times of the peaks
-
-Get the half rise times of the peaks
+Get the time (in seconds) it takes to get to halfway the rise in a peak
 }

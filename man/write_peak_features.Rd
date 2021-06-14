@@ -7,10 +7,10 @@
 write_peak_features(data_with_peaks, outfile)
 }
 \arguments{
-\item{data_with_peaks}{vector with peaks}
+\item{data_with_peaks}{df with info on peaks}
 
-\item{outfile}{where should it be written to}
+\item{outfile}{file to write to}
 }
 \description{
-Write peak features
+Write info on peaks to a file
 }

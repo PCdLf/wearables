@@ -2,15 +2,15 @@
 % Please edit documentation in R/peak_detection.R
 \name{get_half_amp}
 \alias{get_half_amp}
-\title{Get the halftime of the peaks}
+\title{Half peak amp}
 \usage{
 get_half_amp(data, i)
 }
 \arguments{
-\item{data}{vector?}
+\item{data}{df with peak info}
 
-\item{i}{which peak?}
+\item{i}{apex index}
 }
 \description{
-Get the halftime of the peaks
+Get the amplitude value halfway between peak start and apex
 }

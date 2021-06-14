@@ -2,13 +2,13 @@
 % Please edit documentation in R/peak_detection.R
 \name{get_i_apex_with_decay}
 \alias{get_i_apex_with_decay}
-\title{Get the apex to calculate decay times of the peaks}
+\title{Decaying peaks}
 \usage{
 get_i_apex_with_decay(data)
 }
 \arguments{
-\item{data}{vector?}
+\item{data}{df with peak info}
 }
 \description{
-Get the apex to calculate decay times of the peaks
+Identify peaks with a decent decay (at least half the amplitude of rise)
 }

@@ -2,12 +2,12 @@
 % Please edit documentation in R/peak_detection.R
 \name{get_amp}
 \alias{get_amp}
-\title{Get the amplitude of the peaks}
+\title{Peak amplitude}
 \usage{
 get_amp(data)
 }
 \arguments{
-\item{data}{vector?}
+\item{data}{df with peak info}
 }
 \description{
 Get the amplitude of the peaks
