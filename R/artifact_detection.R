@@ -140,71 +140,15 @@ compute_wavelet_coefficients <- function(data){
                                          half_second_level_2 = half_second_level_2_features))
 }
 
-#' Compute wavelet features
+#' Addition of chunk groups
 #' 
-#' Old, slow version
+#' partition data into chunks of a fixed number of rows in order to calculate
+#'   aggregated features per chunk
 #' 
-#' @param wavelet_coeffcients use the wavelet coefficients !!variable name
-compute_wavelet_features <- function(wavelet_coeffcients){
-  functions <- c(max, mean, sd, median, function(values) sum(values > 0))
-  function_names <- c("max", "mean", "std", "median", "positive")
-  
-  features <-lapply(seq_along(functions),
-                    function(index){
-                      features <- as.data.frame(lapply(wavelet_coeffcients,
-                                                       functions[[index]]))
-                      names(features) <- paste(names(features),
-                                               function_names[[index]],
-                                               sep = "_")
-                      features
-                    })
-  
-  do.call("cbind", features)
-}
-
-
-#' Chunk splitting
-#' 
-#' Split into chunks of equal length.
-#' 
-#' @param data vector of values               
-#' @param rows_per_chunk number of values bundled per chunk
-split_in_chunks <- function(data, rows_per_chunk){
-  n_rows <- nrow(data)
-  
-  lapply(seq(1, n_rows, by = rows_per_chunk),
-         function(start_index){
-           end_index <- min(start_index + rows_per_chunk, n_rows)
-           data[start_index:end_index, , drop = FALSE]
-         })
-}
-
-
-
-#' Compute features
-#' 
-#' Old, slow version
-#' 
-#' @param data data
-compute_features <- function(data){
-  sec_per_chunk <- 5
-  
-  coefficients <- compute_wavelet_coefficients(data)
-  wavelet_one_second_chunks <- split_in_chunks(coefficients$one_second_features,
-                                               sec_per_chunk)
-  wavelet_half_second_chunks <- split_in_chunks(coefficients$half_second_features,
-                                                sec_per_chunk * 2)
-  
-  amplitude_chunks <- split_in_chunks(data, 8 * sec_per_chunk)
-  
-  timestamps <- data$DateTime[1] + sec_per_chunk * (seq_along(amplitude_chunks) - 1)
-  
-  as.data.frame(cbind(id = timestamps,
-                      do.call("rbind", lapply(wavelet_one_second_chunks, compute_wavelet_features)),
-                      do.call("rbind", lapply(wavelet_half_second_chunks, compute_wavelet_features)),
-                      do.call("rbind", lapply(amplitude_chunks, compute_amplitude_features))))
-}
-
+#' @param data df to partition into chunks
+#' @param rows_per_chunk size of a chunk
+#' @importFrom magrittr "%>%"
+#' @importFrom dplyr arrange bind_rows mutate
 add_chunk_group <- function(data, rows_per_chunk){
   old_part <- 
     data %>% 
@@ -213,9 +157,10 @@ add_chunk_group <- function(data, rows_per_chunk){
                                   length.out = nrow(.)/rows_per_chunk), 
                               each=rows_per_chunk, 
                               length.out = nrow(.)))
+  
   new_part <- 
     old_part[tail(unique(old_part$group), -1), ] %>% 
-    mutate(group = group - rows_per_chunk)
+    dplyr::mutate(group = group - rows_per_chunk)
     
   dplyr::bind_rows(old_part, new_part) %>% 
     dplyr::arrange(group)
@@ -223,8 +168,9 @@ add_chunk_group <- function(data, rows_per_chunk){
 
 #' Features computation
 #' 
-#' Compute features for SVM (fast version).
+#' Compute features for SVM 
 #' 
+#' @param data df with eda, filtered eda and timestamp columns
 #' @export
 #' @importFrom magrittr "%>%"
 #' @importFrom dplyr group_by summarize select mutate
