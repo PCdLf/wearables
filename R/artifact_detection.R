@@ -234,10 +234,29 @@ compute_features2 <- function(data){
     dplyr::summarize(across(.fns = fun_lis), .groups = "drop") %>%
     dplyr::select(-group)
   
-  amplitude_features <- compute_amplitude_features(data)
+  n_rows_amplitude <- 8 * sec_per_chunk
   
-  amplitude_chunks <- split_in_chunks(data, 8 * sec_per_chunk)
-  timestamps <- data$DateTime[1] + sec_per_chunk * (seq_along(amplitude_chunks) - 1)
+  amplitude_chunks <- 
+    data %>% 
+    dplyr::mutate(group = rep(seq(1, by=n_rows_amplitude, 
+                                  length.out = nrow(.)/n_rows_amplitude), 
+                              each=n_rows_amplitude, 
+                              length.out = nrow(.))) %>%
+    dplyr::bind_rows({
+      .[tail(unique(.$group), -1), ] %>% 
+        mutate(group = group - n_rows_amplitude)
+    }) %>% 
+    dplyr::arrange(group)
+  
+  amplitude_features <- 
+    amplitude_chunks %>% 
+    dplyr::group_by(group) %>% 
+    dplyr::group_map(~compute_amplitude_features(.x)) %>% 
+    bind_rows()
+  
+  timestamps <- 
+    data$DateTime[1] + 
+    sec_per_chunk * (seq_along(nrow(amplitude_features)) - 1)
   
   as.data.frame(cbind(id = timestamps,
                       out_1sec,

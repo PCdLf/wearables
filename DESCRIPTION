@@ -17,3 +17,5 @@ Encoding: UTF-8
 LazyData: true
 Depends: R (>= 3.6)
 RoxygenNote: 7.1.1
+Suggests: 
+    testthat
