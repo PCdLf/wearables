@@ -202,6 +202,22 @@ compute_features <- function(data){
                       do.call("rbind", lapply(amplitude_chunks, compute_amplitude_features))))
 }
 
+add_chunk_group <- function(data, rows_per_chunk){
+  old_part <- 
+    data %>% 
+    dplyr::mutate(group = rep(seq(1, 
+                                  by=rows_per_chunk, 
+                                  length.out = nrow(.)/rows_per_chunk), 
+                              each=rows_per_chunk, 
+                              length.out = nrow(.)))
+  new_part <- 
+    old_part[tail(unique(old_part$group), -1), ] %>% 
+    mutate(group = group - rows_per_chunk)
+    
+  dplyr::bind_rows(old_part, new_part) %>% 
+    dplyr::arrange(group)
+}
+
 #' Features computation
 #' 
 #' Compute features for SVM (fast version).
@@ -223,40 +239,27 @@ compute_features2 <- function(data){
   )
   
   out_1sec <- coefficients$one_second_features %>%
-    dplyr::mutate(group = rep(seq(1, by=5, length.out = nrow(.)/5), each=5, length.out = nrow(.))) %>%
+    add_chunk_group(sec_per_chunk) %>%
     dplyr::group_by(group) %>%
     dplyr::summarize(across(.fns = fun_lis), .groups = "drop") %>%
     dplyr::select(-group)
   
   out_05sec <- coefficients$half_second_features %>%
-    dplyr::mutate(group = rep(seq(1, by=10, length.out = nrow(.)/10), each=10, length.out = nrow(.))) %>%
+    add_chunk_group(2 * sec_per_chunk) %>% 
     dplyr::group_by(group) %>%
     dplyr::summarize(across(.fns = fun_lis), .groups = "drop") %>%
     dplyr::select(-group)
   
-  n_rows_amplitude <- 8 * sec_per_chunk
-  
-  amplitude_chunks <- 
-    data %>% 
-    dplyr::mutate(group = rep(seq(1, by=n_rows_amplitude, 
-                                  length.out = nrow(.)/n_rows_amplitude), 
-                              each=n_rows_amplitude, 
-                              length.out = nrow(.))) %>%
-    dplyr::bind_rows({
-      .[tail(unique(.$group), -1), ] %>% 
-        mutate(group = group - n_rows_amplitude)
-    }) %>% 
-    dplyr::arrange(group)
-  
   amplitude_features <- 
-    amplitude_chunks %>% 
+    data %>% 
+    add_chunk_group(8 * sec_per_chunk) %>% 
     dplyr::group_by(group) %>% 
     dplyr::group_map(~compute_amplitude_features(.x)) %>% 
     bind_rows()
   
   timestamps <- 
     data$DateTime[1] + 
-    sec_per_chunk * (seq_along(nrow(amplitude_features)) - 1)
+    sec_per_chunk * (1:nrow(amplitude_features) - 1)
   
   as.data.frame(cbind(id = timestamps,
                       out_1sec,
