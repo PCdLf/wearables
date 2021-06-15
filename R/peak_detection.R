@@ -7,18 +7,6 @@ get_eda_deriv <- function(eda){
   eda[2:length(eda)] - eda[1:(length(eda)-1)]   
 }
 
-#' Which peak has a drop?
-#' 
-#' finds the drop of a peak within an optional time window
-#' 
-#' @param i apex index
-#' @param peak_sign upward of downward movement of signal
-#' @param offset minimum number of downward measurements after the apex,
-#'   in order to be considered a peak  
-peak_has_drop <- function(i, peak_sign, offset){
-  length_drop <- rle(peak_sign[i:(i+offset-1)])$lengths[1]
-  length_drop >= offset
-}
 
 #' et the eda apex of the signal
 #' 
@@ -29,31 +17,20 @@ peak_has_drop <- function(i, peak_sign, offset){
 #' @param offset minimum number of downward measurements after the apex,
 #'   in order to be considered a peak (default 1 means no restrictions)
 get_apex <- function(eda_deriv, offset = 1){
+  peak_has_drop <- function(i){
+    length_drop <- rle(peak_sign[i:(i+offset-1)])$lengths[1]
+    length_drop >= offset
+  }
+  
   peak_sign <- sign(eda_deriv)
   apex <- integer(length(peak_sign) + 1)
   apex[c(FALSE, diff(peak_sign) == -2)] <- 1
 
   i_apex <- which(apex == 1)
-  has_drops <- sapply(i_apex, peak_has_drop, peak_sign, offset)
+  has_drops <- sapply(i_apex, peak_has_drop)
   
   apex[i_apex[!has_drops]] <- 0
   apex
-}
-
-#' Number of rises before apex
-#' 
-#' Get the number of measurement with a rise before a single apex
-#' 
-#' @param i index of apex
-#' @param eda_deriv first derivative of signal
-#' @param max_lookback maximum lookback  
-get_rise_events_for_apex <- function(i, eda_deriv, max_lookback){
-  peak_sign <- sign(eda_deriv)
-  
-  lookback_i <- max(1, i - max_lookback)
-  
-  r <- rle(rev(peak_sign[lookback_i:i - 1]))
-  r$lengths[1]  
 }
 
 #' Rise time of peaks
@@ -65,12 +42,22 @@ get_rise_events_for_apex <- function(i, eda_deriv, max_lookback){
 #' @param sample_rate sample rate of the signal 
 #' @param start_WT window within which to look for rise time (in seconds)
 get_rise_time <- function(eda_deriv, apices, sample_rate, start_WT){ 
+  get_rise_events_for_apex <- function(i){
+    peak_sign <- sign(eda_deriv)
+    
+    max_lookback <- sample_rate * start_WT
+    lookback_i <- max(1, i - max_lookback)
+    
+    r <- rle(rev(peak_sign[lookback_i:i - 1]))
+    r$lengths[1]  
+  }
+  
   rise_time <- numeric(length(apices))         
   
   i_apex <- which(apices == 1)
 
   rise_time[i_apex] <- 
-    sapply(i_apex, get_rise_events_for_apex, eda_deriv, sample_rate * start_WT) / 
+    sapply(i_apex, get_rise_events_for_apex) / 
     sample_rate
   
   rise_time
@@ -181,7 +168,7 @@ get_half_amp <- function(data, i){
 #' @param data df with peak info
 #' @param i_max_peak_end beginning of next peak or end of signal
 #' @param max_lookahead max distance from apex to search for end
-get_i_end_per_apex <- function(i, i_max_peak_end, max_lookahead){ 
+get_i_end_per_apex <- function(i, i_max_peak_end, max_lookahead, data){ 
   half_amp <- get_half_amp(data, i)
   i_lookahead <- min(i_max_peak_end, i + max_lookahead)
   amps_ahead <- data$filtered_eda[(i + 1):(i_lookahead)]
@@ -208,7 +195,8 @@ get_peak_end <- function(data, max_lookahead){
   i_max_peak_end <- c(i_next_peak_start - 1, nrow(data))
 
   i_peak_end <- mapply(get_i_end_per_apex, i_apex, i_max_peak_end,
-                       MoreArgs = list(max_lookahead = max_lookahead))
+                       MoreArgs = list(max_lookahead = max_lookahead,
+                                       data = data))
   
   peak_end <- integer(nrow(data))
   peak_end[i_peak_end] <- 1
@@ -258,18 +246,6 @@ get_decay_time <- function(data, i_apex_with_decay){
   decay_time
 }
 
-#' Half rise index
-#' 
-#' Get the index of the half rise point for a single peak
-#' 
-#' @param i_peak_start peak start index
-#' @param i_apex apex index
-get_i_half_rise <- function(i_peak_start, i_apex){
-  half_amp <- data$filtered_eda[i_apex] - .5 * data$amp[i_apex]
-  is_below_amp <- data$filtered_eda[(i_apex - 1):i_peak_start] < half_amp
-  i_apex - which(is_below_amp)[1]
-}
-
 #' Half rise time
 #' 
 #' Get the time (in seconds) it takes to get to halfway the rise in a peak
@@ -277,6 +253,12 @@ get_i_half_rise <- function(i_peak_start, i_apex){
 #' @param data df with peak info
 #' @param i_apex_with_decay relevant apices
 get_half_rise <- function(data, i_apex_with_decay){
+  
+  get_i_half_rise <- function(i_peak_start, i_apex){
+    half_amp <- data$filtered_eda[i_apex] - .5 * data$amp[i_apex]
+    is_below_amp <- data$filtered_eda[(i_apex - 1):i_peak_start] < half_amp
+    i_apex - which(is_below_amp)[1]
+  }
   
   i_apex <- which(data$peaks == 1)
   has_decay <- i_apex %in% i_apex_with_decay
@@ -303,7 +285,6 @@ get_SCR_width <- function(data, i_apex_with_decay){
   ))
   SCR_width
 }
-
 
 #' Function to find peaks of an EDA datafile
 #' @description This function finds the peaks of an EDA signal and adds basic properties to the datafile.
@@ -360,8 +341,6 @@ find_peaks <- function(data, offset = 1, start_WT = 4, end_WT = 4, thres = 0,
   
   data
 }
-
-
 
 #' Write peak features
 #' 
