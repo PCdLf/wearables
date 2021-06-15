@@ -43,14 +43,14 @@ get_apex <- function(eda_deriv, offset = 1){
 #' @param start_WT window within which to look for rise time (in seconds)
 get_rise_time <- function(eda_deriv, apices, sample_rate, start_WT){ 
   get_rise_events_for_apex <- function(i){
-    peak_sign <- sign(eda_deriv)
-    
-    max_lookback <- sample_rate * start_WT
     lookback_i <- max(1, i - max_lookback)
     
     r <- rle(rev(peak_sign[lookback_i:i - 1]))
     r$lengths[1]  
   }
+  
+  peak_sign <- sign(eda_deriv)
+  max_lookback <- sample_rate * start_WT
   
   rise_time <- numeric(length(apices))         
   
