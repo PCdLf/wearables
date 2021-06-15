@@ -6,9 +6,14 @@
 #' @param path_out output path
 #' @export
 #' @importFrom futile.logger flog.info
-#' @importFrom utils choose.dir
-batch_analysis <- function(path_in = choose.dir(), path_out = "."){
+batch_analysis <- function(path_in = NULL, path_out = "."){
   
+  
+  if(is.null(path_in) && .Platform$OS.type == "windows"){
+    path_in <- utils::choose.dir()
+  } else {
+    stop("Provide an input directory (argument path_in)")
+  }
   
   # path <- "C:\\repos2\\e4dashboard\\BVI"
   zips <- list.files(path_in, pattern = "[.]zip$", recursive = TRUE, full.names = TRUE)

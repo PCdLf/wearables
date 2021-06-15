@@ -4,7 +4,7 @@
 \alias{batch_analysis}
 \title{Batch analysis}
 \usage{
-batch_analysis(path_in = choose.dir(), path_out = ".")
+batch_analysis(path_in = NULL, path_out = ".")
 }
 \arguments{
 \item{path_in}{input path}

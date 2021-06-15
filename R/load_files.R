@@ -57,25 +57,3 @@ butter_lowpass_filter <- function(data, cutoff, sampling_frequency, order = 5){
   return (y)
 }
 
-
-#######################
-# MAIN code example
-#######################
-
-# Load empatica data from zip, using e4 tools (to install e4 tools use:
-# devtools::install_git("https://github.com/PCdLf/e4tools.git")
-
-#filepath <- "D:/xxx/xxx.zip"
-#data <- e4tools::read_e4(filepath)
-#eda_data <- data$EDA
-#colnames(eda_data)[colnames(eda_data) == "V1"] <- "EDA"
-#eda_data$DateTime <- with_tz(eda_data$DateTime, "UTC")
-
-
-# Process data 
-#eda_data <- process_eda(eda_data)
-
-# Plot
-#plot(eda_data$DateTime, eda_data$EDA, type='l', col='red')
-#lines(eda_data$DateTime, eda_data$filtered_eda, col='blue')
-
