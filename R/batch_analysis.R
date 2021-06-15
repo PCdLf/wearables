@@ -1,4 +1,9 @@
+#' Batch analysis
+#' 
 #' Read and process all ZIP files in a directory
+#' 
+#' @param path_in input path
+#' @param path_out output path
 #' @export
 #' @importFrom futile.logger flog.info
 #' @importFrom utils choose.dir

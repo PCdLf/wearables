@@ -1,12 +1,13 @@
 #' Read, process and feature extraction of E4 data
-#' @description Reads the raw ZIP file using `read_e4`, performs analyses with `ibi_analysis` and `eda_analysis`. 
+#' @description Reads the raw ZIP file using `read_e4`, 
+#'   performs analyses with `ibi_analysis` and `eda_analysis`. 
+#' @param zipfile zip file with e4 data to be read
+#' @param tz timezone where data were recorded (default system timezone)
 #' @return An object with processed data and analyses, object of class 'e4_analysis'.
 #' @rdname read_and_process_e4
 #' @importFrom utils write.csv2
 #' @export
 read_and_process_e4 <- function(zipfile, tz = Sys.timezone()){
-  
-  
   
   data <- read_e4(zipfile, tz)
   flog.info("Raw data read and converted.")
@@ -38,7 +39,12 @@ class = "e4_analysis")
 }
 
 
+#' Output folder
+#' 
 #' Create output folder for E4 analysis results
+#' 
+#' @param obj e4 analysis object
+#' @param out_path output folder
 #' @export
 create_e4_output_folder <- function(obj, out_path = "."){
   
@@ -51,12 +57,14 @@ create_e4_output_folder <- function(obj, out_path = "."){
   out_folder <- file.path(out_path, zipname)
   dir.create(out_folder)
   
-return(invisible(out_folder))
+  return(invisible(out_folder))
 }
 
 
 #' Write CSV files of the output
 #' @description Slow!
+#' @param obj e4 analysis object
+#' @param out_path output folder
 #' @export
 write_processed_e4 <- function(obj, out_path = "."){
   

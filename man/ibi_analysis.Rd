@@ -2,7 +2,7 @@
 % Please edit documentation in R/ibi_analysis.R
 \name{ibi_analysis}
 \alias{ibi_analysis}
-\title{Analysis of interbeat interval (IBI)}
+\title{IBI analysis}
 \usage{
 ibi_analysis(IBI)
 }

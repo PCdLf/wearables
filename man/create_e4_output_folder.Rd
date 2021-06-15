@@ -2,9 +2,14 @@
 % Please edit documentation in R/read_and_proces_e4.R
 \name{create_e4_output_folder}
 \alias{create_e4_output_folder}
-\title{Create output folder for E4 analysis results}
+\title{Output folder}
 \usage{
 create_e4_output_folder(obj, out_path = ".")
+}
+\arguments{
+\item{obj}{e4 analysis object}
+
+\item{out_path}{output folder}
 }
 \description{
 Create output folder for E4 analysis results

@@ -1,4 +1,7 @@
+#' IBI analysis
+#' 
 #' Analysis of interbeat interval (IBI)
+#' 
 #' @param IBI IBI data, component of object (the number of seconds since the start of the recording) read with \code{\link{read_e4}}
 #' @export
 #' @importFrom RHRV CreateHRVData SetVerbose BuildNIHR FilterNIHR InterpolateNIHR 

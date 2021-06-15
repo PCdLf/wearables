@@ -163,40 +163,31 @@ get_half_amp <- function(data, i){
 
 #' Peak end
 #' 
-#' Get the end of the peak for each individual peak with some restrictions
-#' 
-#' @param data df with peak info
-#' @param i_max_peak_end beginning of next peak or end of signal
-#' @param max_lookahead max distance from apex to search for end
-get_i_end_per_apex <- function(i, i_max_peak_end, max_lookahead, data){ 
-  half_amp <- get_half_amp(data, i)
-  i_lookahead <- min(i_max_peak_end, i + max_lookahead)
-  amps_ahead <- data$filtered_eda[(i + 1):(i_lookahead)]
-  length_peak_end <- which(amps_ahead < half_amp)[1]
-  
-  if(is.na(length_peak_end)){
-    i + which.min(amps_ahead)
-  } else {
-    i + length_peak_end
-  }
-}
-
-#' Peak end
-#' 
 #' Find the end of the peaks, with some restrictions on the search
 #' 
 #' @param data df with peak info
 #' @param max_lookahead max distance from apex to search for end
 #' @importFrom utils tail
 get_peak_end <- function(data, max_lookahead){
+  get_i_end_per_apex <- function(i, i_max_peak_end){ 
+    half_amp <- get_half_amp(data, i)
+    i_lookahead <- min(i_max_peak_end, i + max_lookahead)
+    amps_ahead <- data$filtered_eda[(i + 1):(i_lookahead)]
+    length_peak_end <- which(amps_ahead < half_amp)[1]
+    
+    if(is.na(length_peak_end)){
+      i + which.min(amps_ahead)
+    } else {
+      i + length_peak_end
+    }
+  }
+  
   i_apex <- which(data$peaks == 1)
   i_peak_start <- which(data$peak_start == 1)
   i_next_peak_start <- tail(i_peak_start, -1)
   i_max_peak_end <- c(i_next_peak_start - 1, nrow(data))
 
-  i_peak_end <- mapply(get_i_end_per_apex, i_apex, i_max_peak_end,
-                       MoreArgs = list(max_lookahead = max_lookahead,
-                                       data = data))
+  i_peak_end <- mapply(get_i_end_per_apex, i_apex, i_max_peak_end)
   
   peak_end <- integer(nrow(data))
   peak_end[i_peak_end] <- 1
@@ -287,14 +278,16 @@ get_SCR_width <- function(data, i_apex_with_decay){
 }
 
 #' Function to find peaks of an EDA datafile
-#' @description This function finds the peaks of an EDA signal and adds basic properties to the datafile.
-#' @details Also, peak_end is assumed to be no later than the start of the next peak. Is that OK?
-#' @param data:        DataFrame with EDA as one of the columns and indexed by a datetimeIndex
-#' @param offset:      the number of rising samples and falling samples after a peak needed to be counted as a peak
-#' @param start_WT:    maximum number of seconds before the apex of a peak that is the "start" of the peak
-#' @param end_WT:      maximum number of seconds after the apex of a peak that is the "end" of the peak 50 percent of amp
-#' @param thres:       the minimum microsecond change required to register as a peak, defaults as 0 (i.e. all peaks count)
-#' @param sample_rate:  number of samples per second, default=8
+#' @description This function finds the peaks of an EDA signal and adds 
+#'   basic properties to the datafile.
+#' @details Also, peak_end is assumed to be no later than the start of the next peak. 
+#'   Is that OK?
+#' @param data DataFrame with EDA as one of the columns and indexed by a datetimeIndex
+#' @param offset the number of rising samples and falling samples after a peak needed to be counted as a peak
+#' @param start_WT maximum number of seconds before the apex of a peak that is the "start" of the peak
+#' @param end_WT maximum number of seconds after the apex of a peak that is the "end" of the peak 50 percent of amp
+#' @param thres the minimum microsecond change required to register as a peak, defaults as 0 (i.e. all peaks count)
+#' @param sample_rate number of samples per second, default=8
 #' @return data frame with several columns
 #'   peaks               1 if apex
 #'   peak_start          1 if start of peak

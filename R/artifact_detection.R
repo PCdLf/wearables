@@ -5,6 +5,18 @@ sum <- function(...) base::sum(... , na.rm = TRUE)
 median <- function(...) stats::median(... , na.rm = TRUE)
 sd <- function(...) stats::sd(... , na.rm = TRUE)
 
+#' Configuration of the SVM algorithm for binary classification
+#'
+#' @author Sara Taylor \email{sataylor@@mit.edu}
+#' @references \url{data_blah.com}
+"binary_classifier_config"
+
+#' Configuration of the SVM algorithm for ternary classification
+#'
+#' @author Sara Taylor \email{sataylor@@mit.edu}
+#' @references \url{data_blah.com}
+"multiclass_classifier_config"
+
 #' First derivative
 #' 
 #' Get the first derivative.
@@ -15,7 +27,8 @@ get_derivative <- function(values){
   if(end < 3){
     list(NaN)
   } else {
-    list((values[2:(end-1)] + values[3:end]) / 2 - (values[2:(end-1)] + values[1:(end-2)]) / 2)
+    list((values[2:(end-1)] + values[3:end]) / 2 - 
+           (values[2:(end-1)] + values[1:(end-2)]) / 2)
   }
 }
 
@@ -57,24 +70,25 @@ compute_derivative_features <- function(derivative, feature_name){
 #' Compute amplitude features.
 #' 
 #' @param data vector of amplitude values
+#' @importFrom dplyr across .data
 compute_amplitude_features <- function(data){
   
   data %>% 
-    group_by(group) %>% 
-    mutate(raw_derivative = get_derivative(EDA),
-           raw_second_derivative = get_second_derivative(EDA),
-           filtered_derivative = get_derivative(filtered_eda),
-           filtered_second_derivative = get_second_derivative(filtered_eda)) %>% 
-    summarize(raw_mean = mean(EDA),
-              filtered_mean = mean(filtered_eda),
-              across(c(raw_derivative, raw_second_derivative,
-                       filtered_derivative, filtered_second_derivative),
+    group_by(.data$group) %>% 
+    mutate(raw_derivative = get_derivative(.data$EDA),
+           raw_second_derivative = get_second_derivative(.data$EDA),
+           filtered_derivative = get_derivative(.data$filtered_eda),
+           filtered_second_derivative = get_second_derivative(.data$filtered_eda)) %>% 
+    summarize(raw_mean = mean(.data$EDA),
+              filtered_mean = mean(.data$filtered_eda),
+              across(c(.data$raw_derivative, .data$raw_second_derivative,
+                       .data$filtered_derivative, .data$filtered_second_derivative),
                      list(max = ~max(unlist(.x)),
                           min = ~min(unlist(.x)),
                           abs_max = ~max(abs(unlist(.x))),
                           abs_avg = ~mean(abs(unlist(.x))))),
               .groups = "drop") %>%
-    select(-group)
+    select(-.data$group)
   
 }
 
@@ -148,22 +162,22 @@ compute_wavelet_coefficients <- function(data){
 #' @param data df to partition into chunks
 #' @param rows_per_chunk size of a chunk
 #' @importFrom magrittr "%>%"
-#' @importFrom dplyr arrange bind_rows mutate
+#' @importFrom dplyr arrange bind_rows mutate .data
 add_chunk_group <- function(data, rows_per_chunk){
   old_part <- 
     data %>% 
     dplyr::mutate(group = rep(seq(1, 
                                   by=rows_per_chunk, 
-                                  length.out = nrow(.)/rows_per_chunk), 
+                                  length.out = nrow(data)/rows_per_chunk), 
                               each=rows_per_chunk, 
-                              length.out = nrow(.)))
+                              length.out = nrow(data)))
   
   new_part <- 
     old_part[tail(unique(old_part$group), -1), ] %>% 
-    dplyr::mutate(group = group - rows_per_chunk)
+    dplyr::mutate(group = .data$group - rows_per_chunk)
     
   dplyr::bind_rows(old_part, new_part) %>% 
-    dplyr::arrange(group)
+    dplyr::arrange(.data$group)
 }
 
 #' Features computation
@@ -173,7 +187,7 @@ add_chunk_group <- function(data, rows_per_chunk){
 #' @param data df with eda, filtered eda and timestamp columns
 #' @export
 #' @importFrom magrittr "%>%"
-#' @importFrom dplyr group_by summarize select mutate
+#' @importFrom dplyr group_by summarize select mutate across .data
 compute_features2 <- function(data){
   sec_per_chunk <- 5
   
@@ -189,15 +203,15 @@ compute_features2 <- function(data){
   
   out_1sec <- coefficients$one_second_features %>%
     add_chunk_group(sec_per_chunk) %>%
-    dplyr::group_by(group) %>%
+    dplyr::group_by(.data$group) %>%
     dplyr::summarize(across(.fns = fun_lis), .groups = "drop") %>%
-    dplyr::select(-group)
+    dplyr::select(-.data$group)
   
   out_05sec <- coefficients$half_second_features %>%
     add_chunk_group(2 * sec_per_chunk) %>% 
-    dplyr::group_by(group) %>%
+    dplyr::group_by(.data$group) %>%
     dplyr::summarize(across(.fns = fun_lis), .groups = "drop") %>%
-    dplyr::select(-group)
+    dplyr::select(-.data$group)
   
   amplitude_features <- 
     data %>% 
@@ -253,7 +267,7 @@ predict_binary_classifier <- function(data){
            "one_second_level_3_std",
            "one_second_level_3_median")]
   
-  config <- binary_classifier_config
+  config <- e4tools::binary_classifier_config
   
   kernel <- unname(as.data.frame(get_kernel(config$kernel_tranformation,
                                             config$sigma,
@@ -278,7 +292,7 @@ predict_binary_classifier <- function(data){
 #' @param kernels Kernel values from SVM
 #' @export
 choose_between_classes <- function(class_a, class_b, kernels){
-  config <- multiclass_classifier_config
+  config <- e4tools::multiclass_classifier_config
   
   coef_a <- config$coeffcients[[paste0(class_a, "_constrasted_with_", class_b)]]
   coef_b <- config$coeffcients[[paste0(class_b, "_constrasted_with_", class_a)]]
@@ -322,7 +336,7 @@ predict_multiclass_classifier <- function(input){
             "filtered_second_derivative_max",
             "filtered_mean")]
   
-  config <- multiclass_classifier_config
+  config <- e4tools::multiclass_classifier_config
   
   kernels <- lapply(config$kernel_tranformation,
                     get_kernel,
@@ -351,18 +365,20 @@ predict_multiclass_classifier <- function(input){
 #' @param labels labels with artifact classification
 #' @param eda_data data upon which the labels are plotted
 #' @export
+#' @importFrom ggplot2 ggplot aes geom_vline geom_line
+#' @importFrom dplyr .data
 plot_artifacts <- function(labels, eda_data){
   binaries <-
     labels %>%
-    dplyr::filter(label == -1) %>%
-    mutate(min = as.numeric(force_tz(id, "CEST") - first(eda_data$DateTime),
+    dplyr::filter(.data$label == -1) %>%
+    mutate(min = as.numeric(lubridate::force_tz(.data$id, "CEST") - eda_data$DateTime[1],
                             units = "mins")) %>%
-    pull(min)
+    dplyr::pull(.data$min)
   
   eda_data %>%
-    mutate(min = as.numeric(DateTime - first(DateTime), units = "mins")) %>%
+    mutate(min = as.numeric(.data$DateTime - .data$DateTime[1], units = "mins")) %>%
     
-    ggplot(aes(min, EDA)) +
+    ggplot(aes(.data$min, .data$EDA)) +
     geom_vline(xintercept = binaries, colour = "red", size = 4) +
     geom_line(size = 1)
 }

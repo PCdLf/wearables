@@ -2,9 +2,14 @@
 % Please edit documentation in R/batch_analysis.R
 \name{batch_analysis}
 \alias{batch_analysis}
-\title{Read and process all ZIP files in a directory}
+\title{Batch analysis}
 \usage{
 batch_analysis(path_in = choose.dir(), path_out = ".")
+}
+\arguments{
+\item{path_in}{input path}
+
+\item{path_out}{output path}
 }
 \description{
 Read and process all ZIP files in a directory

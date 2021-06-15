@@ -6,9 +6,15 @@
 \usage{
 read_and_process_e4(zipfile, tz = Sys.timezone())
 }
+\arguments{
+\item{zipfile}{zip file with e4 data to be read}
+
+\item{tz}{timezone where data were recorded (default system timezone)}
+}
 \value{
 An object with processed data and analyses, object of class 'e4_analysis'.
 }
 \description{
-Reads the raw ZIP file using `read_e4`, performs analyses with `ibi_analysis` and `eda_analysis`.
+Reads the raw ZIP file using `read_e4`, 
+  performs analyses with `ibi_analysis` and `eda_analysis`.
 }

@@ -44,7 +44,7 @@ upsample_data_to_8Hz <- function(eda_data){
 #https://stackoverflow.com/questions/7105962/how-do-i-run-a-high-pass-or-low-pass-filter-on-data-points-in-r
 ######################
 
-#' @importFrom signal butter filter
+#' @importFrom signal butter
 butter_lowpass_filter <- function(data, cutoff, sampling_frequency, order = 5){
   # Filtering Helper functions
   nyquist_frequency <- 0.5 * sampling_frequency

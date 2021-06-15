@@ -6,6 +6,11 @@
 \usage{
 write_processed_e4(obj, out_path = ".")
 }
+\arguments{
+\item{obj}{e4 analysis object}
+
+\item{out_path}{output folder}
+}
 \description{
 Slow!
 }

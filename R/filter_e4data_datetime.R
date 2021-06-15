@@ -3,6 +3,7 @@
 #' @param start Start Datetime (posixct)
 #' @param end End Datetime (posixct)
 #' @export
+#' @importFrom dplyr .data
 filter_e4data_datetime <- function(data, start, end){
   
   data$IBI$datetime <- lubridate::force_tz(data$IBI$DateTime, "UTC")
@@ -12,20 +13,20 @@ filter_e4data_datetime <- function(data, start, end){
   data$HR$datetime <- lubridate::force_tz(data$HR$DateTime, "UTC")
   
   data$IBI <- dplyr::filter(data$IBI, 
-                            datetime >= start,
-                            datetime <= end)
+                            .data$datetime >= start,
+                            .data$datetime <= end)
   data$EDA <- dplyr::filter(data$EDA, 
-                            datetime >= start,
-                            datetime <= end)
+                            .data$datetime >= start,
+                            .data$datetime <= end)
   data$ACC <- dplyr::filter(data$ACC, 
-                            datetime >= start,
-                            datetime <= end)
+                            .data$datetime >= start,
+                            .data$datetime <= end)
   data$TEMP <- dplyr::filter(data$TEMP, 
-                             datetime >= start,
-                             datetime <= end)
+                             .data$datetime >= start,
+                             .data$datetime <= end)
   data$HR <- dplyr::filter(data$HR, 
-                           datetime >= start,
-                           datetime <= end)
+                           .data$datetime >= start,
+                           .data$datetime <= end)
   
   return(data)
 }

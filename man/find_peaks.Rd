@@ -14,17 +14,17 @@ find_peaks(
 )
 }
 \arguments{
-\item{data:}{DataFrame with EDA as one of the columns and indexed by a datetimeIndex}
+\item{data}{DataFrame with EDA as one of the columns and indexed by a datetimeIndex}
 
-\item{offset:}{the number of rising samples and falling samples after a peak needed to be counted as a peak}
+\item{offset}{the number of rising samples and falling samples after a peak needed to be counted as a peak}
 
-\item{start_WT:}{maximum number of seconds before the apex of a peak that is the "start" of the peak}
+\item{start_WT}{maximum number of seconds before the apex of a peak that is the "start" of the peak}
 
-\item{end_WT:}{maximum number of seconds after the apex of a peak that is the "end" of the peak 50 percent of amp}
+\item{end_WT}{maximum number of seconds after the apex of a peak that is the "end" of the peak 50 percent of amp}
 
-\item{thres:}{the minimum microsecond change required to register as a peak, defaults as 0 (i.e. all peaks count)}
+\item{thres}{the minimum microsecond change required to register as a peak, defaults as 0 (i.e. all peaks count)}
 
-\item{sample_rate:}{number of samples per second, default=8}
+\item{sample_rate}{number of samples per second, default=8}
 }
 \value{
 data frame with several columns
@@ -41,8 +41,10 @@ data frame with several columns
   SCR_width           if sharp decaying apex then time from half rise to end
 }
 \description{
-This function finds the peaks of an EDA signal and adds basic properties to the datafile.
+This function finds the peaks of an EDA signal and adds 
+  basic properties to the datafile.
 }
 \details{
-Also, peak_end is assumed to be no later than the start of the next peak. Is that OK?
+Also, peak_end is assumed to be no later than the start of the next peak. 
+  Is that OK?
 }
