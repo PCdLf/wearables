@@ -2,6 +2,7 @@
 #' as_time
 #' @description Converts Unix time to as.POSIXct 
 #' @param x takes a unixtime and converts to as.POSIXct
+#' @param tz timezone is set to UTC
 #' @export
 # Convert time in seconds to a POSIXct.
 as_time <- function(x, tz = "UTC"){

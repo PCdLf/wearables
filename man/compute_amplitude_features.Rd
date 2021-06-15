@@ -2,10 +2,13 @@
 % Please edit documentation in R/artifact_detection.R
 \name{compute_amplitude_features}
 \alias{compute_amplitude_features}
-\title{Compute amplitude features}
+\title{Amplitude features}
 \usage{
 compute_amplitude_features(data)
 }
+\arguments{
+\item{data}{vector of amplitude values}
+}
 \description{
-Compute amplitude features
+Compute amplitude features.
 }

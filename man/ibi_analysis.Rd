@@ -7,7 +7,7 @@
 ibi_analysis(IBI)
 }
 \arguments{
-\item{IBI}{IBI data, component of object read with \code{\link{read_e4}}}
+\item{IBI}{IBI data, component of object (the number of seconds since the start of the recording) read with \code{\link{read_e4}}}
 }
 \description{
 Analysis of interbeat interval (IBI)

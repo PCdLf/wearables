@@ -1,7 +1,7 @@
 #' Filter all four datasets for a Datetime start + end
-#' @param data Object read with \code{\ink{read_e4}}
+#' @param data Object read with \code{\link{read_e4}}
 #' @param start Start Datetime (posixct)
-#' @param start End Datetime (posixct)
+#' @param end End Datetime (posixct)
 #' @export
 filter_e4data_datetime <- function(data, start, end){
   

@@ -2,6 +2,7 @@
 #' @description Reads the raw ZIP file using `read_e4`, performs analyses with `ibi_analysis` and `eda_analysis`. 
 #' @return An object with processed data and analyses, object of class 'e4_analysis'.
 #' @rdname read_and_process_e4
+#' @importFrom utils write.csv2
 #' @export
 read_and_process_e4 <- function(zipfile, tz = Sys.timezone()){
   

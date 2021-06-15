@@ -8,6 +8,8 @@ as_time(x, tz = "UTC")
 }
 \arguments{
 \item{x}{takes a unixtime and converts to as.POSIXct}
+
+\item{tz}{timezone is set to UTC}
 }
 \description{
 Converts Unix time to as.POSIXct

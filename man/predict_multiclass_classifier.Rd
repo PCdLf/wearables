@@ -2,10 +2,13 @@
 % Please edit documentation in R/artifact_detection.R
 \name{predict_multiclass_classifier}
 \alias{predict_multiclass_classifier}
-\title{Predict multiclass classifier}
+\title{Ternary classifiers}
 \usage{
 predict_multiclass_classifier(input)
 }
+\arguments{
+\item{input}{features from EDA signal}
+}
 \description{
-Predict multiclass classifier
+Generate classifiers (artifact, unclear, no artifact)
 }

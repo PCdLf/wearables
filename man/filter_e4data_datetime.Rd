@@ -7,9 +7,11 @@
 filter_e4data_datetime(data, start, end)
 }
 \arguments{
-\item{data}{Object read with \code{\ink{read_e4}}}
+\item{data}{Object read with \code{\link{read_e4}}}
 
-\item{start}{End Datetime (posixct)}
+\item{start}{Start Datetime (posixct)}
+
+\item{end}{End Datetime (posixct)}
 }
 \description{
 Filter all four datasets for a Datetime start + end

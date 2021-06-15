@@ -1,6 +1,32 @@
 #' Read E4 data
 #' @description Reads in E4 data as a list (with EDA, HR, Temp, ACC, BVP, IBI as dataframes), and prepends timecolumns
-#' @details Details here
+#' @details This function reads in a zipfile as exported by Empatica Connect. Then it extracts the zipfiles in a temporary folder
+#' and unzips the csv files in the temporary folder. 
+#' 
+#' The EDA, HR, BVP, and TEMP csv files have a similar structure in which the
+#' starting time of the recording is read from the first row of the file (in unix time). The frequency of the measurements is read from the 
+#' second row of the recording (in Hz). Subsequently, the raw data is read from row three onward.
+#' 
+#' The ACC csv file contain the acceleration of the Empatica E4 on the three axes x,y and z. The first row contains the starting
+#' time of the recording in unix time. The second row contains the frequency of the measurements in Hz. 
+#' Subsequently, the raw x, y, and z data is read from row three onward.
+#' 
+#' The IBI file has a different structure, the starting time in unix is in the first row, first column.
+#' The firs column contins the number of seconds past since the start of the recording. The number of seconds past since the 
+#' start of the recording represent a heartbeat as derived from the algorithms from the photo plethysmogrophy sensor. The
+#' second column contains the duration of the interval from one heartbeat to the next heartbeat.
+#' 
+#' ACC.csv = 32 Hz
+#' BVP.csv = 64 Hz
+#' EDA.csv = 4 HZ
+#' HR.csv = 1 HZ
+#' TEMP.csv = 4 Hz
+#' 
+#' Please also see the info.txt file provided in the zip file for additional information.
+#' 
+#' The function returns an object of class "e4_data" with a prepended datetime columns
+#' that defaults to user timezone. The object contains a list with dataframes from the physiological signals.
+#'         
 #' @param zipfile A zip file as exported by the instrument
 #' @param tz The timezone used by the instrument (defaults to user timezone).
 #'

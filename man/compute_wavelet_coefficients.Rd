@@ -2,10 +2,13 @@
 % Please edit documentation in R/artifact_detection.R
 \name{compute_wavelet_coefficients}
 \alias{compute_wavelet_coefficients}
-\title{Compute wavelet coefficients}
+\title{Wavelet coefficients}
 \usage{
 compute_wavelet_coefficients(data)
 }
+\arguments{
+\item{data}{data with an EDA element}
+}
 \description{
-Compute wavelet coefficients
+Compute wavelet coefficients.
 }

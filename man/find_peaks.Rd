@@ -2,8 +2,7 @@
 % Please edit documentation in R/peak_detection.R
 \name{find_peaks}
 \alias{find_peaks}
-\title{This function finds the peaks of an EDA signal and adds basic properties to the datafile.
-Also, peak_end is assumed to be no later than the start of the next peak. (Is this okay??)}
+\title{Function to find peaks of an EDA datafile}
 \usage{
 find_peaks(
   data,
@@ -21,28 +20,29 @@ find_peaks(
 
 \item{start_WT:}{maximum number of seconds before the apex of a peak that is the "start" of the peak}
 
-\item{end_WT:}{maximum number of seconds after the apex of a peak that is the "end" of the peak, 50% of amp}
+\item{end_WT:}{maximum number of seconds after the apex of a peak that is the "end" of the peak 50 percent of amp}
 
 \item{thres:}{the minimum microsecond change required to register as a peak, defaults as 0 (i.e. all peaks count)}
 
 \item{sample_rate:}{number of samples per second, default=8}
 }
 \value{
-data$peaks:               list of binary, 1 if apex of SCR
-
-data$peak_start:          list of binary, 1 if start of SCR
-
-data$peak_start_times:    list of strings, if this index is the apex of an SCR, it contains datetime of start of peak
-
-data$peak_end:            list of binary, 1 if rec.t/2 of SCR
-
-data$peak_end_times:      list of strings, if this index is the apex of an SCR, it contains datetime of rec.t/2
-
-data$amplitude:           list of floats,  value of EDA at apex - value of EDA at start
-
-data$max_deriv:           list of floats, max derivative within 1 second of apex of SCR
+data frame with several columns
+  peaks               1 if apex
+  peak_start          1 if start of peak
+  peak_end            1 if end of preak
+  peak_start_times    if apex then corresponding start timestamp
+  peak_end_times      if apex then corresponding end timestamp
+  half_rise           if sharp decaying apex then time to halfway point in rise
+  amp                 if apex then value of EDA at apex - value of EDA at start
+  max_deriv           if apex then max derivative within 1 second of apex
+  rise_time           if apex then time from start to apex
+  decay_time          if sharp decaying apex then time from apex to end
+  SCR_width           if sharp decaying apex then time from half rise to end
 }
 \description{
 This function finds the peaks of an EDA signal and adds basic properties to the datafile.
-Also, peak_end is assumed to be no later than the start of the next peak. (Is this okay??)
+}
+\details{
+Also, peak_end is assumed to be no later than the start of the next peak. Is that OK?
 }

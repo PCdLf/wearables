@@ -2,10 +2,13 @@
 % Please edit documentation in R/artifact_detection.R
 \name{predict_binary_classifier}
 \alias{predict_binary_classifier}
-\title{Predict binary classifier}
+\title{Binary classifiers}
 \usage{
 predict_binary_classifier(data)
 }
+\arguments{
+\item{data}{features from EDA signal}
+}
 \description{
-Predict binary classifier
+Generate classifiers (artifact, no artifact)
 }

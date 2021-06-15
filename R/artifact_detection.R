@@ -5,57 +5,87 @@ sum <- function(...) base::sum(... , na.rm = TRUE)
 median <- function(...) stats::median(... , na.rm = TRUE)
 sd <- function(...) stats::sd(... , na.rm = TRUE)
 
+#' First derivative
+#' 
+#' Get the first derivative.
+#' 
+#' @param values vector of numbers
 get_derivative <- function(values){
   end <- length(values)
   if(end < 3){
-    NaN
+    list(NaN)
   } else {
-    (values[2:(end-1)] + values[3:end]) / 2 - (values[2:(end-1)] + values[1:(end-2)]) / 2
+    list((values[2:(end-1)] + values[3:end]) / 2 - (values[2:(end-1)] + values[1:(end-2)]) / 2)
   }
 }
 
+#' Second derivative
+#' 
+#' Get the second derivative.
+#' 
+#' @param values vector of numbers
 get_second_derivative <- function(values){
   end <- length(values)
   if(end < 3){
-    NaN
+    list(NaN)
   } else {
-    values[3:end] - 2 * values[2:(end-1)] + values[1:(end-2)]
+    list(values[3:end] - 2 * values[2:(end-1)] + values[1:(end-2)])
   }
 }
 
+
+#' Derivative features
+#' 
+#' Compute derivative features.
+#' 
+#' @param derivative vector of derivatives
+#' @param feature_name name of feature 
 compute_derivative_features <- function(derivative, feature_name){
   features <- list()
-
+  
   features[paste0(feature_name, "_max")] <- max(derivative)
   features[paste0(feature_name, "_min")] <- min(derivative)
   features[paste0(feature_name, "_abs_max")] <- max(abs(derivative))
   features[paste0(feature_name, "_abs_avg")] <- mean(abs(derivative))
-
+  
   as.data.frame(features)
 }
 
 
-#' Compute amplitude features
+#' Amplitude features
+#' 
+#' Compute amplitude features.
+#' 
+#' @param data vector of amplitude values
 compute_amplitude_features <- function(data){
-  general_features <- data.frame(raw_mean = mean(data$EDA),
-                                 filtered_mean = mean(data$filtered_eda))
-
-  derivatives <- list(raw_derivative = get_derivative(data$EDA),
-                      raw_second_derivative = get_second_derivative(data$EDA),
-                      filtered_derivative = get_derivative(data$filtered_eda),
-                      filtered_second_derivative = get_second_derivative(data$filtered_eda))
-
-  derivative_features <- lapply(seq_along(derivatives),
-                                function(index){
-                                  compute_derivative_features(derivatives[[index]],
-                                                              names(derivatives)[[index]])
-                                })
-
-  do.call("cbind", c(general_features, derivative_features))
+  
+  data %>% 
+    group_by(group) %>% 
+    mutate(raw_derivative = get_derivative(EDA),
+           raw_second_derivative = get_second_derivative(EDA),
+           filtered_derivative = get_derivative(filtered_eda),
+           filtered_second_derivative = get_second_derivative(filtered_eda)) %>% 
+    summarize(raw_mean = mean(EDA),
+              filtered_mean = mean(filtered_eda),
+              across(c(raw_derivative, raw_second_derivative,
+                       filtered_derivative, filtered_second_derivative),
+                     list(max = ~max(unlist(.x)),
+                          min = ~min(unlist(.x)),
+                          abs_max = ~max(abs(unlist(.x))),
+                          abs_avg = ~mean(abs(unlist(.x))))),
+              .groups = "drop") %>%
+    select(-group)
+  
 }
 
+#' Max value per segment of length n
+#' 
+#' Give the maximum value of a vector of values per segment of length n.
+#' 
+#' @param values array of numbers
+#' @param n length of each segment
+#' @param output_length argument to adjust for final segment not being full
 max_per_n <- function(values, n, output_length){
-
   if (n == 1) {
     abs(values[1:output_length])
   } else {
@@ -63,37 +93,46 @@ max_per_n <- function(values, n, output_length){
                      nrow = n,
                      byrow =  FALSE,
                      dimnames = list(1:n, 1:output_length))
-
+    
     as.double(apply(abs(matrix), 2, max))
   }
 }
 
+#' Wavelet decomposition
+#' 
+#' Compute wavelet decomposition.
+#' 
+#' @param data vector of values
 #' @importFrom waveslim dwt
 compute_wavelet_decomposition <- function(data){
   output_length <- (length(data) %/% 8) * 8
-
+  
   decompostion <- waveslim::dwt(data[1:output_length], "haar", 3, "periodic")
-
+  
   list(level1 = decompostion$d1,
        level2 = decompostion$d2,
        level3 = decompostion$d3)
 }
 
 
-#' Compute wavelet coefficients
+#' Wavelet coefficients
+#' 
+#' Compute wavelet coefficients.
+#' 
+#' @param data data with an EDA element
 compute_wavelet_coefficients <- function(data){
-
+  
   wavelets <- compute_wavelet_decomposition(data$EDA) 
-
+  
   one_second_feature_length <- ceiling(nrow(data) / 8)
   one_second_level_1_features <- max_per_n(wavelets$level1, 4, one_second_feature_length)
   one_second_level_2_features <- max_per_n(wavelets$level2, 2, one_second_feature_length)
   one_second_level_3_features <- max_per_n(wavelets$level3, 1, one_second_feature_length)
-
+  
   half_second_feature_length <- ceiling(nrow(data) / 4)
   half_second_level_1_features <- max_per_n(wavelets$level1, 2, half_second_feature_length)
   half_second_level_2_features <- max_per_n(wavelets$level2, 1, half_second_feature_length)
-
+  
   list(one_second_features = data.frame(one_second_level_1 = one_second_level_1_features,
                                         one_second_level_2 = one_second_level_2_features,
                                         one_second_level_3 = one_second_level_3_features),
@@ -101,63 +140,37 @@ compute_wavelet_coefficients <- function(data){
                                          half_second_level_2 = half_second_level_2_features))
 }
 
-
-#' Compute wavelet features
-compute_wavelet_features <- function(wavelet_coeffcients){
-  functions <- c(max, mean, sd, median, function(values) sum(values > 0))
-  function_names <- c("max", "mean", "std", "median", "positive")
-
-  features <-lapply(seq_along(functions),
-                    function(index){
-                      features <- as.data.frame(lapply(wavelet_coeffcients,
-                                                       functions[[index]]))
-                      names(features) <- paste(names(features),
-                                               function_names[[index]],
-                                               sep = "_")
-                      features
-                    })
-
-  do.call("cbind", features)
+#' Addition of chunk groups
+#' 
+#' partition data into chunks of a fixed number of rows in order to calculate
+#'   aggregated features per chunk
+#' 
+#' @param data df to partition into chunks
+#' @param rows_per_chunk size of a chunk
+#' @importFrom magrittr "%>%"
+#' @importFrom dplyr arrange bind_rows mutate
+add_chunk_group <- function(data, rows_per_chunk){
+  old_part <- 
+    data %>% 
+    dplyr::mutate(group = rep(seq(1, 
+                                  by=rows_per_chunk, 
+                                  length.out = nrow(.)/rows_per_chunk), 
+                              each=rows_per_chunk, 
+                              length.out = nrow(.)))
+  
+  new_part <- 
+    old_part[tail(unique(old_part$group), -1), ] %>% 
+    dplyr::mutate(group = group - rows_per_chunk)
+    
+  dplyr::bind_rows(old_part, new_part) %>% 
+    dplyr::arrange(group)
 }
 
-
-
-split_in_chunks <- function(data, rows_per_chunk){
-  n_rows <- nrow(data)
-
-  lapply(seq(1, n_rows, by = rows_per_chunk),
-         function(start_index){
-           end_index <- min(start_index + rows_per_chunk, n_rows)
-           data[start_index:end_index, , drop = FALSE]
-         })
-}
-
-
-
-#' Compute features
-#' @description Old, slow version
-#' @export
-compute_features <- function(data){
-  sec_per_chunk <- 5
-
-  coefficients <- compute_wavelet_coefficients(data)
-  wavelet_one_second_chunks <- split_in_chunks(coefficients$one_second_features,
-                                                 sec_per_chunk)
-  wavelet_half_second_chunks <- split_in_chunks(coefficients$half_second_features,
-                                                  sec_per_chunk * 2)
-
-  amplitude_chunks <- split_in_chunks(data, 8 * sec_per_chunk)
-
-  timestamps <- data$DateTime[1] + sec_per_chunk * (seq_along(amplitude_chunks) - 1)
-
-  as.data.frame(cbind(id = timestamps,
-                      do.call("rbind", lapply(wavelet_one_second_chunks, compute_wavelet_features)),
-                      do.call("rbind", lapply(wavelet_half_second_chunks, compute_wavelet_features)),
-                      do.call("rbind", lapply(amplitude_chunks, compute_amplitude_features))))
-}
-
-#' Compute features - fast
-#' @description Fast version
+#' Features computation
+#' 
+#' Compute features for SVM 
+#' 
+#' @param data df with eda, filtered eda and timestamp columns
 #' @export
 #' @importFrom magrittr "%>%"
 #' @importFrom dplyr group_by summarize select mutate
@@ -173,37 +186,43 @@ compute_features2 <- function(data){
     median = median,
     positive = ~sum(.x > 0)
   )
-
+  
   out_1sec <- coefficients$one_second_features %>%
-    dplyr::mutate(group = rep(seq(1, by=5, length.out = nrow(.)/5), each=5, length.out = nrow(.))) %>%
+    add_chunk_group(sec_per_chunk) %>%
     dplyr::group_by(group) %>%
     dplyr::summarize(across(.fns = fun_lis), .groups = "drop") %>%
     dplyr::select(-group)
   
   out_05sec <- coefficients$half_second_features %>%
-    dplyr::mutate(group = rep(seq(1, by=10, length.out = nrow(.)/10), each=10, length.out = nrow(.))) %>%
+    add_chunk_group(2 * sec_per_chunk) %>% 
     dplyr::group_by(group) %>%
     dplyr::summarize(across(.fns = fun_lis), .groups = "drop") %>%
     dplyr::select(-group)
   
-  amplitude_features <- compute_amplitude_features(data)
-  
-  amplitude_chunks <- split_in_chunks(data, 8 * sec_per_chunk)
-  timestamps <- data$DateTime[1] + sec_per_chunk * (seq_along(amplitude_chunks) - 1)
+  amplitude_features <- 
+    data %>% 
+    add_chunk_group(8 * sec_per_chunk) %>% 
+    compute_amplitude_features()
+
+  timestamps <- 
+    data$DateTime[1] + 
+    sec_per_chunk * (1:nrow(amplitude_features) - 1)
   
   as.data.frame(cbind(id = timestamps,
                       out_1sec,
                       out_05sec,
                       amplitude_features))
-                      
-                      # do.call("rbind", lapply(wavelet_one_second_chunks, compute_wavelet_features)),
-                      # do.call("rbind", lapply(wavelet_half_second_chunks, compute_wavelet_features))
-                      #do.call("rbind", lapply(amplitude_chunks, compute_amplitude_features))))
+  
 }
 
-
-
-
+#' SVM kernel
+#' 
+#' Generate kernel needed for SVM
+#' 
+#' @param kernel_transformation Data matrix used to transform EDA features
+#'   into kernel values
+#' @param sigma The inverse kernel width used by the kernel
+#' @param columns Features computed from EDA signal 
 get_kernel <- function(kernel_transformation, sigma, columns){
   kernlab::kernelMatrix(kernlab::rbfdot(sigma = sigma),
                         kernel_transformation,
@@ -211,56 +230,69 @@ get_kernel <- function(kernel_transformation, sigma, columns){
 }
 
 
-#' Predict binary classifier
+#' Binary classifiers
+#' 
+#' Generate classifiers (artifact, no artifact)
+#' 
+#' @param data features from EDA signal
 #' @export
 predict_binary_classifier <- function(data){
   
   relevant_columns <-
     data[c("raw_mean",
-            "raw_derivative_abs_max",
-            "raw_second_derivative_max",
-            "raw_second_derivative_abs_avg",
-            "filtered_mean",
-            "filtered_second_derivative_min",
-            "filtered_second_derivative_abs_max",
-            "one_second_level_1_max",
-            "one_second_level_1_mean",
-            "one_second_level_1_std",
-            "one_second_level_2_std",
-            "one_second_level_3_std",
-            "one_second_level_3_median")]
-
+           "raw_derivative_abs_max",
+           "raw_second_derivative_max",
+           "raw_second_derivative_abs_avg",
+           "filtered_mean",
+           "filtered_second_derivative_min",
+           "filtered_second_derivative_abs_max",
+           "one_second_level_1_max",
+           "one_second_level_1_mean",
+           "one_second_level_1_std",
+           "one_second_level_2_std",
+           "one_second_level_3_std",
+           "one_second_level_3_median")]
+  
   config <- binary_classifier_config
-
+  
   kernel <- unname(as.data.frame(get_kernel(config$kernel_tranformation,
                                             config$sigma,
                                             relevant_columns)))
-
+  
   labels <- sapply(kernel,
                    function(value){
                      as.integer(sign(sum(config$coefficients * value) + config$intercept))
                    })
-
+  
   data.frame(id = data$id,
              label = labels)
 }
 
+
+#' Choice between two classes
+#' 
+#' Make choice between two classes based on kernel values
+#' 
+#' @param class_a Number by which class a is indicated
+#' @param class_b Number by which class b is indicated
+#' @param kernels Kernel values from SVM
+#' @export
 choose_between_classes <- function(class_a, class_b, kernels){
   config <- multiclass_classifier_config
-
+  
   coef_a <- config$coeffcients[[paste0(class_a, "_constrasted_with_", class_b)]]
   coef_b <- config$coeffcients[[paste0(class_b, "_constrasted_with_", class_a)]]
   intercept_a_b <- config$intercept[paste0(class_a, "_and_", class_b)]
   kernel_a <- kernels[[paste0("class_", class_a)]]
   kernel_b <- kernels[[paste0("class_", class_b)]]
-
+  
   sapply(seq_len(ncol(kernel_a)),
          function(index) {
            prediction_value <-
              sum(coef_a * kernel_a[,index]) +
              sum(coef_b * kernel_b[,index]) +
              intercept_a_b
-
+           
            if (prediction_value > 0) {
              as.integer(class_a)
            } else {
@@ -270,10 +302,14 @@ choose_between_classes <- function(class_a, class_b, kernels){
 }
 
 
-#' Predict multiclass classifier
+#' Ternary classifiers
+#' 
+#' Generate classifiers (artifact, unclear, no artifact)
+#' 
+#' @param input features from EDA signal
 #' @export
 predict_multiclass_classifier <- function(input){
-
+  
   relevant_columns <-
     input[c("filtered_second_derivative_abs_max",
             "filtered_second_derivative_min",
@@ -285,30 +321,35 @@ predict_multiclass_classifier <- function(input){
             "raw_second_derivative_abs_avg",
             "filtered_second_derivative_max",
             "filtered_mean")]
-
+  
   config <- multiclass_classifier_config
-
+  
   kernels <- lapply(config$kernel_tranformation,
                     get_kernel,
                     config$sigma,
                     relevant_columns)
-
+  
   label_predictions <- cbind(`class -1 and 0` = choose_between_classes(-1, 0, kernels),
                              `class -1 and 1` = choose_between_classes(-1, 1, kernels),
                              `class 0 and 1` = choose_between_classes(0, 1, kernels))
-
+  
   label_majority_votes <- apply(label_predictions,
                                 1,
                                 function(values) {
                                   values[duplicated(values)]
                                 })
-
+  
   data.frame(id = input$id,
              label = label_majority_votes)
 }
 
 
-#' Plot artifacts
+#' Artifact plots
+#' 
+#' Plot artifacts after eda_data is classified
+#' 
+#' @param labels labels with artifact classification
+#' @param eda_data data upon which the labels are plotted
 #' @export
 plot_artifacts <- function(labels, eda_data){
   binaries <-
@@ -317,10 +358,10 @@ plot_artifacts <- function(labels, eda_data){
     mutate(min = as.numeric(force_tz(id, "CEST") - first(eda_data$DateTime),
                             units = "mins")) %>%
     pull(min)
-
+  
   eda_data %>%
     mutate(min = as.numeric(DateTime - first(DateTime), units = "mins")) %>%
-
+    
     ggplot(aes(min, EDA)) +
     geom_vline(xintercept = binaries, colour = "red", size = 4) +
     geom_line(size = 1)
