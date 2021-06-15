@@ -19,7 +19,7 @@ read_and_process_e4 <- function(zipfile, tz = Sys.timezone()){
   })
   flog.info("IBI data analyzed.")
     
-  eda_filt <- e4tools::process_eda(data$EDA)
+  eda_filt <- wearables::process_eda(data$EDA)
   flog.info("EDA data filtered.")
   
   eda_feat <- compute_features2(eda_filt)

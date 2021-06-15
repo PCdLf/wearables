@@ -267,7 +267,7 @@ predict_binary_classifier <- function(data){
            "one_second_level_3_std",
            "one_second_level_3_median")]
   
-  config <- e4tools::binary_classifier_config
+  config <- wearables::binary_classifier_config
   
   kernel <- unname(as.data.frame(get_kernel(config$kernel_tranformation,
                                             config$sigma,
@@ -292,7 +292,7 @@ predict_binary_classifier <- function(data){
 #' @param kernels Kernel values from SVM
 #' @export
 choose_between_classes <- function(class_a, class_b, kernels){
-  config <- e4tools::multiclass_classifier_config
+  config <- wearables::multiclass_classifier_config
   
   coef_a <- config$coeffcients[[paste0(class_a, "_constrasted_with_", class_b)]]
   coef_b <- config$coeffcients[[paste0(class_b, "_constrasted_with_", class_a)]]
@@ -336,7 +336,7 @@ predict_multiclass_classifier <- function(input){
             "filtered_second_derivative_max",
             "filtered_mean")]
   
-  config <- e4tools::multiclass_classifier_config
+  config <- wearables::multiclass_classifier_config
   
   kernels <- lapply(config$kernel_tranformation,
                     get_kernel,

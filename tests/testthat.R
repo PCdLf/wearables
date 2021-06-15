@@ -1,4 +1,4 @@
 library(testthat)
-library(e4tools)
+library(wearables)
 
-test_check("e4tools")
+test_check("wearables")

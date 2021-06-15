@@ -1,7 +1,7 @@
-Package: e4tools
+Package: wearables
 Type: Package
 Date: 2019-5-12
-Title: Tools to Read and Convert E4 Data
+Title: Tools to Read and Convert Wearables Data
 Version: 0.6
 Authors@R: c(person("Peter", "de Looff", role = c("aut", "cre"),
                      email = "peterdelooff@gmail.com"),
@@ -14,8 +14,8 @@ Imports:
     kernlab, padr, varian, ggplot2
 Maintainer: Peter de Looff <peterdelooff@gmail.com>
 Description: 
-    Package to read Empatica E4 data in a list, perform several transformations, 
-    run batch.
+    Package to read Empatica E4 data, perform several transformations, perform signal
+    processing, batch analyses.
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
