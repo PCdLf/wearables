@@ -4,10 +4,10 @@
 \alias{predict_multiclass_classifier}
 \title{Ternary classifiers}
 \usage{
-predict_multiclass_classifier(input)
+predict_multiclass_classifier(data)
 }
 \arguments{
-\item{input}{features from EDA signal}
+\item{data}{features from EDA signal}
 }
 \description{
 Generate classifiers (artifact, unclear, no artifact)

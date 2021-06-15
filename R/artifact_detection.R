@@ -320,12 +320,12 @@ choose_between_classes <- function(class_a, class_b, kernels){
 #' 
 #' Generate classifiers (artifact, unclear, no artifact)
 #' 
-#' @param input features from EDA signal
+#' @param data features from EDA signal
 #' @export
-predict_multiclass_classifier <- function(input){
+predict_multiclass_classifier <- function(data){
   
   relevant_columns <-
-    input[c("filtered_second_derivative_abs_max",
+    data[c("filtered_second_derivative_abs_max",
             "filtered_second_derivative_min",
             "one_second_level_1_std",
             "raw_second_derivative_max",
@@ -350,10 +350,12 @@ predict_multiclass_classifier <- function(input){
   label_majority_votes <- apply(label_predictions,
                                 1,
                                 function(values) {
-                                  values[duplicated(values)]
+                                  out <- values[duplicated(values)]
+                                  if(length(out) == 0)out <- 0
+                                  out
                                 })
   
-  data.frame(id = input$id,
+  data.frame(id = data$id,
              label = label_majority_votes)
 }
 

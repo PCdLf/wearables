@@ -332,28 +332,17 @@ find_peaks <- function(data, offset = 1, start_WT = 4, end_WT = 4, thres = 0,
                              'rise_time', 'decay_time', 'SCR_width')
   data <- data[, c(old_col_names, new_col_names_ordered)]
   
-  data
-}
-
-#' Write peak features
-#' 
-#' Write info on peaks to a file
-#' 
-#' @param data_with_peaks df with info on peaks
-#' @param outfile file to write to
-#' @importFrom utils write.table
-#' @export
-write_peak_features <- function(data_with_peaks, outfile){
+  # Remove rows without peaks
+  featureData <- data[data$peaks==1,][c('DateTime', 'EDA','rise_time','max_deriv','amp','decay_time','SCR_width')]
   
-  featureData <- data_with_peaks[data_with_peaks$peaks==1,][c('DateTime', 'EDA','rise_time','max_deriv','amp','decay_time','SCR_width')]
-
   # Replace 0s with NA, this is where the 50 percent of the peak was not found, too close to the next peak
   featureData[, c('SCR_width','decay_time')][featureData[, c('SCR_width','decay_time')] == 0] <- NA
   featureData['AUC'] <- featureData['amp'] * featureData['SCR_width']
   
-  # Warning: Write table writes time as is (in System.timezone), not as UTC 
-  write.table(featureData, outfile, sep=';', dec = ",", row.names = FALSE)
+  
+  featureData
 }
+
 
 
 # ############ MAIN CODE ######################

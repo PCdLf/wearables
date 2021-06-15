@@ -2,9 +2,12 @@
 % Please edit documentation in R/read_and_proces_e4.R
 \name{read_and_process_e4}
 \alias{read_and_process_e4}
+\alias{process_e4}
 \title{Read, process and feature extraction of E4 data}
 \usage{
 read_and_process_e4(zipfile, tz = Sys.timezone())
+
+process_e4(data)
 }
 \arguments{
 \item{zipfile}{zip file with e4 data to be read}

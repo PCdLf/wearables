@@ -12,31 +12,46 @@ read_and_process_e4 <- function(zipfile, tz = Sys.timezone()){
   data <- read_e4(zipfile, tz)
   flog.info("Raw data read and converted.")
   
+  process_e4(data)
+  
+}
+
+
+#' @rdname read_and_process_e4
+#' @export
+process_e4 <- function(data){
+  
   suppressMessages({
     suppressWarnings({
       ibi <- ibi_analysis(data$IBI)  
     })
   })
   flog.info("IBI data analyzed.")
-    
+  
   eda_filt <- wearables::process_eda(data$EDA)
   flog.info("EDA data filtered.")
   
+  eda_peaks <- find_peaks(eda_filt)
+  flog.info("Peak detection complete.")
+  
   eda_feat <- compute_features2(eda_filt)
   flog.info("EDA Features computed")
-  
+
   eda_bin_pred <- predict_binary_classifier(eda_feat)
   eda_mc_pred  <- predict_multiclass_classifier(eda_feat)
   flog.info("Model predictions generated.")
   
-structure(list(
-  data = data,
-  ibi = ibi,
-  eda_bin = eda_bin_pred,
-  eda_mc = eda_mc_pred
-), 
-class = "e4_analysis")
+  structure(list(
+    data = data,
+    ibi = ibi,
+    eda_peaks = eda_peaks,
+    eda_bin = eda_bin_pred,
+    eda_mc = eda_mc_pred
+  ), 
+  class = "e4_analysis")
+  
 }
+
 
 
 #' Output folder
