@@ -301,9 +301,10 @@ get_SCR_width <- function(data, i_apex_with_decay){
 #'   decay_time          if sharp decaying apex then time from apex to end
 #'   SCR_width           if sharp decaying apex then time from half rise to end
 #' @export
-find_peaks <- function(data, offset = 1, start_WT = 4, end_WT = 4, thres = 0, 
+find_peaks <- function(data, offset = 1, start_WT = 4, end_WT = 4, thres = .02, 
                        sample_rate = getOption("SAMPLE_RATE", 8)){ 
   
+  offset <- offset * sample_rate
   old_col_names <- names(data)
   
   eda_deriv <- get_eda_deriv(data$filtered_eda)
