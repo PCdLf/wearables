@@ -283,10 +283,10 @@ get_SCR_width <- function(data, i_apex_with_decay){
 #' @details Also, peak_end is assumed to be no later than the start of the next peak. 
 #'   Is that OK?
 #' @param data DataFrame with EDA as one of the columns and indexed by a datetimeIndex
-#' @param offset the number of rising samples and falling samples after a peak needed to be counted as a peak
+#' @param offset the number of rising seconds and falling seconds after a peak needed to be counted as a peak
 #' @param start_WT maximum number of seconds before the apex of a peak that is the "start" of the peak
 #' @param end_WT maximum number of seconds after the apex of a peak that is the "end" of the peak 50 percent of amp
-#' @param thres the minimum microsecond change required to register as a peak, defaults as 0 (i.e. all peaks count)
+#' @param thres the minimum microsecond change required to register as a peak, defaults as .02
 #' @param sample_rate number of samples per second, default=8
 #' @return data frame with several columns
 #'   peaks               1 if apex
