@@ -19,6 +19,7 @@ read_and_process_e4 <- function(zipfile, tz = Sys.timezone()){
 
 #' @rdname read_and_process_e4
 #' @export
+#' @param data object from read_e4 function
 process_e4 <- function(data){
   
   suppressMessages({

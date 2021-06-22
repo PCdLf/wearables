@@ -13,6 +13,8 @@ process_e4(data)
 \item{zipfile}{zip file with e4 data to be read}
 
 \item{tz}{timezone where data were recorded (default system timezone)}
+
+\item{data}{object from read_e4 function}
 }
 \value{
 An object with processed data and analyses, object of class 'e4_analysis'.
