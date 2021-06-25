@@ -1,5 +1,7 @@
 ## Test environments
 * local OS Win10 Pro install, R 4.0.4
+* travis-ci
+* r-hub check --> wearables 0.6.2: OK
 * win-builder (devel and release)
 
 ## R CMD check results

@@ -4,6 +4,6 @@ test/
 notes/
 tests/
 tmp/
-cran-comments.md/
+^cran-comments.md
 ^\.travis\.yml$
 ^\.github$
