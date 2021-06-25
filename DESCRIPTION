@@ -2,14 +2,14 @@ Package: wearables
 Type: Package
 Date: 2019-5-12
 Title: Tools to Read and Convert Wearables Data
-Version: 0.6-2
+Version: 0.6.2
 Authors@R: c(person("Peter", "de Looff", role = c("aut", "cre"),
                      email = "peterdelooff@gmail.com"),
               person("Remko", "Duursma", role = "aut"),
               person("Saskia", "Koldijk", role = "aut"),
               person("Kees", "de Schepper", role = "aut"),
               person("Matthijs", "Noordzij", role = "ctb"),
-              person("Natasha", "Jacques", role = "ctb")
+              person("Natasha", "Jacques", role = "ctb"),
               person("Sara", "Taylor", role = "ctb"))
 Imports: 
     xts, lubridate, dplyr, RHRV, magrittr, signal, waveslim, futile.logger, 
