@@ -1,0 +1,1 @@
+This is the first release of a package that contains tools to Read and Convert Wearables Data.
