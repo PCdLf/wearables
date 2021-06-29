@@ -14,7 +14,7 @@ binary_classifier_config
 Configuration of the SVM algorithm for binary classification
 }
 \references{
-\url{data_blah.com}
+\url{https://eda-explorer.media.mit.edu/}
 }
 \author{
 Sara Taylor \email{sataylor@mit.edu}

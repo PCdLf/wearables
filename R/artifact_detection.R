@@ -8,13 +8,13 @@ sd <- function(...) stats::sd(... , na.rm = TRUE)
 #' Configuration of the SVM algorithm for binary classification
 #'
 #' @author Sara Taylor \email{sataylor@@mit.edu}
-#' @references \url{data_blah.com}
+#' @references \url{https://eda-explorer.media.mit.edu/}
 "binary_classifier_config"
 
 #' Configuration of the SVM algorithm for ternary classification
 #'
 #' @author Sara Taylor \email{sataylor@@mit.edu}
-#' @references \url{data_blah.com}
+#' @references \url{https://eda-explorer.media.mit.edu/}
 "multiclass_classifier_config"
 
 #' First derivative

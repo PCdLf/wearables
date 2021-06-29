@@ -42,3 +42,7 @@ Please also see the info.txt file provided in the zip file for additional inform
 The function returns an object of class "e4_data" with a prepended datetime columns
 that defaults to user timezone. The object contains a list with dataframes from the physiological signals.
 }
+\examples{
+library(wearables)
+#read_e4()
+}

@@ -7,3 +7,4 @@ tmp/
 ^cran-comments.md
 ^\.travis\.yml$
 ^\.github$
+^revdep$

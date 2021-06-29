@@ -29,7 +29,9 @@
 #'         
 #' @param zipfile A zip file as exported by the instrument
 #' @param tz The timezone used by the instrument (defaults to user timezone).
-#'
+#' @examples
+#' library(wearables)
+#' #read_e4()
 #' @export
 read_e4 <- function(zipfile = NULL,
                     tz = Sys.timezone()){
