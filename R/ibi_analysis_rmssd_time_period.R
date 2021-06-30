@@ -6,7 +6,7 @@
 #' @export
 #' @importFrom varian rmssd
 #' @importFrom dplyr .data
-calculate_RMSSF <- function(IBIdata){
+calculate_RMSSD <- function(IBIdata){
   #heart rate variability from inter beat intervals
   #https://www.sciencedirect.com/science/article/pii/S0735109797005548
   #https://www.hrv4training.com/blog/heart-rate-variability-normal-values

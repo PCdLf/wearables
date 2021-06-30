@@ -11,7 +11,7 @@ as_time <- function(x, tz = "UTC"){
 
 
 #' prepend_time_column
-#' @description Comlumn binds a time_column to the dataframe
+#' @description Column binds a time_column to the dataframe
 #' @param data dataframe
 #' @param timestart the start of the recording
 #' @param hertz hertz in which the E4 data was recorded

@@ -8,7 +8,7 @@ get_eda_deriv <- function(eda){
 }
 
 
-#' et the eda apex of the signal
+#' Get the eda apex of the signal
 #' 
 #' finds the apex of electrodermal activity eda signal 
 #'   within an optional time window
