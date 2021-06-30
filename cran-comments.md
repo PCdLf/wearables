@@ -2,9 +2,9 @@
 There were no ERRORs, WARNINGs or NOTEs. 
 
 ## Test environments
-* local OS Win10 Pro install, R 4.1.0
-* travis-ci --> OK
-* r-hub check --> wearables 0.6.2: OK
+* local OS Win10 Pro install, R 4.1.0: OK
+* travis-ci : OK
+* r-hub check wearables 0.6.2: OK
 * devtools::check_win_release() --> 1 note
 
 Possibly mis-spelled words in DESCRIPTION:
@@ -20,7 +20,7 @@ Found the following (possibly) invalid URLs:
     Status: Error
     Message: SSL certificate problem: certificate has expired
 
-###The website exists, but the SSL certificate has expired. Authors of the website are notified, this will have no effect on the package
+###The website exists, but the SSL certificate has expired. Authors of the website are notified, this will have no effect on the package.
 
 
 ## This is the first submission of the package.
