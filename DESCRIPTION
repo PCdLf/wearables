@@ -9,7 +9,7 @@ Authors@R: c(person("Peter", "de Looff", role = c("aut", "cre"),
               person("Saskia", "Koldijk", role = "aut"),
               person("Kees", "de Schepper", role = "aut"),
               person("Matthijs", "Noordzij", role = "ctb"),
-              person("Natasha", "Jacques", role = "ctb"),
+              person("Natasha", "Jaques", role = "ctb"),
               person("Sara", "Taylor", role = "ctb"))
 Imports: 
     xts, lubridate, dplyr, RHRV, magrittr, signal, waveslim, futile.logger, 
