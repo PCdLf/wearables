@@ -2,7 +2,7 @@
 % Please edit documentation in R/peak_detection.R
 \name{get_apex}
 \alias{get_apex}
-\title{et the eda apex of the signal}
+\title{Get the eda apex of the signal}
 \usage{
 get_apex(eda_deriv, offset = 1)
 }

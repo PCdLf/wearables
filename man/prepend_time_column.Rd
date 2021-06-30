@@ -16,5 +16,5 @@ prepend_time_column(data, timestart, hertz, tz = Sys.timezone())
 \item{tz}{The timezone, defaults to user timezone}
 }
 \description{
-Comlumn binds a time_column to the dataframe
+Column binds a time_column to the dataframe
 }
