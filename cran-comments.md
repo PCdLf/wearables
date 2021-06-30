@@ -5,7 +5,7 @@ There were no ERRORs, WARNINGs or NOTEs.
 * local OS Win10 Pro install, R 4.1.0: OK
 * travis-ci Ubuntu Xenial 16.04: OK
 * r-hub check wearables 0.6.2: OK
-* devtools::check_win_release() --> 1 note
+* check_win_release() and check_win_devel() --> 1 note:
 
 Possibly mis-spelled words in DESCRIPTION:
   Empatica (18:21)
