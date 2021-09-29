@@ -22,5 +22,16 @@ test_that("wavelet features computed over right chunk length", {
                c(-Inf, -Inf))
 })
 
+test_that("chunks have first row of next chunk as last row", {
+
+  result <- data.frame(x = 1:5) %>% 
+    add_chunk_group(2) %>% 
+    .$x
+  
+  expect_equal(result,
+               as.integer(c(1, 2, 3, 
+                            3, 4, 5, 
+                            5)))
+})
 
 
