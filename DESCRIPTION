@@ -1,8 +1,8 @@
 Package: wearables
 Type: Package
-Date: 2021-6-30
+Date: 2021-10-27
 Title: Tools to Read and Convert Wearables Data
-Version: 0.6.2
+Version: 0.7.0
 Authors@R: c(person("Peter", "de Looff", role = c("aut", "cre"),
                      email = "peterdelooff@gmail.com"),
               person("Remko", "Duursma", role = "aut"),
@@ -17,7 +17,7 @@ Imports:
 Maintainer: Peter de Looff <peterdelooff@gmail.com>
 Description: 
     Package to read Empatica E4 data, perform several transformations, perform signal
-    processing, batch analyses.
+    processing and analyses, including batch analyses.
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
