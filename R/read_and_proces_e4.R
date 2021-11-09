@@ -28,6 +28,11 @@ read_and_process_e4 <- function(zipfile, tz = Sys.timezone()){
 # Rename 'label' to 'quality_flag'
 join_eda_bin <- function(data, eda_bin){
   
+  if(nrow(data) == 0){
+    data$quality_flag <- integer(0)
+    return(data)
+  }
+  
   padr::thicken(data, interval = "5 sec") %>% 
     dplyr::left_join(eda_bin, by = c("DateTime_5_sec" = "id")) %>%
     dplyr::select(-dplyr::all_of("DateTime_5_sec")) %>%
