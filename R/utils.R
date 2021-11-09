@@ -50,6 +50,17 @@ left_join(out, x, by = "DateTime")
 }
 
 
+# Are all provided data files filled? 
+# Returns FALSE if one or more files have 1 or 0 lines of data.
+check_datafiles_filled <- function(path){
+  
+  datasets <- c("EDA","ACC","TEMP","HR","BVP","IBI")
+  fns <- file.path(path, paste0(datasets, ".csv"))
+  
+  nrows <- sapply(fns, R.utils::countLines)
+  
+  all(nrows > 1)
+}
 
 
 

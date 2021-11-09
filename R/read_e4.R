@@ -33,6 +33,7 @@
 #' library(wearables)
 #' #read_e4()
 #' @export
+#' @importFrom R.utils countLines
 read_e4 <- function(zipfile = NULL,
                     tz = Sys.timezone()){
 
@@ -50,10 +51,18 @@ read_e4 <- function(zipfile = NULL,
   # Unzip files to temp directory
   unzip(zipfile, exdir = out_dir)
 
+  
+  check <- check_datafiles_filled(out_dir)
+  if(!check){
+    warning(paste("One or more files in",zipfile,"is (nearly) empty."))
+    return(NULL)
+  }
+  
   # Standard datasets and filenames
   datasets <- c("EDA","ACC","TEMP","HR","BVP")
   fns <- file.path(out_dir, paste0(datasets, ".csv"))
 
+  
   # Get measurement frequency (on line 2)
   get_hertz <- function(x){
     read.csv(x, skip=1, nrow=1, header=FALSE)[[1]]
@@ -71,7 +80,7 @@ read_e4 <- function(zipfile = NULL,
   names(timestart) <- datasets
 
   # Read all datasets
-  data <- lapply(fns, read.csv, header=FALSE, skip = 2)
+  data <- lapply(fns, read.csv, header = FALSE, skip = 2)
   names(data) <- datasets
 
   for(d in datasets){
@@ -93,26 +102,26 @@ read_e4 <- function(zipfile = NULL,
   }
 
   # Read IBI data separately (different format)
-  ibi <- read.csv(file.path(out_dir, "IBI.csv"),
-                  stringsAsFactors = FALSE,
-                  header = FALSE, skip = 1)
-
+  ibi_file <- file.path(out_dir, "IBI.csv")
+  ibi <- read.csv(ibi_file,
+                    stringsAsFactors = FALSE,
+                    header = FALSE, skip = 1)
+    
   ibi_timestart <- get_timestart(file.path(out_dir, "IBI.csv"))
   timestart <- c(timestart, list(IBI = ibi_timestart))
-
+    
   ibi <- cbind(data.frame(DateTime = as_time(ibi_timestart, tz = tz) + ibi[[1]]),
-                          seconds = ibi[[1]],
-                          IBI = ibi[[2]])
+                 seconds = ibi[[1]],
+                 IBI = ibi[[2]])
   data <- c(data, list(IBI = ibi))
-
-
+  
   # For ACC, add the geometric mean acceleration
   data$ACC$a <- sqrt(data$ACC$x^2 + data$ACC$y^2 + data$ACC$z^2) / 64
 
   
   # Is there a tags.csv file?
   tag_file <- file.path(out_dir, "tags.csv")
-  if(file.exists(tag_file)){
+  if(file.exists(tag_file) && R.utils::countLines(tag_file) > 0){
     data$tags <- setNames(read.table(tag_file), "DateTime")
     data$tags$DateTime <- as_time(data$tags$DateTime,tz=tz)
   } else {
