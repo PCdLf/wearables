@@ -1,20 +1,3 @@
-library(tidyverse)
-library(lubridate)
-library(wearables)
-
-data <- readRDS("C:/Users/Gebruiker/Desktop/1574754139_A00204.rds")
-
-# Read in an e4 data zip
-# This has to be put in a separate box, or something like that (maybe choose.file?)
-# Should we be able to that for multiple files? All with the same time?
-# This could be easily extended to a text file with the Empatica zipfiles in
-# one column and time in a separate column.
-e4_data <- wearables::read_e4("C:/repos/BVI/Sensor_data/Peter 2019/1574839870_A00204.zip")
-e4_data <- wearables::read_e4("C:/repos/BVI/Sensor_data/Peter 2021/1635148245_A00204.zip")
-
-
-e4_data <- wearables::read_e4("c:/repos2/e4dashboard/www/example_data/1574839870_A00204.zip")
-
 
 #' Force character datetime variable ("yyyy-mm-dd hh:mm:ss") to system timezone
 #' @param time Datetime variable ("yyyy-mm-dd hh:mm:ss")
@@ -122,14 +105,14 @@ filter_createdir_zip <- function(data, time_start, time_end, interval, out_path 
     
     # And write it as unix (for the zip files)
     unix_e4 <- as.numeric(lubridate::with_tz(lubridate::ymd_hms(out$vec_interval[i],
-                                          tz = Sys.timezone()), tzone = "UTC"))
+                                                                tz = Sys.timezone()), tzone = "UTC"))
     
     # IBI has a different structure than the other files
     # IBI.csv has a column with the number of seconds since the start of the original recording
     # Therefore we use the unix time of the EDA file to ensure that the proper DateTime intervals
     # are selected and saved.
     unix_ibi <- as.numeric(lubridate::with_tz(lubridate::ymd_hms(data$EDA$DateTime[1],
-                                           tz = Sys.timezone()), tzone = "UTC"))
+                                                                 tz = Sys.timezone()), tzone = "UTC"))
     
     # Hz from the datafiles
     acc_hz <- 32
@@ -180,9 +163,5 @@ filter_createdir_zip <- function(data, time_start, time_end, interval, out_path 
     
   }
 }
-
-
-
-
 
 
