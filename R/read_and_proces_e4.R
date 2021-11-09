@@ -14,7 +14,12 @@ read_and_process_e4 <- function(zipfile, tz = Sys.timezone()){
   data <- read_e4(zipfile, tz)
   flog.info("Raw data read and converted.")
   
-  process_e4(data)
+  if(is.null(data)){
+    return(NULL)
+  } else {
+    process_e4(data)  
+  }
+  
   
 }
 
