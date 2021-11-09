@@ -123,12 +123,15 @@ get_max_deriv <- function(data, eda_deriv, sample_rate){
     max(eda_deriv[max(1, i - sample_rate):i])
   }
   
-  i_apex <- which(data$peaks == 1)
   max_deriv <- numeric(nrow(data))
   
-  max_deriv[i_apex] <-
-    sapply(i_apex, get_max_deriv_for_event) *
-    sample_rate
+  i_apex <- which(data$peaks == 1)
+  if(length(i_apex) > 0){
+    max_deriv[i_apex] <-
+      sapply(i_apex, get_max_deriv_for_event) *
+      sample_rate  
+    
+  }
   
   max_deriv
 }
@@ -169,6 +172,8 @@ get_half_amp <- function(data, i){
 #' @param max_lookahead max distance from apex to search for end
 #' @importFrom utils tail
 get_peak_end <- function(data, max_lookahead){
+  
+  
   get_i_end_per_apex <- function(i, i_max_peak_end){ 
     half_amp <- get_half_amp(data, i)
     i_lookahead <- min(i_max_peak_end, i + max_lookahead)
@@ -183,14 +188,19 @@ get_peak_end <- function(data, max_lookahead){
   }
   
   i_apex <- which(data$peaks == 1)
-  i_peak_start <- which(data$peak_start == 1)
-  i_next_peak_start <- tail(i_peak_start, -1)
-  i_max_peak_end <- c(i_next_peak_start - 1, nrow(data))
-
-  i_peak_end <- mapply(get_i_end_per_apex, i_apex, i_max_peak_end)
-  
   peak_end <- integer(nrow(data))
-  peak_end[i_peak_end] <- 1
+  
+  if(length(i_apex) > 0){
+    i_peak_start <- which(data$peak_start == 1)
+    i_next_peak_start <- tail(i_peak_start, -1)
+    i_max_peak_end <- c(i_next_peak_start - 1, nrow(data))
+    
+    i_peak_end <- mapply(get_i_end_per_apex, i_apex, i_max_peak_end)
+    
+    
+    peak_end[i_peak_end] <- 1
+  }
+  
   
   peak_end
 }
@@ -252,12 +262,17 @@ get_half_rise <- function(data, i_apex_with_decay){
   }
   
   i_apex <- which(data$peaks == 1)
-  has_decay <- i_apex %in% i_apex_with_decay
-  i_peak_start_with_decay <- which(data$peak_start ==  1)[has_decay]
-  
-  i_half_rise <- mapply(get_i_half_rise, i_peak_start_with_decay, i_apex_with_decay)
   half_rise <- as.POSIXct(rep(NA, nrow(data)))
-  half_rise[i_apex_with_decay] <- data$DateTime[i_half_rise]
+  
+  if(length(i_apex) > 0){
+    has_decay <- i_apex %in% i_apex_with_decay
+    i_peak_start_with_decay <- which(data$peak_start ==  1)[has_decay]
+    
+    i_half_rise <- mapply(get_i_half_rise, i_peak_start_with_decay, i_apex_with_decay)
+    
+    half_rise[i_apex_with_decay] <- data$DateTime[i_half_rise]
+  }
+  
   half_rise
 }
 
@@ -316,7 +331,9 @@ find_peaks <- function(data, offset = 1, start_WT = 4, end_WT = 4, thres = .02,
   data <- remove_small_peaks(data, thres)
   
   data$peak_start_times <- get_peak_start_times(data)
+  
   data$max_deriv <- get_max_deriv(data, eda_deriv, sample_rate)
+  
   data$amp <- get_amp(data)
   data$peak_end <- get_peak_end(data, end_WT * sample_rate)
   data$peak_end_times <- get_peak_end_times(data)
