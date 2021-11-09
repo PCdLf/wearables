@@ -34,6 +34,8 @@
 #' #read_e4()
 #' @export
 #' @importFrom R.utils countLines
+#' @importFrom stats setNames
+#' @importFrom utils read.table
 read_e4 <- function(zipfile = NULL,
                     tz = Sys.timezone()){
 
@@ -122,7 +124,7 @@ read_e4 <- function(zipfile = NULL,
   # Is there a tags.csv file?
   tag_file <- file.path(out_dir, "tags.csv")
   if(file.exists(tag_file) && R.utils::countLines(tag_file) > 0){
-    data$tags <- setNames(read.table(tag_file), "DateTime")
+    data$tags <- stats::setNames(utils::read.table(tag_file), "DateTime")
     data$tags$DateTime <- as_time(data$tags$DateTime,tz=tz)
   } else {
     data$tags <- NULL

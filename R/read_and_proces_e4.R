@@ -7,6 +7,7 @@
 #' @rdname read_and_process_e4
 #' @importFrom utils write.csv2
 #' @importFrom padr thicken
+#' @importFrom dplyr all_of
 #' @export
 read_and_process_e4 <- function(zipfile, tz = Sys.timezone()){
   
@@ -23,9 +24,9 @@ read_and_process_e4 <- function(zipfile, tz = Sys.timezone()){
 join_eda_bin <- function(data, eda_bin){
   
   padr::thicken(data, interval = "5 sec") %>% 
-    left_join(eda_bin, by = c("DateTime_5_sec" = "id")) %>%
-    select(-DateTime_5_sec) %>%
-    rename(quality_flag = label)
+    dplyr::left_join(eda_bin, by = c("DateTime_5_sec" = "id")) %>%
+    dplyr::select(-dplyr::all_of("DateTime_5_sec")) %>%
+    dplyr::rename(quality_flag = "label")
   
 }
 
@@ -90,7 +91,7 @@ process_e4 <- function(data){
     ACC_sd = sd(data$ACC$a)
   )
   
-  eda_clean <- dplyr::filter(eda_filt, quality_flag == 1)
+  eda_clean <- dplyr::filter(eda_filt, .data$quality_flag == 1)
   
   if(nrow(eda_clean) > 0){
     eda_summary <- list(
@@ -110,7 +111,7 @@ process_e4 <- function(data){
     )
   }
   
-  pks_clean <- dplyr::filter(eda_peaks, quality_flag == 1)
+  pks_clean <- dplyr::filter(eda_peaks, .data$quality_flag == 1)
   
   if(nrow(eda_clean) > 0){
     peaks_summary <- list(

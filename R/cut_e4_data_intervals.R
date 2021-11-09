@@ -3,14 +3,13 @@
 #' @param time Datetime variable ("yyyy-mm-dd hh:mm:ss")
 #' @export
 char_clock_systime <- function (time){
-  force_tz(lubridate::ymd_hms(time), tz = Sys.timezone())
+  lubridate::force_tz(lubridate::ymd_hms(time), tz = Sys.timezone())
 }
 
 
 #' Filter all six datasets for a Datetime start + end
 #' @description A function to determine how many intervals should be
-#' created. Supports the \code{\link{filter_e4data_datetime_filecut}} function
-#' The question is at what time do you want the filecut to start, what should be 
+#' created. The question is at what time do you want the filecut to start, what should be 
 #' the period that you want separate files for, and what should the interval be?
 #' @param time_start User input start time in the character format 
 #' "yyyy-mm-dd hh:mm:ss" / e.g., "2019-11-27 08:32:00". Where do you want the file cut to start?
@@ -22,7 +21,7 @@ char_clock_systime <- function (time){
 #' chosen as for the calculation of some of the heart rate variability parameters 
 #' one needs at least 5 minutes of data. 
 #' @export
-#' @importFrom lubridate ymd_hms
+#' @importFrom lubridate ymd_hms minutes
 e4_filecut_intervals <- function(time_start, time_end, interval){
   
   # This should also be put in a separate box in the app
@@ -46,28 +45,38 @@ e4_filecut_intervals <- function(time_start, time_end, interval){
 #' The function also creates identical Empatica E4 zipfiles in the same directory as
 #' where the original zipfile is located.
 #' @param data Object read with \code{\link{read_e4}}
-#' @param time User input start time in the character format 
+#' @param time_start User input start time in the character format 
 #' "yyyy-mm-dd hh:mm:ss" / e.g., "2019-11-27 08:32:00". Where do you want the file cut to start?
-#' @param period User input period (in minutes) e.g., 30 or 60 minutes. What is the duration of the period (in minutes) that you want to split up?   
+#' @param time_end User input period (in minutes) e.g., 30 or 60 minutes. What is the duration of the period (in minutes) that you want to split up?   
 #' @param interval # Interval: User input interval (in minutes/ e.g., 5)
 #' What is the duration of the interval you want to divide the period into? 
 #' For example, the paper by de Looff et al. (2019) uses 5 minute intervals over
 #' a 30 minute period preceding aggressive behavior. The 5 minute interval is 
 #' chosen as for the calculation of some of the heart rate variability parameters 
 #' one needs at least 5 minutes of data. 
+#' @param out_path The directory where to write the cut files; defaults to the input folder.
+#' @importFrom utils zip write.table
 #' @export
 filter_createdir_zip <- function(data, time_start, time_end, interval, out_path = NULL){
   
   # Create an out object with the start times of the intervals needed
   out <- e4_filecut_intervals(time_start, time_end, interval)
   
+  
+  if(is.null(out_path)){
+    out_path <- dirname(attributes(data)$zipfile)
+    dir.create(out_path, showWarnings = FALSE)
+  }
+  fn_base <- basename(attributes(data)$zipfile)
+  
+  
   # Iterate over the intervals needed to be split    
   for (i in seq_along(out$vec_interval)){
     
     # Create a directory that uses the name of the original file and
     # then adds the interval number
-    out_path <- file.path(paste0(attributes(data)[3][[1]],"_", i))
-    dir.create(out_path, showWarnings = TRUE)  
+    out_fn <- file.path(out_path, paste0(fn_base,"_", i))
+    dir.create(out_fn, showWarnings = FALSE)
     
     # What are the start and end times of the intervals needed? 
     # charclock could be entered here 
@@ -123,43 +132,43 @@ filter_createdir_zip <- function(data, time_start, time_end, interval, out_path 
     
     # Write the file to the created directory
     # EDA
-    write.table(c(unix_e4, eda_hz, data_filtered$EDA$EDA),
-                file = paste0(out_path, "/", "EDA.csv"), 
+    utils::write.table(c(unix_e4, eda_hz, data_filtered$EDA$EDA),
+                file = paste0(out_fn, "/", "EDA.csv"), 
                 quote=F, dec=".", row.names=FALSE, col.names=FALSE)
     
     # ACC
-    write.table(data.frame(x = c(unix_e4, acc_hz, data_filtered$ACC$x),
+    utils::write.table(data.frame(x = c(unix_e4, acc_hz, data_filtered$ACC$x),
                            y = c(unix_e4, acc_hz, data_filtered$ACC$y),
                            z = c(unix_e4, acc_hz, data_filtered$ACC$z)),
-                file = paste0(out_path, "/", "ACC.csv"), 
+                file = paste0(out_fn, "/", "ACC.csv"), 
                 quote=F, sep = ",", dec=".", row.names=FALSE, col.names=FALSE)
     
     # TEMP
-    write.table(c(unix_e4, temp_hz, data_filtered$TEMP$TEMP),
-                file = paste0(out_path, "/", "TEMP.csv"), 
+    utils::write.table(c(unix_e4, temp_hz, data_filtered$TEMP$TEMP),
+                file = paste0(out_fn, "/", "TEMP.csv"), 
                 quote=F, dec=".", row.names=FALSE, col.names=FALSE)
     
     # HR
-    write.table(c(unix_e4, hr_hz, data_filtered$HR$HR),
-                file = paste0(out_path, "/", "HR.csv"), 
+    utils::write.table(c(unix_e4, hr_hz, data_filtered$HR$HR),
+                file = paste0(out_fn, "/", "HR.csv"), 
                 quote=F, dec=".", row.names=FALSE, col.names=FALSE)
     
     # BVP
-    write.table(c(unix_e4, bvp_hz, data_filtered$BVP$BVP),
-                file = paste0(out_path, "/", "BVP.csv"), 
+    utils::write.table(c(unix_e4, bvp_hz, data_filtered$BVP$BVP),
+                file = paste0(out_fn, "/", "BVP.csv"), 
                 quote=F, dec=".", row.names=FALSE, col.names=FALSE)
     
     # IBI
-    write.table(data.frame(time = c(unix_ibi, data_filtered$IBI$seconds),
+    utils::write.table(data.frame(time = c(unix_ibi, data_filtered$IBI$seconds),
                            ibi = c("IBI", data_filtered$IBI$IBI)),
-                file = paste0(out_path, "/", "IBI.csv"), 
+                file = paste0(out_fn, "/", "IBI.csv"), 
                 quote=F, sep = ",", dec=".", row.names=FALSE, col.names=FALSE)
     
     # Zip and clean before end of sequence
-    files2zip <- dir(out_path, full.names = TRUE)
-    utils::zip(zipfile = out_path, files = files2zip, extras = '-j')
+    files2zip <- dir(out_fn, full.names = TRUE)
+    utils::zip(zipfile = out_fn, files = files2zip, extras = '-j')
     
-    unlink(out_path, recursive = TRUE)
+    unlink(out_fn, recursive = TRUE)
     
   }
 }

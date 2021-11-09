@@ -13,7 +13,7 @@ Authors@R: c(person("Peter", "de Looff", role = c("aut", "cre"),
               person("Sara", "Taylor", role = "ctb"))
 Imports: 
     xts, lubridate, dplyr, RHRV, magrittr, signal, waveslim, futile.logger, 
-    kernlab, padr, varian, ggplot2
+    kernlab, padr, varian, ggplot2, R.utils
 Maintainer: Peter de Looff <peterdelooff@gmail.com>
 Description: 
     Package to read Empatica E4 data, perform several transformations, perform signal
