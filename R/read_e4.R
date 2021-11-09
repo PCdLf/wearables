@@ -109,6 +109,16 @@ read_e4 <- function(zipfile = NULL,
   # For ACC, add the geometric mean acceleration
   data$ACC$a <- sqrt(data$ACC$x^2 + data$ACC$y^2 + data$ACC$z^2) / 64
 
+  
+  # Is there a tags.csv file?
+  tag_file <- file.path(out_dir, "tags.csv")
+  if(file.exists(tag_file)){
+    data$tags <- setNames(read.table(tag_file), "DateTime")
+    data$tags$DateTime <- as_time(data$tags$DateTime,tz=tz)
+  } else {
+    data$tags <- NULL
+  }
+  
   # Return data, store name of original file in the attributes, which we can read with:
   # attr(data, "zipfile")
   structure(data,
