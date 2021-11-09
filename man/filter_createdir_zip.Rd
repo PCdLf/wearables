@@ -7,7 +7,14 @@ are needed for the files to be cut.
 The function also creates identical Empatica E4 zipfiles in the same directory as
 where the original zipfile is located.}
 \usage{
-filter_createdir_zip(data, time_start, time_end, interval, out_path = NULL)
+filter_createdir_zip(
+  data,
+  time_start,
+  time_end,
+  interval,
+  out_path = NULL,
+  fn_name = NULL
+)
 }
 \arguments{
 \item{data}{Object read with \code{\link{read_e4}}}

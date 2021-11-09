@@ -57,17 +57,21 @@ e4_filecut_intervals <- function(time_start, time_end, interval){
 #' @param out_path The directory where to write the cut files; defaults to the input folder.
 #' @importFrom utils zip write.table
 #' @export
-filter_createdir_zip <- function(data, time_start, time_end, interval, out_path = NULL){
+filter_createdir_zip <- function(data, time_start, time_end, interval, 
+                                 out_path = NULL, fn_name = NULL){
   
   # Create an out object with the start times of the intervals needed
   out <- e4_filecut_intervals(time_start, time_end, interval)
-  
   
   if(is.null(out_path)){
     out_path <- dirname(attributes(data)$zipfile)
     dir.create(out_path, showWarnings = FALSE)
   }
-  fn_base <- basename(attributes(data)$zipfile)
+  if(is.null(fn_name)){
+    fn_base <- basename(attributes(data)$zipfile)
+  } else {
+    fn_base <- tools::file_path_sans_ext(fn_name)
+  }
   
   
   # Iterate over the intervals needed to be split    
