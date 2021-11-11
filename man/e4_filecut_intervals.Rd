@@ -2,7 +2,7 @@
 % Please edit documentation in R/cut_e4_data_intervals.R
 \name{e4_filecut_intervals}
 \alias{e4_filecut_intervals}
-\title{Filter all six datasets for a Datetime start + end}
+\title{Filter datasets for a Datetime start + end}
 \usage{
 e4_filecut_intervals(time_start, time_end, interval)
 }
@@ -17,7 +17,9 @@ What is the duration of the interval you want to divide the period into?
 For example, the paper by de Looff et al. (2019) uses 5 minute intervals over
 a 30 minute period preceding aggressive behavior. The 5 minute interval is 
 chosen as for the calculation of some of the heart rate variability parameters 
-one needs at least 5 minutes of data.}
+one needs at least 5 minutes of data, but shorter intervals are possible as well, see for instance:
+Shaffer, Fred, en J. P. Ginsberg. ‘An Overview of Heart Rate Variability Metrics and Norms’.
+ Frontiers in Public Health 5 (28 september 2017). https://doi.org/10.3389/fpubh.2017.00258.}
 }
 \description{
 A function to determine how many intervals should be

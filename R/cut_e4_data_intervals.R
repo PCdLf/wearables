@@ -57,7 +57,8 @@ e4_filecut_intervals <- function(time_start, time_end, interval){
 #' chosen as for the calculation of some of the heart rate variability parameters 
 #' one needs at least 5 minutes of data. 
 #' @param out_path The directory where to write the cut files; defaults to the input folder.
-#' @param fn_name file path withou extension
+#' @param fn_name The directory where to write the cut files without the extension.
+#' @return out_path fn_name
 #' @importFrom utils zip write.table
 #' @export
 filter_createdir_zip <- function(data, time_start, time_end, interval, 
