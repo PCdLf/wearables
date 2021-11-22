@@ -301,7 +301,7 @@ get_SCR_width <- function(data, i_apex_with_decay){
 #' @param offset the number of rising seconds and falling seconds after a peak needed to be counted as a peak
 #' @param start_WT maximum number of seconds before the apex of a peak that is the "start" of the peak
 #' @param end_WT maximum number of seconds after the apex of a peak that is the "end" of the peak 50 percent of amp
-#' @param thres the minimum microsecond change required to register as a peak, defaults as .02
+#' @param thres the minimum microsecond change required to register as a peak, defaults as .005
 #' @param sample_rate number of samples per second, default=8
 #' @return data frame with several columns
 #'   peaks               1 if apex
@@ -316,7 +316,7 @@ get_SCR_width <- function(data, i_apex_with_decay){
 #'   decay_time          if sharp decaying apex then time from apex to end
 #'   SCR_width           if sharp decaying apex then time from half rise to end
 #' @export
-find_peaks <- function(data, offset = 1, start_WT = 4, end_WT = 4, thres = .02, 
+find_peaks <- function(data, offset = 1, start_WT = 4, end_WT = 4, thres = .005, 
                        sample_rate = getOption("SAMPLE_RATE", 8)){ 
   
   offset <- offset * sample_rate
@@ -367,13 +367,13 @@ find_peaks <- function(data, offset = 1, start_WT = 4, end_WT = 4, thres = .02,
 #
 # fullOutputPath = "features.csv"
 #
-# #for testing (defaults)
+# #for testing
 # #offset <- 1
 # #thres <- 0.02
 # #start_WT <- 4
 # #end_WT <- 4
 #
-# #settings Peter de Looff
+# #settings Peter de Looff (also used in the default)
 # offset = 1
 # thres = 0.005
 # start_WT = 4
