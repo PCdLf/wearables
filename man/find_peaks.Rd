@@ -9,7 +9,7 @@ find_peaks(
   offset = 1,
   start_WT = 4,
   end_WT = 4,
-  thres = 0.02,
+  thres = 0.005,
   sample_rate = getOption("SAMPLE_RATE", 8)
 )
 }
@@ -22,7 +22,7 @@ find_peaks(
 
 \item{end_WT}{maximum number of seconds after the apex of a peak that is the "end" of the peak 50 percent of amp}
 
-\item{thres}{the minimum microsecond change required to register as a peak, defaults as .02}
+\item{thres}{the minimum microsecond change required to register as a peak, defaults as .005}
 
 \item{sample_rate}{number of samples per second, default=8}
 }

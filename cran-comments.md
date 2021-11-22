@@ -2,31 +2,21 @@
 There were no ERRORs, WARNINGs or NOTEs. 
 
 ## Test environments
-* local OS Win10 Pro install, R 4.1.0: OK
+* local OS Win10 Pro install, R 4.2.0: OK
 
-* travis-ci Ubuntu Xenial 16.04: OK
+* travis-ci Ubuntu Xenial 16.04: 
 
-* check_win_release() and check_win_devel() --> 1 note:
+* check_for_cran(): OK
+* Windows Server 2008 R2 SP1, R-devel, 32/64 bit: OK
 
-Possibly mis-spelled words in DESCRIPTION:
-  Empatica (18:21)
-  Wearables (4:34)
+* check_win_release() 
+* check_win_devel() 
 
-###These words are spelled correctly
-
-Found the following (possibly) invalid URLs:
-  URL: https://eda-explorer.media.mit.edu/
-    From: man/binary_classifier_config.Rd
-          man/multiclass_classifier_config.Rd
-    Status: Error
-    Message: SSL certificate problem: certificate has expired
-
-###The website exists, but the SSL certificate has expired. Authors of the website are notified, this will have no effect on the package.
-    
 * r-hub check
-Ubuntu en Fedora checks are OK, 
+Ubuntu: 
+Fedora checks: OK 
 
-Windows server 2008: one error on Bioconductor does not yet build and check packages for R version 4.2; see https://bioconductor.org. This issue is already opened on rhub:
-https://github.com/r-hub/rhub/issues/471 
 
-## This is the first submission of the package.
+
+
+## This is the second submission of the package.
