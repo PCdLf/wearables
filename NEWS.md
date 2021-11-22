@@ -1,6 +1,6 @@
 This is the second release of a package that contains tools to Read and Convert Wearables Data.
 
-wearables 0.8
+wearables 0.8.1
 2021-11-09
 
 -Added a function to cut files in intervals over a time period. 
