@@ -33,10 +33,21 @@ join_eda_bin <- function(data, eda_bin){
     return(data)
   }
   
+  # padr::thicken(data, interval = "5 sec") %>%
+  #   dplyr::left_join(eda_bin, by = c("DateTime_5_sec" = "id")) %>%
+  #   dplyr::select(-dplyr::all_of("DateTime_5_sec")) %>%
+  #   dplyr::rename(quality_flag = "label")
+
+  # Updated function, sometimes the quality_flag received NA if the function
+  # did not floor the date properly
   padr::thicken(data, interval = "5 sec") %>% 
-    dplyr::left_join(eda_bin, by = c("DateTime_5_sec" = "id")) %>%
-    dplyr::select(-dplyr::all_of("DateTime_5_sec")) %>%
+    dplyr::left_join(mutate(eda_bin,
+                            DateTime_5_sec = lubridate::floor_date(id, "5 seconds")),
+                     by = "DateTime_5_sec") %>%
+    dplyr::select(-dplyr::all_of(c("DateTime_5_sec", "id"))) %>%
     dplyr::rename(quality_flag = "label")
+  
+
   
 }
 

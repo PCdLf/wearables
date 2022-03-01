@@ -1,7 +1,9 @@
-This is the second release of a package that contains tools to Read and Convert Wearables Data.
+This is the third release of a package that contains tools to Read and Convert Wearables Data.
 
-wearables 0.8.1
-2021-11-09
+wearables 0.8.2
+2022-03-01
 
 -Added a function to cut files in intervals over a time period. 
 -Set the threshold for peak detection to .005 in accordance with de Looff et al. (2019)
+-Updated function join_eda_bin, sometimes the quality_flag received NA if the function
+did not floor the date properly
