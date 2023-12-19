@@ -8,7 +8,7 @@ users to read in an E4 zip file from Empatica connect into a list.
 The package was created to detect artifacts and extract features that can be used for 
 analysis.
 
-- 'read_e4()' is the first function that can be used to read Empatica E4 data into a list.
+- `read_e4()` is the first function that can be used to read Empatica E4 data into a list.
 
 If you are new to Empatica E4, the best place to start is the [website from Empatica ](https://www.empatica.com/research/e4/) or the accompanying website for the [Shiny tool
 ](https://pcdlf.shinyapps.io/e4dashboard/).
