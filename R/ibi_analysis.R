@@ -70,7 +70,7 @@ ibi_analysis <- function(IBI){
       frequency = list(
         HF = mean(freq$HF),
         LF = mean(freq$LF),
-        HFLF = mean(freq$HFLF),
+        LFHF = mean(freq$LFHF),
         VLF = mean(freq$VLF),
         ULF = mean(freq$ULF)
       ),
