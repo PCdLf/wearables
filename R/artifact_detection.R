@@ -223,13 +223,13 @@ compute_features2 <- function(data) {
   out_1sec <- coefficients$one_second_features %>%
     add_chunk_group(sec_per_chunk) %>%
     dplyr::group_by(.data$group) %>%
-    dplyr::summarize(across(.fns = fun_lis), .groups = "drop") %>%
+    dplyr::summarize(across(.cols = everything(), .fns = fun_lis), .groups = "drop") %>%
     dplyr::select(-.data$group)
 
   out_05sec <- coefficients$half_second_features %>%
     add_chunk_group(2 * sec_per_chunk) %>%
     dplyr::group_by(.data$group) %>%
-    dplyr::summarize(across(.fns = fun_lis), .groups = "drop") %>%
+    dplyr::summarize(across(.cols = everything(), .fns = fun_lis), .groups = "drop") %>%
     dplyr::select(-.data$group)
 
   amplitude_features <-
