@@ -1,11 +1,10 @@
-
 #' as_time
-#' @description Converts Unix time to as.POSIXct 
+#' @description Converts Unix time to as.POSIXct
 #' @param x takes a unixtime and converts to as.POSIXct
 #' @param tz timezone is set to UTC
 #' @export
 # Convert time in seconds to a POSIXct.
-as_time <- function(x, tz = "UTC"){
+as_time <- function(x, tz = "UTC") {
   as.POSIXct(x, origin = "1970-1-1", tz = tz)
 }
 
@@ -16,11 +15,10 @@ as_time <- function(x, tz = "UTC"){
 #' @param timestart the start of the recording
 #' @param hertz hertz in which the E4 data was recorded
 #' @param tz The timezone, defaults to user timezone
-#' @export 
+#' @export
 #' @importFrom lubridate with_tz
-prepend_time_column <- function(data, timestart, hertz, tz = Sys.timezone()){
-
-  datetime <-  as_time(timestart) + (1/hertz) * (1:nrow(data) - 1)
+prepend_time_column <- function(data, timestart, hertz, tz = Sys.timezone()) {
+  datetime <- as_time(timestart) + (1 / hertz) * (1:nrow(data) - 1)
 
   datetime <- with_tz(datetime, tz)
 
@@ -37,32 +35,26 @@ prepend_time_column <- function(data, timestart, hertz, tz = Sys.timezone()){
 #' @importFrom stats median
 #' @importFrom utils unzip
 #' @importFrom utils read.csv
-pad_e4 <- function(x){
-
+pad_e4 <- function(x) {
   interval <- as.numeric(median(diff(x$DateTime)))
 
-  out <- data.frame(DateTime = seq(from = min(x$DateTime),
-                                   to = max(x$DateTime),
-                                   by = interval)
-  )
+  out <- data.frame(DateTime = seq(
+    from = min(x$DateTime),
+    to = max(x$DateTime),
+    by = interval
+  ))
 
-left_join(out, x, by = "DateTime")
+  left_join(out, x, by = "DateTime")
 }
 
 
-# Are all provided data files filled? 
+# Are all provided data files filled?
 # Returns FALSE if one or more files have 1 or 0 lines of data.
-check_datafiles_filled <- function(path){
-  
-  datasets <- c("EDA","ACC","TEMP","HR","BVP","IBI")
+check_datafiles_filled <- function(path) {
+  datasets <- c("EDA", "ACC", "TEMP", "HR", "BVP", "IBI")
   fns <- file.path(path, paste0(datasets, ".csv"))
-  
+
   nrows <- sapply(fns, R.utils::countLines)
-  
+
   all(nrows > 1)
 }
-
-
-
-
-
