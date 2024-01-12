@@ -35,14 +35,14 @@ ibi_analysis <- function(IBI) {
 
   # Note that it is not necessary to specify freqhr since it matches with
   # the default value: 4 Hz
-  suppressWarnings({
+  # suppressWarnings({
     e4_hrv_data <- RHRV::InterpolateNIHR(e4_hrv_data, freqhr = 4)
 
     e4_hrv_data <- RHRV::CreateTimeAnalysis(e4_hrv_data,
       size = 300,
       interval = 7.8125
     )
-  })
+  # })
 
   # We typically have a lot of missing beats with wristbands, so frequency analysis is difficult.
   e4_hrv_data <- RHRV::CreateFreqAnalysis(e4_hrv_data)
