@@ -13,6 +13,6 @@ get_apex(eda_deriv, offset = 1)
 in order to be considered a peak (default 1 means no restrictions)}
 }
 \description{
-finds the apex of electrodermal activity eda signal 
+finds the apex of electrodermal activity eda signal
   within an optional time window
 }

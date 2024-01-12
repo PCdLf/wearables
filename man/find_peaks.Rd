@@ -41,10 +41,10 @@ data frame with several columns
   SCR_width           if sharp decaying apex then time from half rise to end
 }
 \description{
-This function finds the peaks of an EDA signal and adds 
+This function finds the peaks of an EDA signal and adds
   basic properties to the datafile.
 }
 \details{
-Also, peak_end is assumed to be no later than the start of the next peak. 
+Also, peak_end is assumed to be no later than the start of the next peak.
   Is that OK?
 }
