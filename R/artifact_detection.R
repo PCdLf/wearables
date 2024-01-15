@@ -413,9 +413,8 @@ plot_artifacts <- function(labels, eda_data) {
   binaries <-
     labels %>%
     dplyr::filter(.data$label == -1) %>%
-    mutate(min = as.numeric(lubridate::force_tz(.data$id, "CEST") - eda_data$DateTime[1],
-      units = "mins"
-    )) %>%
+    mutate(min = as.numeric(lubridate::force_tz(.data$id, Sys.timezone()) - eda_data$DateTime[1],
+                            units = "mins")) %>%
     dplyr::pull(.data$min)
 
   eda_data %>%
