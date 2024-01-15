@@ -1,6 +1,6 @@
 #' IBI analysis version 2
 #'
-#' Analysis of interbeat interval (IBI)
+#' Analysis of interbeat interval (IBI).
 #' @description The function ibi_analysis.R would occasionally throw an error
 #' in the BuildNIHR function or the InterpolateNIHR function because wrist measures with the Empatica E4
 #' result in empty IBI files due to artifacts (it is difficult to correctly measure HRV (more recently correctly dubbed PRV) on the wrist.
