@@ -6,8 +6,7 @@
 #'
 #' @export
 #' @importFrom xts xts
-as_timeseries <- function(data, index = 2, name_col = "V1"){
-
+as_timeseries <- function(data, index = 2, name_col = "V1") {
   tdata <- pad_e4(data)
 
   panel <- xts(tdata[[index]], order.by = tdata[[1]])

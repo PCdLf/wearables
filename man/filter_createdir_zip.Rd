@@ -19,16 +19,16 @@ filter_createdir_zip(
 \arguments{
 \item{data}{Object read with \code{\link{read_e4}}}
 
-\item{time_start}{User input start time in the character format 
+\item{time_start}{User input start time in the character format
 "yyyy-mm-dd hh:mm:ss" / e.g., "2019-11-27 08:32:00". Where do you want the file cut to start?}
 
 \item{time_end}{User input end time (same format as time_start)}
 
 \item{interval}{# Interval: User input interval (in minutes/ e.g., 5)
-What is the duration of the interval you want to divide the period into? 
+What is the duration of the interval you want to divide the period into?
 For example, the paper by de Looff et al. (2019) uses 5 minute intervals over
-a 30 minute period preceding aggressive behavior. The 5 minute interval is 
-chosen as for the calculation of some of the heart rate variability parameters 
+a 30 minute period preceding aggressive behavior. The 5 minute interval is
+chosen as for the calculation of some of the heart rate variability parameters
 one needs at least 5 minutes of data.}
 
 \item{out_path}{The directory where to write the cut files; defaults to the input folder.}

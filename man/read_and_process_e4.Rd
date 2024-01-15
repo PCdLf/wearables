@@ -20,6 +20,6 @@ process_e4(data)
 An object with processed data and analyses, object of class 'e4_analysis'.
 }
 \description{
-Reads the raw ZIP file using `read_e4`, 
+Reads the raw ZIP file using `read_e4`,
   performs analyses with `ibi_analysis` and `eda_analysis`.
 }
