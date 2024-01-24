@@ -1,9 +1,13 @@
+# wearables 0.8.3
+
 This is the fourth release of a package that contains tools to Read and Convert Wearables Data.
+
+## New features 
 
 wearables 0.8.3
 2024-01-12
--Added functions to handle empty IBI files for the Empatica E4.
-
+* Added functions to handle empty IBI files for the Empatica E4.
+* `ibi_analysis()` New version of ibi_analysis function: This function is an updated approach for the analysis of (IBI) data.
 
 wearables 0.8.2
 2022-03-01

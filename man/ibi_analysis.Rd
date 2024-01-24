@@ -2,13 +2,50 @@
 % Please edit documentation in R/ibi_analysis.R
 \name{ibi_analysis}
 \alias{ibi_analysis}
-\title{IBI analysis}
+\title{IBI analysis version 2}
 \usage{
 ibi_analysis(IBI)
 }
 \arguments{
-\item{IBI}{IBI data, component of object (the number of seconds since the start of the recording) read with \code{\link{read_e4}}}
+\item{IBI}{IBI data, a dataframe with columns including DateTime and seconds since the start
+of the recording. This data can be read with read with \code{\link{read_e4}}}
+}
+\value{
+A list containing the results of the time analysis, frequency analysis (if available), 
+and a summary of HRV measures. The summary includes time domain measures (SDNN, pNN50, etc.), 
+frequency domain measures (HF, LF, LFHF, etc.), and counts of original and accepted beats.
 }
 \description{
-Analysis of interbeat interval (IBI)
+The `ibi_analysis` function is an update to the previous `ibi_analysis_old` (version 0.8.1) 
+and includes improvements to handle Empatica E4 data more effectively. The updated version 
+tries to mitigate issues with empty IBI files and reduces the likelihood of errors during HRV analysis.
+}
+\details{
+This function is an updated approach for the analysis of (IBI) data.
+Here is a link to the old version \code{\link{ibi_analysis_old}}.
+It was updated to handle specific errors encountered in the BuildNIHR or InterpolateNIHR functions
+that resulted from files that were almost empty on IBI data. 
+
+This function analyzes IBI data, focusing on time and frequency domain measures.
+ Note that the function imports functions from the RHRV package for HRV (Heart Rate Variability)
+ analysis. Also note that measurements on the wrist are now more often referred to as PRV (Pulse
+ Rate Variability), see for instance
+  https://jphysiolanthropol.biomedcentral.com/articles/10.1186/s40101-020-00233-x.
+
+
+The function performs several steps in processing IBI data:
+1. Initializes HRV data structure using RHRV.
+2. Handles potential data discrepancies due to the nature of wrist-worn devices.
+3. Implements error handling for BuildNIHR and InterpolateNIHR functions.
+4. Processes the data through time and frequency domain analyses.
+5. Returns a comprehensive summary of HRV measures.
+}
+\examples{
+\dontrun{
+zip_path <- system.file("extdata", "1635148245_A00204.zip", package = "wearables")
+Assuming "IBI_data" is your interbeat interval data
+result <- read_e4("path to your file") 
+print(result$IBI)
+}
+
 }
