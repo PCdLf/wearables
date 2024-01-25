@@ -29,17 +29,43 @@ join_eda_bin <- function(data, eda_bin) {
     return(data)
   }
 
-  # padr::thicken(data, interval = "5 sec") %>%
-  #   dplyr::left_join(eda_bin, by = c("DateTime_5_sec" = "id")) %>%
-  #   dplyr::select(-dplyr::all_of("DateTime_5_sec")) %>%
-  #   dplyr::rename(quality_flag = "label")
-
-  # Updated function, sometimes the quality_flag received NA if the function
-  # did not floor the date properly
-  padr::thicken(data, interval = "5 sec") %>%
+#' Join EDA Binary Classifier Output to Dataset
+#'
+#' This function joins the output of an EDA binary classifier to a dataset based on 
+#' rounded 5-second intervals. It is designed to merge two data frames: one containing 
+#' your main data and another containing EDA binary classifier predictions. The function 
+#' ensures that each record in the main data is matched with the appropriate classifier 
+#' output by aligning timestamps to the nearest 5-second interval.
+#'
+#' @param data A data frame containing the main dataset with a 'DateTime' column 
+#' that represents timestamps.
+#' @param eda_bin A data frame containing the EDA binary classifier outputs, including 
+#' an 'id' column that represents timestamps. This data frame is expected to merge with 
+#' the main data frame based on these timestamps.
+#'
+#' @return A data frame that combines the main dataset with the EDA binary classifier 
+#' outputs. The classifier's label is renamed to 'quality_flag'. In cases where a precise 
+#' match for the 5-second interval is not found in the classifier output, NA values 
+#' may be introduced in the 'quality_flag' column.
+#'
+#' @details The function first uses `padr::thicken` to extend the main data frame by 
+#' creating a new column 'DateTime_5_sec', which rounds the 'DateTime' values to 5-second 
+#' intervals. Then, it performs a left join with the EDA binary classifier data, which 
+#' has been similarly adjusted using `lubridate::floor_date` to match these intervals. 
+#' After the join, unnecessary columns ('DateTime_5_sec' and 'id') are dropped, and the 
+#' classifier's 'label' column is renamed to 'quality_flag'.
+#'
+#' @examples
+#' \dontrun{
+#'   main_data <- data.frame(DateTime = as.POSIXct(...), ...)
+#'   classifier_data <- data.frame(id = as.POSIXct(...), label = ..., ...)
+#'   joined_data <- join_eda_bin(main_data, classifier_data)
+#' }
+#'
+padr::thicken(data, interval = "5 sec") %>%
     dplyr::left_join(
       mutate(eda_bin,
-        DateTime_5_sec = lubridate::floor_date(id, "5 seconds")
+        DateTime_5_sec = lubridate::floor_date(.data$id, "5 seconds")
       ),
       by = "DateTime_5_sec"
     ) %>%

@@ -2,13 +2,37 @@
 % Please edit documentation in R/artifact_detection.R
 \name{compute_features2}
 \alias{compute_features2}
-\title{Features computation}
+\title{Compute Features for SVM}
 \usage{
 compute_features2(data)
 }
 \arguments{
-\item{data}{df with eda, filtered eda and timestamp columns}
+\item{data}{A data frame with columns for electrodermal activity (eda), filtered electrodermal 
+activity (filtered eda), and timestamps (DateTime). It is assumed that the data frame has 
+already been preprocessed appropriately for feature computation.}
+}
+\value{
+A data frame with computed features. Each row corresponds to a time chunk, and columns 
+include statistical measures (like maximum, mean, standard deviation, median, and sum of positive 
+values) of wavelet coefficients computed over different intervals (1 second, 0.5 seconds, and 
+based on amplitude features).
 }
 \description{
-Compute features for SVM
+This function computes features for support vector machines (SVM) analysis. It processes input data, 
+applies wavelet coefficients computation, and aggregates various statistical measures over 
+defined time chunks. The function is designed to work with data frames containing electrodermal 
+activity (EDA) data, filtered EDA, and timestamps.
+}
+\details{
+The function internally computes wavelet coefficients and then divides the data into 
+chunks of specified durations (1 second, 0.5 seconds, and a custom duration based on amplitude 
+features). For each chunk, it calculates various statistical measures. The resulting data frame 
+includes timestamps and the computed features, which can be used for further analysis or as input 
+to machine learning models like SVM.
+}
+\examples{
+\dontrun{
+# Assuming 'my_data' is a preprocessed data frame with the necessary columns
+features <- compute_features2(my_data)
+}
 }

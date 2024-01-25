@@ -199,19 +199,43 @@ add_chunk_group <- function(data, rows_per_chunk) {
     dplyr::arrange(.data$group)
 }
 
-#' Features computation
+#' Compute Features for SVM
 #'
-#' Compute features for SVM
+#' This function computes features for support vector machines (SVM) analysis. It processes input data, 
+#' applies wavelet coefficients computation, and aggregates various statistical measures over 
+#' defined time chunks. The function is designed to work with data frames containing electrodermal 
+#' activity (EDA) data, filtered EDA, and timestamps.
 #'
-#' @param data df with eda, filtered eda and timestamp columns
-#' @export
+#' @param data A data frame with columns for electrodermal activity (eda), filtered electrodermal 
+#' activity (filtered eda), and timestamps (DateTime). It is assumed that the data frame has 
+#' already been preprocessed appropriately for feature computation.
+#'
+#' @return A data frame with computed features. Each row corresponds to a time chunk, and columns 
+#' include statistical measures (like maximum, mean, standard deviation, median, and sum of positive 
+#' values) of wavelet coefficients computed over different intervals (1 second, 0.5 seconds, and 
+#' based on amplitude features).
+#'
+#' @details The function internally computes wavelet coefficients and then divides the data into 
+#' chunks of specified durations (1 second, 0.5 seconds, and a custom duration based on amplitude 
+#' features). For each chunk, it calculates various statistical measures. The resulting data frame 
+#' includes timestamps and the computed features, which can be used for further analysis or as input 
+#' to machine learning models like SVM.
+#'
+#' @examples
+#' \dontrun{
+#' # Assuming 'my_data' is a preprocessed data frame with the necessary columns
+#' features <- compute_features2(my_data)
+#' }
 #' @importFrom magrittr "%>%"
-#' @importFrom dplyr group_by summarize select mutate across .data
+#' @importFrom rlang .data
+#' @importFrom dplyr group_by summarize select mutate across everything
+#' @export
 compute_features2 <- function(data) {
+  id <- NULL 
   sec_per_chunk <- 5
-
+  
   coefficients <- compute_wavelet_coefficients(data)
-
+  
   fun_lis <- list(
     max = max,
     mean = mean,
@@ -219,28 +243,28 @@ compute_features2 <- function(data) {
     median = median,
     positive = ~ sum(.x > 0)
   )
-
+  
   out_1sec <- coefficients$one_second_features %>%
     add_chunk_group(sec_per_chunk) %>%
     dplyr::group_by(.data$group) %>%
     dplyr::summarize(across(.cols = everything(), .fns = fun_lis), .groups = "drop") %>%
     dplyr::select(-.data$group)
-
+  
   out_05sec <- coefficients$half_second_features %>%
     add_chunk_group(2 * sec_per_chunk) %>%
     dplyr::group_by(.data$group) %>%
     dplyr::summarize(across(.cols = everything(), .fns = fun_lis), .groups = "drop") %>%
     dplyr::select(-.data$group)
-
+  
   amplitude_features <-
     data %>%
     add_chunk_group(8 * sec_per_chunk) %>%
     compute_amplitude_features()
-
+  
   timestamps <-
     data$DateTime[1] +
     sec_per_chunk * (1:nrow(amplitude_features) - 1)
-
+  
   as.data.frame(cbind(
     id = timestamps,
     out_1sec,
