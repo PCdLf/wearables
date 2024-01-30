@@ -94,7 +94,8 @@ create_dataframes <- function(data, type, file, vars = c("x", "y", "z"),
 #' # read_embrace_plus("yourpathtohezipfile.zip")
 #' @export
 #' @import sparklyr
-#' @importFrom cli cli_alert_info cli_alert_warning cli_progress_step cli_progress_update cli_progress_done
+#' @importFrom dplyr pull
+#' @importFrom cli cli_alert_info cli_alert_warning cli_progress_step cli_progress_update cli_progress_done qty
 read_embrace_plus <- function(zipfile) {
   
   # Check for already installed Spark versions
@@ -106,6 +107,7 @@ read_embrace_plus <- function(zipfile) {
   
   # Open a local Spark connection
   # Attach avro package to be able to read in avro files
+  cli_alert_info("Connecting to local Spark cluster")
   sc <- spark_connect(master = "local",
                       version = tail(spark_available_versions(), 1)$spark,
                       packages = "org.apache.spark:spark-avro_2.12:3.5.0")
