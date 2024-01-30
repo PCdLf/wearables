@@ -9,6 +9,8 @@ These devices can be found here:
 https://www.empatica.com/embraceplus/
 https://nowatch.com/
 
+Current functionality includes the `read_embrace_plus` function, that can be used to read in the zip file coming from the Empatica EmbracePlus device. This zip file contains `.avro` files.
+
 This package was originally created for signal analysis of the Empatica E4 wearables device. It allows
 users to read in an E4 zip file from Empatica connect into a list.
 The package was created to detect artifacts and extract features that can be used for 
