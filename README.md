@@ -39,7 +39,7 @@ Or get the development version from GitHub:
 
 ```r
 install.packages("remotes")
-remotes::install_github("PCdLf/waiter")
+remotes::install_github("PCdLf/wearables")
 ```
 
 ## Getting started
