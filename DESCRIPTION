@@ -1,27 +1,43 @@
-Package: wearables
 Type: Package
-Date: 2024-04-01
+Package: wearables
 Title: Tools to Read and Convert Wearables Data
-Version: 0.8.3
-Authors@R: c(person("Peter", "de Looff", role = c("aut", "cre"),
-                     email = "peterdelooff@gmail.com"),
-              person("Remko", "Duursma", role = "aut"),
-              person("Saskia", "Koldijk", role = "aut"),
-              person("Kees", "de Schepper", role = "aut"),
-              person("Matthijs", "Noordzij", role = "ctb"),
-              person("Natasha", "Jaques", role = "ctb"),
-              person("Sara", "Taylor", role = "ctb"))
-Imports: 
-    xts, lubridate, dplyr, RHRV, magrittr, signal, waveslim, futile.logger, 
-    kernlab, padr, varian, ggplot2, R.utils, rlang
+Version: 0.9.0
+Date: 2024-01-30
+Authors@R: c(
+    person("Peter", "de Looff", , "peterdelooff@gmail.com", role = c("aut", "cre")),
+    person("Remko", "Duursma", role = "aut"),
+    person("Saskia", "Koldijk", role = "aut"),
+    person("Kees", "de Schepper", role = "aut"),
+    person("Matthijs", "Noordzij", role = "ctb"),
+    person("Natasha", "Jaques", role = "ctb"),
+    person("Sara", "Taylor", role = "ctb")
+  )
 Maintainer: Peter de Looff <peterdelooff@gmail.com>
-Description: 
-    Package to read Empatica E4 data, perform several transformations, perform signal
-    processing and analyses, including batch analyses.
+Description: Package to read Empatica E4 data, perform several
+    transformations, perform signal processing and analyses, including
+    batch analyses.
 License: GPL-2
-Encoding: UTF-8
-LazyData: true
-Depends: R (>= 3.6)
-RoxygenNote: 7.2.3
+Depends: 
+    R (>= 3.6)
+Imports: 
+    cli,
+    dplyr,
+    futile.logger,
+    ggplot2,
+    kernlab,
+    lubridate,
+    magrittr,
+    padr,
+    R.utils,
+    RHRV,
+    rlang,
+    signal,
+    sparklyr,
+    varian,
+    waveslim,
+    xts
 Suggests: 
     testthat
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.2.3
