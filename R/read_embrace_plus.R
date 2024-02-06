@@ -111,7 +111,7 @@ read_embrace_plus <- function(zipfile) {
   sc <- spark_connect(master = "local",
                       version = tail(spark_available_versions(), 1)$spark,
                       packages = "org.apache.spark:spark-avro_2.12:3.5.0")
-  cli_alert_done("Connected!")
+  cli_alert_success("Connected!")
   
   # Extract files to a temporary folder
   path <- paste0(tempdir(), "/extracted")
