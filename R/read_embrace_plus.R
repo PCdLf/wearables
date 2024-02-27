@@ -154,6 +154,8 @@ read_embrace_plus <- function(zipfile) {
                                   type = "accelerometer", 
                                   file, 
                                   timestamp_start = c("timestampStart", "samplingFrequency", "x"))
+    # For ACC, add the geometric mean acceleration
+    acc_data$a <- sqrt(acc_data$x^2 + acc_data$y^2 + acc_data$z^2) / 64
     
     gy_data <- create_dataframes(raw_data, 
                                  type = "gyroscope", 

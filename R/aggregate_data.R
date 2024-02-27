@@ -73,7 +73,8 @@ aggregate_embrace_plus_data <- function(x) {
     summarize(
       x = mean(x),
       y = mean(y),
-      z = mean(z)
+      z = mean(z),
+      a = mean(a)
     ) %>%
     dplyr::rename(DateTime = datetime_1min)
   
