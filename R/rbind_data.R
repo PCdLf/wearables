@@ -23,7 +23,7 @@ rbind_data <- function(data) {
 #' 
 #' @description This function takes a list of E4 datasets and row-binds them
 #' together.
-#' @param data An object read in by `read_e4`
+#' @param data An object read in by `\code{\link{read_e4}}
 #' @export
 rbind_e4 <- function(data) {
   rbind_data(data)
@@ -33,7 +33,7 @@ rbind_e4 <- function(data) {
 #' 
 #' @description This function takes a list of Embrace Plus datasets and row-binds 
 #' them together.
-#' @param data An object read in by `read_embrace_plus`
+#' @param data An object read in by \code{\link{read_embrace_plus}}
 #' @export
 rbind_embrace_plus <- function(data) {
   rbind_data(data)
@@ -43,8 +43,7 @@ rbind_embrace_plus <- function(data) {
 #' 
 #' @description This function takes a list of NOWATCH datasets and row-binds them
 #' together.
-#' @param data An object read in by `read_nowatch`
-#' @export
+#' @param data An object read in by \code{\link{read_nowatch}}
 rbind_nowatch <- function(data) {
   rbind_data(data)
 }
