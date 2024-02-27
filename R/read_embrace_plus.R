@@ -116,6 +116,11 @@ read_embrace_plus <- function(zipfile) {
   # Extract files to a temporary folder
   path <- paste0(tempdir(), "/extracted")
   
+  # if path exists, remove content
+  if (dir.exists(path)) {
+    unlink(path, recursive = TRUE)
+  }
+  
   unzip(zipfile = zipfile, 
         exdir = path)
   
