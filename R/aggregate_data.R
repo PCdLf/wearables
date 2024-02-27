@@ -53,8 +53,8 @@ aggregate_e4_data <- function(x) {
 #' @export
 aggregate_embrace_plus_data <- function(x) {
   
-  if (length(x) == 1) {
-    warning("Only one item found. Did you run rbind_embrace_plus()?")
+  if (is.null(x$EDA)) {
+    warning("Data not found. Did you run rbind_embrace_plus()?")
   }
   
   x$EDA <- padr::thicken(x$EDA,
