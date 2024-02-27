@@ -214,7 +214,7 @@ read_embrace_plus <- function(zipfile) {
   spark_disconnect(sc)
   
   return(
-    structure(avro_list, 
+    structure(avro_list[[1]], 
               class = "embraceplusdata",
               zipfile = tools::file_path_sans_ext(zipfile)
     )
