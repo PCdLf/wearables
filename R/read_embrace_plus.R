@@ -125,7 +125,8 @@ read_embrace_plus <- function(zipfile) {
   
   i <- 0
   cli_progress_step("Processed {i}/{length(avro_files)} {qty(i)}file{?s}",
-                    msg_done = "Completed data reading and processing")
+                    msg_done = "Completed data reading and processing",
+                    spinner = TRUE)
   
   for (file in avro_files) {
     
