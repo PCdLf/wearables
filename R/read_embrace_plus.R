@@ -34,12 +34,14 @@ get_timestamp_column <- function(start_time, sampling_freq, len_list, tz) {
 #' @param type type of data to extract
 #' @param file filename of the original data
 #' @param vars variables to extract
+#' @param vars_names names to give to the variables
 #' @param tz timezone
 #' @param timestamp_start vector of 3 elements, containing the names of the columns 
 #'   in the data that contain the start time of the recording.
 #' @keywords internal
 #' @noRd
 create_dataframes <- function(data, type, file, vars = c("x", "y", "z"), 
+                              var_names = c("x", "y", "z"),
                               timestamp_start = NULL, tz) {
   
   if (!all(vars %in% names(data[[type]]))) {
@@ -60,9 +62,9 @@ create_dataframes <- function(data, type, file, vars = c("x", "y", "z"),
     for (var in vars) {
       if (length(df) == 0) {
         df <- data.frame(x = data[[type]][[var]])
-        names(df) <- c(var)
+        names(df) <- c(var_names[which(vars == var)])
       }
-      df[[var]] <- data[[type]][[var]]
+      df[[var]] <- data[[type]][[var_names[which(vars == var)]]]
     }
     
     if (!is.null(timestamp_start)) {
@@ -172,6 +174,7 @@ read_embrace_plus <- function(zipfile,
     eda_data <- create_dataframes(raw_data, 
                                   type = "eda",
                                   vars = "values",
+                                  var_names = "EDA",
                                   file, 
                                   timestamp_start = c("timestampStart", "samplingFrequency", "values"),
                                   tz = tz)
@@ -179,6 +182,7 @@ read_embrace_plus <- function(zipfile,
     temp_data <- create_dataframes(raw_data, 
                                    type = "temperature",
                                    vars = "values",
+                                   var_names = "TEMP",
                                    file, 
                                    timestamp_start = c("timestampStart", "samplingFrequency", "values"),
                                    tz = tz)
@@ -186,6 +190,7 @@ read_embrace_plus <- function(zipfile,
     bvp_data <- create_dataframes(raw_data,
                                   type = "bvp",
                                   vars = "values",
+                                  var_names = "BVP",
                                   file, 
                                   timestamp_start = c("timestampStart", "samplingFrequency", "values"),
                                   tz = tz)
@@ -193,6 +198,7 @@ read_embrace_plus <- function(zipfile,
     steps_data <- create_dataframes(raw_data,
                                     type = "steps",
                                     vars = "values",
+                                    var_names = "STEPS",
                                     file, 
                                     timestamp_start = c("timestampStart", "samplingFrequency", "values"),
                                     tz = tz)
@@ -200,6 +206,7 @@ read_embrace_plus <- function(zipfile,
     systolic_peaks_data <- create_dataframes(raw_data,
                                              type = "systolicPeaks",
                                              vars = "peaksTimeNanos",
+                                             var_names = "PEAKS",
                                              file)
     
     
