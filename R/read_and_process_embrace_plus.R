@@ -8,6 +8,7 @@
 #' @export
 read_and_process_embrace_plus <- function(zipfile, tz = Sys.timezone()) {
   data <- read_embrace_plus(zipfile, tz)
+  data <- rbind_embrace_plus(data)
   
   if (is.null(data)) {
     return(NULL)
