@@ -15,10 +15,10 @@ get_timestamp_column <- function(start_time, sampling_freq, len_list, tz) {
   
   # Generate a range of timestamps from start to end with the given frequency
   timestamp_column <- seq(from = start_timestamp, to = end_timestamp, by = 1 / sampling_freq)
-  timestamp_df <- data.frame(timestamp = timestamp_column)
+  timestamp_df <- data.frame(DateTime = timestamp_column)
   
   # Convert 'timestamp' column back to Unix timestamp in seconds
-  timestamp_df$unix_timestamp <- as.numeric(as.POSIXct(timestamp_df$timestamp, origin = "1970-01-01", tz = "UTC"))
+  timestamp_df$unix_timestamp <- as.numeric(as.POSIXct(timestamp_df$DateTime, origin = "1970-01-01", tz = "UTC"))
   
   # Drop last row
   if (nrow(timestamp_df) > len_list) {
