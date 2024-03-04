@@ -3,21 +3,22 @@
 #' @param start_time start time of the recording in seconds
 #' @param sampling_freq sampling frequency of the recording
 #' @param len_list length of the list
+#' @param tz timezone
 #' @keywords internal
 #' @noRd
-get_timestamp_column <- function(start_time, sampling_freq, len_list) {
+get_timestamp_column <- function(start_time, sampling_freq, len_list, tz) {
   start_time_ns <- start_time * 1000
-  start_timestamp <- as.POSIXct(start_time_ns / 1e9, origin = "1970-01-01", tz = "UTC")
+  start_timestamp <- as.POSIXct(start_time_ns / 1e9, origin = "1970-01-01", tz = tz)
   
   # Calculate end_timestamp based on the length of the list and sampling frequency
   end_timestamp <- start_timestamp + as.difftime(len_list / sampling_freq, units = "secs")
   
   # Generate a range of timestamps from start to end with the given frequency
   timestamp_column <- seq(from = start_timestamp, to = end_timestamp, by = 1 / sampling_freq)
-  timestamp_df <- data.frame(timestamp = timestamp_column)
+  timestamp_df <- data.frame(DateTime = timestamp_column)
   
   # Convert 'timestamp' column back to Unix timestamp in seconds
-  timestamp_df$unix_timestamp <- as.numeric(as.POSIXct(timestamp_df$timestamp, origin = "1970-01-01", tz = "UTC"))
+  timestamp_df$unix_timestamp <- as.numeric(as.POSIXct(timestamp_df$DateTime, origin = "1970-01-01", tz = "UTC"))
   
   # Drop last row
   if (nrow(timestamp_df) > len_list) {
@@ -33,12 +34,15 @@ get_timestamp_column <- function(start_time, sampling_freq, len_list) {
 #' @param type type of data to extract
 #' @param file filename of the original data
 #' @param vars variables to extract
+#' @param vars_names names to give to the variables
+#' @param tz timezone
 #' @param timestamp_start vector of 3 elements, containing the names of the columns 
 #'   in the data that contain the start time of the recording.
 #' @keywords internal
 #' @noRd
 create_dataframes <- function(data, type, file, vars = c("x", "y", "z"), 
-                              timestamp_start = NULL) {
+                              var_names = c("x", "y", "z"),
+                              timestamp_start = NULL, tz) {
   
   if (!all(vars %in% names(data[[type]]))) {
     stop(sprintf("vars must be in the data, vars found are: %s", 
@@ -58,9 +62,9 @@ create_dataframes <- function(data, type, file, vars = c("x", "y", "z"),
     for (var in vars) {
       if (length(df) == 0) {
         df <- data.frame(x = data[[type]][[var]])
-        names(df) <- c(var)
+        names(df) <- c(var_names[which(vars == var)])
       }
-      df[[var]] <- data[[type]][[var]]
+      df[[var]] <- data[[type]][[var_names[which(vars == var)]]]
     }
     
     if (!is.null(timestamp_start)) {
@@ -70,7 +74,8 @@ create_dataframes <- function(data, type, file, vars = c("x", "y", "z"),
       
       timestamp_df <- get_timestamp_column(data[[type]][[timestamp_start[1]]], 
                                            data[[type]][[timestamp_start[2]]], 
-                                           length(data[[type]][[timestamp_start[3]]]))
+                                           length(data[[type]][[timestamp_start[3]]]),
+                                           tz = tz)
       
       df <- cbind(df, timestamp_df)
     }
@@ -89,6 +94,7 @@ create_dataframes <- function(data, type, file, vars = c("x", "y", "z"),
 #' The object contains a list with dataframes from the physiological signals.
 #'
 #' @param zipfile A zip file as exported by the instrument
+#' @param tz The timezone used by the instrument (defaults to user timezone).
 #' @examples
 #' library(wearables)
 #' # read_embrace_plus("yourpathtohezipfile.zip")
@@ -96,7 +102,8 @@ create_dataframes <- function(data, type, file, vars = c("x", "y", "z"),
 #' @import sparklyr
 #' @import cli
 #' @importFrom dplyr pull
-read_embrace_plus <- function(zipfile) {
+read_embrace_plus <- function(zipfile,
+                              tz = Sys.timezone()) {
   
   # Check for already installed Spark versions
   # if none available, install the latest version
@@ -116,6 +123,11 @@ read_embrace_plus <- function(zipfile) {
   # Extract files to a temporary folder
   path <- paste0(tempdir(), "/extracted")
   
+  # if path exists, remove content
+  if (dir.exists(path)) {
+    unlink(path, recursive = TRUE)
+  }
+  
   unzip(zipfile = zipfile, 
         exdir = path)
   
@@ -125,7 +137,8 @@ read_embrace_plus <- function(zipfile) {
   
   i <- 0
   cli_progress_step("Processed {i}/{length(avro_files)} {qty(i)}file{?s}",
-                    msg_done = "Completed data reading and processing")
+                    msg_done = "Completed data reading and processing",
+                    spinner = TRUE)
   
   for (file in avro_files) {
     
@@ -147,40 +160,53 @@ read_embrace_plus <- function(zipfile) {
     acc_data <- create_dataframes(raw_data, 
                                   type = "accelerometer", 
                                   file, 
-                                  timestamp_start = c("timestampStart", "samplingFrequency", "x"))
+                                  timestamp_start = c("timestampStart", "samplingFrequency", "x"),
+                                  tz = tz)
+    # For ACC, add the geometric mean acceleration
+    acc_data$a <- sqrt(acc_data$x^2 + acc_data$y^2 + acc_data$z^2) / 64
     
     gy_data <- create_dataframes(raw_data, 
                                  type = "gyroscope", 
                                  file, 
-                                 timestamp_start = c("timestampStart", "samplingFrequency", "x"))
+                                 timestamp_start = c("timestampStart", "samplingFrequency", "x"),
+                                 tz = tz)
     
     eda_data <- create_dataframes(raw_data, 
                                   type = "eda",
                                   vars = "values",
+                                  var_names = "EDA",
                                   file, 
-                                  timestamp_start = c("timestampStart", "samplingFrequency", "values"))
+                                  timestamp_start = c("timestampStart", "samplingFrequency", "values"),
+                                  tz = tz)
     
     temp_data <- create_dataframes(raw_data, 
                                    type = "temperature",
                                    vars = "values",
+                                   var_names = "TEMP",
                                    file, 
-                                   timestamp_start = c("timestampStart", "samplingFrequency", "values"))
+                                   timestamp_start = c("timestampStart", "samplingFrequency", "values"),
+                                   tz = tz)
     
     bvp_data <- create_dataframes(raw_data,
                                   type = "bvp",
                                   vars = "values",
+                                  var_names = "BVP",
                                   file, 
-                                  timestamp_start = c("timestampStart", "samplingFrequency", "values"))
+                                  timestamp_start = c("timestampStart", "samplingFrequency", "values"),
+                                  tz = tz)
     
     steps_data <- create_dataframes(raw_data,
                                     type = "steps",
                                     vars = "values",
+                                    var_names = "STEPS",
                                     file, 
-                                    timestamp_start = c("timestampStart", "samplingFrequency", "values"))
+                                    timestamp_start = c("timestampStart", "samplingFrequency", "values"),
+                                    tz = tz)
     
     systolic_peaks_data <- create_dataframes(raw_data,
                                              type = "systolicPeaks",
                                              vars = "peaksTimeNanos",
+                                             var_names = "PEAKS",
                                              file)
     
     
@@ -216,7 +242,8 @@ read_embrace_plus <- function(zipfile) {
   return(
     structure(avro_list, 
               class = "embraceplusdata",
-              zipfile = tools::file_path_sans_ext(zipfile)
+              zipfile = tools::file_path_sans_ext(zipfile),
+              tz = tz
     )
   )
 }

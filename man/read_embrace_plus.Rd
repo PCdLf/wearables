@@ -4,10 +4,12 @@
 \alias{read_embrace_plus}
 \title{Read Embrace Plus data}
 \usage{
-read_embrace_plus(zipfile)
+read_embrace_plus(zipfile, tz = Sys.timezone())
 }
 \arguments{
 \item{zipfile}{A zip file as exported by the instrument}
+
+\item{tz}{The timezone used by the instrument (defaults to user timezone).}
 }
 \description{
 Reads in Embrace Plus data as a list (with EDA, HR, Temp, ACC, BVP, IBI as dataframes), and prepends timecolumns

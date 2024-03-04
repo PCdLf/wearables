@@ -11,7 +11,7 @@
 #' @export
 read_and_process_e4 <- function(zipfile, tz = Sys.timezone()) {
   data <- read_e4(zipfile, tz)
-
+  
   if (is.null(data)) {
     return(NULL)
   } else {
@@ -20,14 +20,6 @@ read_and_process_e4 <- function(zipfile, tz = Sys.timezone()) {
   }
 }
 
-
-# Join EDA binary classifier output to a dataset, based on rounded 5sec intervals.
-# Rename 'label' to 'quality_flag'
-join_eda_bin <- function(data, eda_bin) {
-  if (nrow(data) == 0) {
-    data$quality_flag <- integer(0)
-    return(data)
-  }
 
 #' Join EDA Binary Classifier Output to Dataset
 #'
@@ -61,20 +53,24 @@ join_eda_bin <- function(data, eda_bin) {
 #'   classifier_data <- data.frame(id = as.POSIXct(...), label = ..., ...)
 #'   joined_data <- join_eda_bin(main_data, classifier_data)
 #' }
-#'
-padr::thicken(data, interval = "5 sec") %>%
+#' @export
+join_eda_bin <- function(data, eda_bin) {
+  
+  if (nrow(data) == 0) {
+    data$quality_flag <- integer(0)
+    return(data)
+  }
+  
+  padr::thicken(data, interval = "5 sec") %>%
     dplyr::left_join(
       mutate(eda_bin,
-        DateTime_5_sec = lubridate::floor_date(.data$id, "5 seconds")
+             DateTime_5_sec = lubridate::floor_date(.data$id, "5 seconds")
       ),
       by = "DateTime_5_sec"
     ) %>%
     dplyr::select(-dplyr::all_of(c("DateTime_5_sec", "id"))) %>%
     dplyr::rename(quality_flag = "label")
 }
-
-
-
 
 #' @rdname read_and_process_e4
 #' @export
@@ -86,28 +82,28 @@ process_e4 <- function(data) {
     })
   })
   flog.info("IBI data analyzed.")
-
+  
   eda_filt <- wearables::process_eda(data$EDA)
   flog.info("EDA data filtered.")
-
+  
   eda_peaks <- find_peaks(eda_filt)
   flog.info("Peak detection complete.")
-
+  
   eda_feat <- compute_features2(eda_filt)
   flog.info("EDA Features computed")
-
+  
   eda_bin_pred <- predict_binary_classifier(eda_feat)
   eda_mc_pred <- predict_multiclass_classifier(eda_feat)
   flog.info("Model predictions generated, artifacts classified.")
-
+  
   # Add quality flags to data
   eda_filt <- join_eda_bin(eda_filt, eda_bin_pred)
   eda_peaks <- join_eda_bin(eda_peaks, eda_bin_pred)
-
+  
   # Time range of the data
   r <- range(eda_filt$DateTime)
   time_range <- as.numeric(difftime(r[2], r[1], units = "min"))
-
+  
   # Additional summaries
   hr_summary <- list(
     HR_mean = mean(data$HR$HR),
@@ -116,7 +112,7 @@ process_e4 <- function(data) {
     HR_max = max(data$HR$HR),
     HR_sd = sd(data$HR$HR)
   )
-
+  
   temp_summary <- list(
     TEMP_mean = mean(data$TEMP$TEMP),
     TEMP_median = median(data$TEMP$TEMP),
@@ -124,7 +120,7 @@ process_e4 <- function(data) {
     TEMP_max = max(data$TEMP$TEMP),
     TEMP_sd = sd(data$TEMP$TEMP)
   )
-
+  
   acc_summary <- list(
     ACC_mean = mean(data$ACC$a),
     ACC_median = median(data$ACC$a),
@@ -132,9 +128,9 @@ process_e4 <- function(data) {
     ACC_max = max(data$ACC$a),
     ACC_sd = sd(data$ACC$a)
   )
-
+  
   eda_clean <- dplyr::filter(eda_filt, .data$quality_flag == 1)
-
+  
   if (nrow(eda_clean) > 0) {
     eda_summary <- list(
       EDA_clean_mean = mean(eda_clean$EDA),
@@ -152,9 +148,9 @@ process_e4 <- function(data) {
       EDA_clean_sd = NA
     )
   }
-
+  
   pks_clean <- dplyr::filter(eda_peaks, .data$quality_flag == 1)
-
+  
   if (nrow(eda_clean) > 0) {
     peaks_summary <- list(
       peaks_clean_sum = nrow(pks_clean),
@@ -169,8 +165,8 @@ process_e4 <- function(data) {
       peaks_clean_mean_amp = NA
     )
   }
-
-
+  
+  
   structure(
     list(
       data = data,
@@ -201,14 +197,14 @@ process_e4 <- function(data) {
 #' @export
 create_e4_output_folder <- function(obj, out_path = ".") {
   stopifnot(inherits(obj, "e4_analysis"))
-
+  
   # read_e4 stored the zipname as an attribute
   zipname <- basename(attr(obj$data, "zipfile"))
-
+  
   # Output goes to a folder with the zipfile name
   out_folder <- file.path(out_path, zipname)
   dir.create(out_folder)
-
+  
   return(invisible(out_folder))
 }
 
@@ -220,22 +216,22 @@ create_e4_output_folder <- function(obj, out_path = ".") {
 #' @export
 write_processed_e4 <- function(obj, out_path = ".") {
   stopifnot(inherits(obj, "e4_analysis"))
-
+  
   out_folder <- create_e4_output_folder(obj, out_path)
-
+  
   # write.csv(obj$data$ , file.path(out_folder, ...)
-
+  
   file_out <- function(data, name) {
     write.csv2(data, file.path(out_folder, name), row.names = FALSE)
   }
-
+  
   file_out(obj$data$EDA, "EDA.csv")
   file_out(obj$data$ACC, "ACC.csv")
   file_out(obj$data$TEMP, "TEMP.csv")
   file_out(obj$data$HR, "HR.csv")
   file_out(obj$data$BVP, "BVP.csv")
   file_out(obj$data$IBI, "IBI.csv")
-
+  
   ibi_a <- data.frame(
     Time = obj$ibi$freq_analysis$Time,
     HRV = obj$ibi$freq_analysis$HRV,
@@ -246,11 +242,11 @@ write_processed_e4 <- function(obj, out_path = ".") {
     LFHF = obj$ibi$freq_analysis$LFHF
   )
   file_out(ibi_a, "IBI_FreqAnalysis.csv")
-
+  
   # Vector with summary variables
   ibi_s <- c(obj$ibi$time_analysis, obj$ibi$summary$frequency, obj$ibi$summary$beats)
   file_out(ibi_s, "IBI_SummaryPars.csv")
-
+  
   # EDA model predictions
   file_out(obj$eda_bin, "EDA_binary_prediction.csv")
   file_out(obj$eda_mc, "EDA_multiclass_prediction.csv")

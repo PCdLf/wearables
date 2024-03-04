@@ -1,3 +1,13 @@
+# wearables 0.10.0
+2024-02-27
+
+## New features
+* Added `read_and_process_embrace_plus()` to read and process data from the Embrace Plus. This aligns with the `read_and_process_e4()` function for the E4.
+* Made general `rbind_data()` and `aggregate_data()` functions, which makes it easier to on-board other devices in the future. In the future, these functions will also be preferred to functions like `rbind_e4()` and `aggregate_e4_data()`. Currently these functions are wrappers around the more general functions, to ensure backwards compatibility.
+
+## Improvements
+* Updated `read_embrace_plus()` to make the outcome more consistent with the E4. Instead of the `timestamp` column, the column is now named `DateTime`, and also the columns called `values` are renamed to align with E4 (e.g. `TEMP` instead of `values`).
+
 # wearables 0.9.0
 2024-01-30
 
