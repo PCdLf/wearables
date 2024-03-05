@@ -10,7 +10,8 @@ Authors@R: c(
     person("Kees", "de Schepper", role = "aut"),
     person("Matthijs", "Noordzij", role = "ctb"),
     person("Natasha", "Jaques", role = "ctb"),
-    person("Sara", "Taylor", role = "ctb")
+    person("Sara", "Taylor", role = "ctb"),
+    person("Veerle", "van Leemput", role = "ctb")
   )
 Maintainer: Peter de Looff <peterdelooff@gmail.com>
 Description: Package to read Empatica E4 data, perform several
