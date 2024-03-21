@@ -105,6 +105,11 @@ create_dataframes <- function(data, type, file, vars = c("x", "y", "z"),
 read_embrace_plus <- function(zipfile,
                               tz = Sys.timezone()) {
   
+  # Check if file exists
+  if (!file.exists(zipfile)) {
+    cli_abort("File does not exist")
+  }
+  
   # Check for already installed Spark versions
   # if none available, install the latest version
   if (nrow(spark_available_versions()) == 0) {
