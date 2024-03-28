@@ -131,7 +131,7 @@ read_embrace_plus <- function(zipfile,
   if (type == "aggregated") {
     return(read_aggregated_embrace_plus(zipfile, tz))
   }
-
+  
 }
 
 
@@ -185,7 +185,13 @@ read_aggregated_embrace_plus <- function(zipfile, tz) {
     
   }
   
-  return(csv_list)
+  return(    
+    structure(csv_list, 
+              class = "embraceplusdata",
+              zipfile = tools::file_path_sans_ext(zipfile),
+              tz = tz
+    )
+  )
   
 }
 
@@ -323,12 +329,6 @@ read_raw_embrace_plus <- function(zipfile, tz) {
   # Disconnect from the Spark cluster
   spark_disconnect(sc)
   
-  return(
-    structure(avro_list, 
-              class = "embraceplusdata",
-              zipfile = tools::file_path_sans_ext(zipfile),
-              tz = tz
-    )
-  )
+  return(avro_list)
   
 }

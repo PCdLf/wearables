@@ -68,5 +68,10 @@ read_nowatch <- function(zipfile,
     
   }
   
-  return(csv_list)
+  return(    
+    structure(csv_list, 
+              class = "nowatchdata",
+              zipfile = tools::file_path_sans_ext(zipfile),
+              tz = tz
+    ))
 }
