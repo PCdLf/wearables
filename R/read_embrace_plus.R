@@ -28,6 +28,9 @@ get_timestamp_column <- function(start_time, sampling_freq, len_list, tz) {
   return(timestamp_df)
 }
 
+
+
+
 #' Create dataframe for psychological factors
 #' @description Creates a dataframe for psychological factors
 #' @param data list of dataframes
@@ -83,6 +86,9 @@ create_dataframes <- function(data, type, file, vars = c("x", "y", "z"),
   return(df)
 }
 
+
+
+
 #' Read Embrace Plus data
 #' @description Reads in Embrace Plus data as a list (with EDA, HR, Temp, ACC, BVP, IBI as dataframes), and prepends timecolumns
 #' @details This function reads in a zipfile as exported by Embrace Plus. Then it extracts the zipfiles in a temporary folder
@@ -93,22 +99,52 @@ create_dataframes <- function(data, type, file, vars = c("x", "y", "z"),
 #' The function returns an object of class "embrace_plus_data" with a prepended datetime columns.
 #' The object contains a list with dataframes from the physiological signals.
 #'
-#' @param zipfile A zip file as exported by the instrument
+#' @param zipfile A zip file as exported by the instrument. Can be aggregatd data, or raw data.
+#' @param type The type of data contained in the zip file. Either "raw" or "aggregated".
 #' @param tz The timezone used by the instrument (defaults to user timezone).
 #' @examples
-#' library(wearables)
-#' # read_embrace_plus("yourpathtohezipfile.zip")
+#' \dontrun{
+#'  library(wearables)
+#'  read_embrace_plus("yourpathtohezipfile.zip")
+#' }
 #' @export
-#' @import sparklyr
 #' @import cli
 #' @importFrom dplyr pull
 read_embrace_plus <- function(zipfile,
+                              type = "raw",
                               tz = Sys.timezone()) {
   
   # Check if file exists
   if (!file.exists(zipfile)) {
     cli_abort("File does not exist")
   }
+  
+  # Check type
+  if (!type %in% c("raw", "aggregated")) {
+    cli_abort("type must be either 'raw' or 'aggregated'")
+  }
+  
+  if (type == "raw") {
+    return(read_raw_embrace_plus(zipfile, tz))
+  }
+  
+  if (type == "aggregated") {
+    return(read_aggregated_embrace_plus(zipfile, tz))
+  }
+
+}
+
+
+
+
+#' Extracts avro files from raw data
+#' @description Processes .avro files
+#' @param tz timezone
+#' @keywords internal
+#' @import sparklyr
+#' @import cli
+#' @noRd
+read_raw_embrace_plus <- function(zipfile, tz) {
   
   # Check for already installed Spark versions
   # if none available, install the latest version
@@ -251,4 +287,5 @@ read_embrace_plus <- function(zipfile,
               tz = tz
     )
   )
+  
 }

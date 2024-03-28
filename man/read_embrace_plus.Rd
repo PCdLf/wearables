@@ -4,10 +4,12 @@
 \alias{read_embrace_plus}
 \title{Read Embrace Plus data}
 \usage{
-read_embrace_plus(zipfile, tz = Sys.timezone())
+read_embrace_plus(zipfile, type = "raw", tz = Sys.timezone())
 }
 \arguments{
-\item{zipfile}{A zip file as exported by the instrument}
+\item{zipfile}{A zip file as exported by the instrument. Can be aggregatd data, or raw data.}
+
+\item{type}{The type of data contained in the zip file. Either "raw" or "aggregated".}
 
 \item{tz}{The timezone used by the instrument (defaults to user timezone).}
 }
@@ -24,6 +26,8 @@ The function returns an object of class "embrace_plus_data" with a prepended dat
 The object contains a list with dataframes from the physiological signals.
 }
 \examples{
-library(wearables)
-# read_embrace_plus("yourpathtohezipfile.zip")
+\dontrun{
+ library(wearables)
+ read_embrace_plus("yourpathtohezipfile.zip")
+}
 }
