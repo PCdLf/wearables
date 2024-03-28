@@ -89,35 +89,6 @@ create_dataframes <- function(data, type, file, vars = c("x", "y", "z"),
 
 
 
-
-#' Unzip files and store files in temporary directory
-#' @description Extracts avro or csv files from a zip file
-#' @param zipfile path to the zip file
-#' @param type type of file to extract
-#' @keywords internal
-#' @noRd
-unzip_embrace_plus <- function(zipfile, type) {
-  
-  # Extract files to a temporary folder
-  path <- paste0(tempdir(), "/extracted")
-  
-  # if path exists, remove content
-  if (dir.exists(path)) {
-    unlink(path, recursive = TRUE)
-  }
-  
-  unzip(zipfile = zipfile, 
-        exdir = path)
-  
-  files <- list.files(path, recursive = TRUE, pattern = sprintf("[.]%s$", type), full.names = TRUE)
-  
-  return(files)
-}
-
-
-
-
-
 #' Read Embrace Plus data
 #' @description Reads in Embrace Plus data as a list (with EDA, HR, Temp, ACC, BVP, IBI as dataframes), and prepends timecolumns
 #' @details This function reads in a zipfile as exported by Embrace Plus. Then it extracts the zipfiles in a temporary folder
@@ -176,7 +147,7 @@ read_aggregated_embrace_plus <- function(zipfile, tz) {
   
   # e4 reference: c("EDA", "ACC", "TEMP", "HR", "BVP")
   
-  csv_files <- unzip_embrace_plus(zipfile, "csv")
+  csv_files <- unzip_files(zipfile, "csv")
   
   # Get the content before .csv and after the last _ (but include -)
   dataset_names <- gsub(".*?([A-Za-z0-9\\-]+)[.]csv", "\\1", csv_files)
@@ -244,7 +215,7 @@ read_raw_embrace_plus <- function(zipfile, tz) {
                       packages = "org.apache.spark:spark-avro_2.12:3.5.0")
   cli_alert_success("Connected!")
   
-  avro_files <- unzip_embrace_plus(zipfile, type = "avro")
+  avro_files <- unzip_files(zipfile, type = "avro")
   
   cli_alert_info("About to start processing {length(avro_files)} avro file{?s}")
   
