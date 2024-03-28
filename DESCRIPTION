@@ -1,8 +1,8 @@
 Type: Package
 Package: wearables
 Title: Tools to Read and Convert Wearables Data
-Version: 0.10.0
-Date: 2024-02-27
+Version: 0.11.0
+Date: 2024-03-28
 Authors@R: c(
     person("Peter", "de Looff", , "peterdelooff@gmail.com", role = c("aut", "cre")),
     person("Remko", "Duursma", role = "aut"),
@@ -14,7 +14,7 @@ Authors@R: c(
     person("Veerle", "van Leemput", role = "ctb")
   )
 Maintainer: Peter de Looff <peterdelooff@gmail.com>
-Description: Package to read Empatica E4 data, perform several
+Description: Package to read Empatica E4, Embrace Plus, and Nowatch data, perform several
     transformations, perform signal processing and analyses, including
     batch analyses.
 License: GPL-2

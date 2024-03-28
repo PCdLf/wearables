@@ -1,3 +1,10 @@
+# wearables 0.11.0
+2024-03-28
+
+## New features
+* Added new function to read data from Nowatch: `read_nowatch()`. This function will return a list of dataframes with the data from the Nowatch.
+* Added reading of aggregated data from Embrace Plus by adding a `type` argument in `read_embrace_plus()`. This argument can be set to `raw` or `aggregated` to read the raw or aggregated data from the Embrace Plus.
+
 # wearables 0.10.0
 2024-02-27
 
