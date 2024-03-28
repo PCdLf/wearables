@@ -145,8 +145,6 @@ read_embrace_plus <- function(zipfile,
 #' @noRd
 read_aggregated_embrace_plus <- function(zipfile, tz) {
   
-  # e4 reference: c("EDA", "ACC", "TEMP", "HR", "BVP")
-  
   csv_files <- unzip_files(zipfile, "csv")
   
   # Get the content before .csv and after the last _ (but include -)
