@@ -10,8 +10,6 @@ read_nowatch(zipfile, tz = Sys.timezone())
 \item{zipfile}{A zip file as exported by the instrument. Only aggregated data supported.}
 
 \item{tz}{The timezone used by the instrument (defaults to user timezone).}
-
-\item{type}{The type of data contained in the zip file.}
 }
 \description{
 Reads in Nowatch data as a list, and prepends timecolumns

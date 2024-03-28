@@ -9,7 +9,6 @@
 #' The object contains a list with dataframes from the physiological signals.
 #'
 #' @param zipfile A zip file as exported by the instrument. Only aggregated data supported.
-#' @param type The type of data contained in the zip file.
 #' @param tz The timezone used by the instrument (defaults to user timezone).
 #' @examples
 #' \dontrun{
