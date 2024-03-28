@@ -4,21 +4,28 @@
 \alias{aggregate_data}
 \alias{aggregate_e4_data}
 \alias{aggregate_embrace_plus_data}
-\title{Aggregate data into 1min timestamps}
+\alias{aggregate_nowatch_data}
+\title{Aggregate data into timesteps}
 \usage{
-aggregate_data(x)
+aggregate_data(x, interval = "1 min")
 
-aggregate_e4_data(x)
+aggregate_e4_data(x, interval = "1 min")
 
-aggregate_embrace_plus_data(x)
+aggregate_embrace_plus_data(x, interval = "1 min")
+
+aggregate_nowatch_data(x, interval = "1 min")
 }
 \arguments{
-\item{x}{An object read by \code{\link{read_e4}} or \code{\link{read_embrace_plus}}.}
+\item{x}{An object read by \code{\link{read_e4}}, \code{\link{read_embrace_plus}} or \code{\link{read_nowatch}}.}
+
+\item{interval}{The interval to aggregate the data. Default is 1 min.}
 }
 \description{
-Aggregate data into 1min timestamps
+Aggregate data into timesteps
 
-Aggregate E4 data into 1min timesteps
+Aggregate E4 data into timesteps
 
-Aggregate Embrace Plus data into 1min timesteps
+Aggregate Embrace Plus data into timesteps
+
+Aggregate Nowatch data into timesteps
 }

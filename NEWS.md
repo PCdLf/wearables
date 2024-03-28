@@ -4,6 +4,7 @@
 ## New features
 * Added new function to read data from Nowatch: `read_nowatch()`. This function will return a list of dataframes with the data from the Nowatch.
 * Added reading of aggregated data from Embrace Plus by adding a `type` argument in `read_embrace_plus()`. This argument can be set to `raw` or `aggregated` to read the raw or aggregated data from the Embrace Plus.
+* `aggregate_data()` and friends (`aggregate_e4_data()`, `aggregate_embrace_plus_data()`, `aggregate_nowatch()`) now have a `interval` argument. It defaults to `"1 min"`, but can be changed if desired.
 
 # wearables 0.10.0
 2024-02-27

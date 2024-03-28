@@ -1,59 +1,22 @@
-#' Aggregate data into 1min timestamps
-#' @param x An object read by \code{\link{read_e4}} or \code{\link{read_embrace_plus}}.
+#' Aggregate data into timesteps
+#' @param x An object read by \code{\link{read_e4}}, \code{\link{read_embrace_plus}} or \code{\link{read_nowatch}}.
+#' @param interval The interval to aggregate the data. Default is 1 min.
 #' @export
-aggregate_data <- function(x) {
+aggregate_data <- function(x, interval = "1 min") {
   
-  if ("EDA" %in% names(x)) {
+  for (name in names(x)) {
     
-    x$EDA <- padr::thicken(x$EDA,
-                           interval = "1 min",
-                           colname = "datetime_1min"
+    if (nrow(x[[name]]) == 0 || !any(c("DateTime", "datetime_1min") %in% colnames(x[[name]]))) {
+      next
+    }
+    
+    x[[name]] <- padr::thicken(x[[name]],
+                               interval = interval,
+                               colname = "datetime_1min"
     ) %>%
       dplyr::group_by(datetime_1min) %>%
-      summarize(EDA = mean(EDA)) %>%
+      dplyr::summarise(across(where(is.numeric), mean)) %>%
       dplyr::rename(DateTime = datetime_1min)
-    
-  }
-  
-  if ("ACC" %in% names(x)) {
-    
-    x$ACC <- padr::thicken(x$ACC,
-                           interval = "1 min",
-                           colname = "datetime_1min"
-    ) %>%
-      group_by(datetime_1min) %>%
-      summarize(
-        x = mean(x),
-        y = mean(y),
-        z = mean(z),
-        a = mean(a)
-      ) %>%
-      dplyr::rename(DateTime = datetime_1min)
-    
-  }
-  
-  if ("TEMP" %in% names(x)) {
-    
-    x$TEMP <- padr::thicken(x$TEMP,
-                            interval = "1 min",
-                            colname = "datetime_1min"
-    ) %>%
-      group_by(datetime_1min) %>%
-      summarize(TEMP = mean(TEMP)) %>%
-      dplyr::rename(DateTime = datetime_1min)
-    
-  }
-  
-  if ("HR" %in% names(x)) {
-    
-    x$HR <- padr::thicken(x$HR,
-                          interval = "1 min",
-                          colname = "datetime_1min"
-    ) %>%
-      group_by(datetime_1min) %>%
-      summarize(HR = mean(HR)) %>%
-      dplyr::rename(DateTime = datetime_1min)
-    
   }
   
   x$BVP <- NULL
@@ -66,31 +29,45 @@ aggregate_data <- function(x) {
   
 }
 
-#' Aggregate E4 data into 1min timesteps
+#' Aggregate E4 data into timesteps
 #' @rdname aggregate_data
 #' @export
-aggregate_e4_data <- function(x) {
+aggregate_e4_data <- function(x, interval = "1 min") {
   
   if (is.null(x$EDA)) {
     warning("Data not found. Did you run rbind_e4()?")
   }
   
-  x <- aggregate_data(x)
+  x <- aggregate_data(x, interval = interval)
   
   return(x)
   
 }
 
-#' Aggregate Embrace Plus data into 1min timesteps
+#' Aggregate Embrace Plus data into timesteps
 #' @rdname aggregate_data
 #' @export
-aggregate_embrace_plus_data <- function(x) {
+aggregate_embrace_plus_data <- function(x, interval = "1 min") {
   
   if (is.null(x$EDA)) {
     warning("Data not found. Did you run rbind_embrace_plus()?")
   }
   
-  x <- aggregate_data(x)
+  x <- aggregate_data(x, interval = interval)
+  
+  return(x)
+}
+
+#' Aggregate Nowatch data into timesteps
+#' @rdname aggregate_data
+#' @export
+aggregate_nowatch_data <- function(x, interval = "1 min") {
+  
+  if (is.null(x$EDA)) {
+    warning("Data not found. Did you use read_nowatch()?")
+  }
+  
+  x <- aggregate_data(x, interval = interval)
   
   return(x)
 }
