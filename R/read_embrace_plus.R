@@ -89,12 +89,41 @@ create_dataframes <- function(data, type, file, vars = c("x", "y", "z"),
 
 
 
+
+#' Unzip files and store files in temporary directory
+#' @description Extracts avro or csv files from a zip file
+#' @param zipfile path to the zip file
+#' @param type type of file to extract
+#' @keywords internal
+#' @noRd
+unzip_embrace_plus <- function(zipfile, type) {
+  
+  # Extract files to a temporary folder
+  path <- paste0(tempdir(), "/extracted")
+  
+  # if path exists, remove content
+  if (dir.exists(path)) {
+    unlink(path, recursive = TRUE)
+  }
+  
+  unzip(zipfile = zipfile, 
+        exdir = path)
+  
+  files <- list.files(path, recursive = TRUE, pattern = sprintf("[.]%s$", type), full.names = TRUE)
+  
+  return(files)
+}
+
+
+
+
+
 #' Read Embrace Plus data
 #' @description Reads in Embrace Plus data as a list (with EDA, HR, Temp, ACC, BVP, IBI as dataframes), and prepends timecolumns
 #' @details This function reads in a zipfile as exported by Embrace Plus. Then it extracts the zipfiles in a temporary folder
 #' and unzips them in the same temporary folder.
 #'
-#' The unzipped files are avro files, and are read in with using `sparklyr`, which sets up a local Spark cluster.
+#' The unzipped files are avro or csv files, where avro files are read in with using `sparklyr`, which sets up a local Spark cluster.
 #'
 #' The function returns an object of class "embrace_plus_data" with a prepended datetime columns.
 #' The object contains a list with dataframes from the physiological signals.
@@ -137,6 +166,60 @@ read_embrace_plus <- function(zipfile,
 
 
 
+#' Extract csv files from data
+#' @description Processes .csv files
+#' @param tz timezone
+#' @keywords internal
+#' @import cli
+#' @noRd
+read_aggregated_embrace_plus <- function(zipfile, tz) {
+  
+  # e4 reference: c("EDA", "ACC", "TEMP", "HR", "BVP")
+  
+  csv_files <- unzip_embrace_plus(zipfile, "csv")
+  
+  # Get the content before .csv and after the last _ (but include -)
+  dataset_names <- gsub(".*?([A-Za-z0-9\\-]+)[.]csv", "\\1", csv_files)
+  dataset_names <- toupper(dataset_names)
+  dataset_names <- gsub("TEMPERATURE", "TEMP", dataset_names)
+  dataset_names <- gsub("SLEEP-DETECTION", "SLEEP", dataset_names)
+  dataset_names <- gsub("PULSE-RATE", "HR", dataset_names)
+  dataset_names <- gsub("MOVEMENT-INTENSITY", "MOVE", dataset_names)
+  dataset_names <- gsub("RESPIRATORY-RATE", "RR", dataset_names)
+  dataset_names <- gsub("WEARING-DETECTION", "WEAR", dataset_names)
+  csv_files <- setNames(csv_files, dataset_names)
+  
+  csv_list <- list()
+  
+  for (i in 1:length(csv_files)) {
+    
+    file <- csv_files[i]
+    
+    this_file <- read.csv(file, stringsAsFactors = FALSE)
+    
+    rename_cols <- list(c("timestamp_iso", "DateTime"),
+                        c("timestamp_unix", "unix_timestamp"),
+                        c("eda_scl_usiemens", "EDA"))
+    
+    for (j in rename_cols) {
+      if (j[[1]] %in% colnames(this_file)) {
+        names(this_file)[names(this_file) == j[[1]]] <- j[[2]]
+      }
+    }
+    
+    # further pre-processing
+    this_file$DateTime <- as.POSIXct(gsub("T|Z", " ", this_file$DateTime), tz = tz)
+    
+    csv_list[[names(file)]] <- this_file
+    
+  }
+  
+  return(csv_list)
+  
+}
+
+
+
 #' Extracts avro files from raw data
 #' @description Processes .avro files
 #' @param tz timezone
@@ -161,18 +244,7 @@ read_raw_embrace_plus <- function(zipfile, tz) {
                       packages = "org.apache.spark:spark-avro_2.12:3.5.0")
   cli_alert_success("Connected!")
   
-  # Extract files to a temporary folder
-  path <- paste0(tempdir(), "/extracted")
-  
-  # if path exists, remove content
-  if (dir.exists(path)) {
-    unlink(path, recursive = TRUE)
-  }
-  
-  unzip(zipfile = zipfile, 
-        exdir = path)
-  
-  avro_files <- list.files(path, recursive = TRUE, pattern = "[.]avro$", full.names = TRUE)
+  avro_files <- unzip_embrace_plus(zipfile, type = "avro")
   
   cli_alert_info("About to start processing {length(avro_files)} avro file{?s}")
   

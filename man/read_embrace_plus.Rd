@@ -20,7 +20,7 @@ Reads in Embrace Plus data as a list (with EDA, HR, Temp, ACC, BVP, IBI as dataf
 This function reads in a zipfile as exported by Embrace Plus. Then it extracts the zipfiles in a temporary folder
 and unzips them in the same temporary folder.
 
-The unzipped files are avro files, and are read in with using `sparklyr`, which sets up a local Spark cluster.
+The unzipped files are avro or csv files, where avro files are read in with using `sparklyr`, which sets up a local Spark cluster.
 
 The function returns an object of class "embrace_plus_data" with a prepended datetime columns.
 The object contains a list with dataframes from the physiological signals.
