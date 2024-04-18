@@ -4,10 +4,17 @@
 \alias{read_embrace_plus}
 \title{Read Embrace Plus data}
 \usage{
-read_embrace_plus(zipfile, type = "raw", tz = Sys.timezone())
+read_embrace_plus(
+  zipfile = NULL,
+  folder = NULL,
+  type = "raw",
+  tz = Sys.timezone()
+)
 }
 \arguments{
-\item{zipfile}{A zip file as exported by the instrument. Can be aggregatd data, or raw data.}
+\item{zipfile}{A zip file as exported by the instrument. Can be aggregated data, or raw data.}
+
+\item{folder}{A folder with the unzipped files. If this is provided, the zipfile is not used.}
 
 \item{type}{The type of data contained in the zip file. Either "raw" or "aggregated".}
 
@@ -28,6 +35,7 @@ The object contains a list with dataframes from the physiological signals.
 \examples{
 \dontrun{
  library(wearables)
- read_embrace_plus("yourpathtohezipfile.zip")
+ read_embrace_plus(zipfile = "yourpathtohezipfile.zip")
+ read_embrace_plus(folder = "/path/to/folder/with/files", type = "aggregated")
 }
 }

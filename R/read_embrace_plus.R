@@ -99,24 +99,36 @@ create_dataframes <- function(data, type, file, vars = c("x", "y", "z"),
 #' The function returns an object of class "embrace_plus_data" with a prepended datetime columns.
 #' The object contains a list with dataframes from the physiological signals.
 #'
-#' @param zipfile A zip file as exported by the instrument. Can be aggregatd data, or raw data.
+#' @param zipfile A zip file as exported by the instrument. Can be aggregated data, or raw data.
+#' @param folder A folder with the unzipped files. If this is provided, the zipfile is not used.
 #' @param type The type of data contained in the zip file. Either "raw" or "aggregated".
 #' @param tz The timezone used by the instrument (defaults to user timezone).
 #' @examples
 #' \dontrun{
 #'  library(wearables)
-#'  read_embrace_plus("yourpathtohezipfile.zip")
+#'  read_embrace_plus(zipfile = "yourpathtohezipfile.zip")
+#'  read_embrace_plus(folder = "/path/to/folder/with/files", type = "aggregated")
 #' }
 #' @export
 #' @import cli
 #' @importFrom dplyr pull
-read_embrace_plus <- function(zipfile,
+read_embrace_plus <- function(zipfile = NULL,
+                              folder = NULL,
                               type = "raw",
                               tz = Sys.timezone()) {
   
-  # Check if file exists
-  if (!file.exists(zipfile)) {
+  # Check if zipfile or folder is provided
+  if (is.null(zipfile) && is.null(folder)) {
+    cli_abort("Either zipfile or folder must be provided")
+  }
+  
+  # Check if file or folder exist
+  if (!is.null(zipfile) && !file.exists(zipfile)) {
     cli_abort("File does not exist")
+  }
+  
+  if (!is.null(folder) && !dir.exists(folder)) {
+    cli_abort("Folder does not exist")
   }
   
   # Check type
@@ -125,11 +137,11 @@ read_embrace_plus <- function(zipfile,
   }
   
   if (type == "raw") {
-    return(read_raw_embrace_plus(zipfile, tz))
+    return(read_raw_embrace_plus(zipfile, folder, tz))
   }
   
   if (type == "aggregated") {
-    return(read_aggregated_embrace_plus(zipfile, tz))
+    return(read_aggregated_embrace_plus(zipfile, folder, tz))
   }
   
 }
@@ -139,13 +151,26 @@ read_embrace_plus <- function(zipfile,
 
 #' Extract csv files from data
 #' @description Processes .csv files
+#' @param zipfile path to zipfile
+#' @param folder path to folder
 #' @param tz timezone
 #' @keywords internal
 #' @import cli
 #' @noRd
-read_aggregated_embrace_plus <- function(zipfile, tz) {
+read_aggregated_embrace_plus <- function(zipfile = NULL, folder = NULL, tz) {
   
-  csv_files <- unzip_files(zipfile, "csv")
+  if (!is.null(zipfile)) {
+    csv_files <- unzip_files(zipfile, "csv")
+  }
+  
+  if (!is.null(folder)) {
+    # check if there is a subdirectory first
+    if (length(list.files(folder, full.names = TRUE)) == 1) {
+      folder <- list.files(folder, full.names = TRUE)
+    }
+    
+    csv_files <- list.files(folder, pattern = ".csv", full.names = TRUE)
+  }
   
   # Get the content before .csv and after the last _ (but include -)
   dataset_names <- gsub(".*?([A-Za-z0-9\\-]+)[.]csv", "\\1", csv_files)
@@ -197,12 +222,14 @@ read_aggregated_embrace_plus <- function(zipfile, tz) {
 
 #' Extracts avro files from raw data
 #' @description Processes .avro files
+#' @param zipfile zip file
+#' @param folder folder
 #' @param tz timezone
 #' @keywords internal
 #' @import sparklyr
 #' @import cli
 #' @noRd
-read_raw_embrace_plus <- function(zipfile, tz) {
+read_raw_embrace_plus <- function(zipfile = NULL, folder = NULL , tz) {
   
   # Check for already installed Spark versions
   # if none available, install the latest version
@@ -219,7 +246,13 @@ read_raw_embrace_plus <- function(zipfile, tz) {
                       packages = "org.apache.spark:spark-avro_2.12:3.5.0")
   cli_alert_success("Connected!")
   
-  avro_files <- unzip_files(zipfile, type = "avro")
+  if (!is.null(zipfile)) {
+    avro_files <- unzip_files(zipfile, type = "avro")
+  }
+  
+  if (!is.null(folder)) {
+    avro_files <- list.files(folder, pattern = ".avro", full.names = TRUE)
+  }
   
   cli_alert_info("About to start processing {length(avro_files)} avro file{?s}")
   
