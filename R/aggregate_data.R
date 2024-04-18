@@ -63,7 +63,7 @@ aggregate_embrace_plus_data <- function(x, interval = "1 min") {
 #' @export
 aggregate_nowatch_data <- function(x, interval = "1 min") {
   
-  if (is.null(x$EDA)) {
+  if (is.null(x$ACT)) {
     warning("Data not found. Did you use read_nowatch()?")
   }
   
