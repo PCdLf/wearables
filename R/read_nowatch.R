@@ -1,7 +1,7 @@
 #' Read Nowatch data
 #' @description Reads in Nowatch data as a list, and prepends timecolumns
-#' @details This function reads in a zipfile as exported by Nowatch. Then it extracts the zipfiles in a temporary folder
-#' and unzips them in the same temporary folder.
+#' @details This function reads in a zipfile with files exported by the Nowatch instrument,
+#' or a folder with the unzipped files. The files are expected to be csv files.
 #'
 #' The unzipped files are csv files.
 #'
@@ -9,23 +9,43 @@
 #' The object contains a list with dataframes from the physiological signals.
 #'
 #' @param zipfile A zip file as exported by the instrument. Only aggregated data supported.
+#' @param folder A folder with the unzipped files. If this is provided, the zipfile is not used.
 #' @param tz The timezone used by the instrument (defaults to user timezone).
 #' @examples
 #' \dontrun{
 #'  library(wearables)
 #'  read_nowatch("yourpathtohezipfile.zip")
+#'  read_nowatch(folder = "/path/to/folder/with/files")
 #' }
 #' @export
 #' @import cli
-read_nowatch <- function(zipfile,
+read_nowatch <- function(zipfile = NULL,
+                         folder = NULL,
                          tz = Sys.timezone()) {
   
-  # Check if file exists
-  if (!file.exists(zipfile)) {
+  # Check if zipfile or folder is provided
+  if (is.null(zipfile) && is.null(folder)) {
+    cli_abort("Please provide a zipfile or a folder")
+  }
+  
+  # Check if zipfile exists
+  if (!is.null(zipfile) && !file.exists(zipfile)) {
     cli_abort("File does not exist")
   }
   
-  csv_files <- unzip_files(zipfile, "csv")
+  # Check if folder exists
+  if (!is.null(folder) && !dir.exists(folder)) {
+    cli_abort("Folder does not exist")
+  }
+  
+  # Unzip the files
+  if (!is.null(zipfile)) {
+    csv_files <- unzip_files(zipfile, "csv")
+  }
+  
+  if (!is.null(folder)) {
+    csv_files <- list.files(folder, full.names = TRUE)
+  }
   
   # Get the content before .csv and after the last _ (but include -)
   dataset_names <- gsub(".*?([A-Za-z0-9\\-]+)[.]csv", "\\1", csv_files)

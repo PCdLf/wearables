@@ -4,10 +4,12 @@
 \alias{read_nowatch}
 \title{Read Nowatch data}
 \usage{
-read_nowatch(zipfile, tz = Sys.timezone())
+read_nowatch(zipfile = NULL, folder = NULL, tz = Sys.timezone())
 }
 \arguments{
 \item{zipfile}{A zip file as exported by the instrument. Only aggregated data supported.}
+
+\item{folder}{A folder with the unzipped files. If this is provided, the zipfile is not used.}
 
 \item{tz}{The timezone used by the instrument (defaults to user timezone).}
 }
@@ -15,8 +17,8 @@ read_nowatch(zipfile, tz = Sys.timezone())
 Reads in Nowatch data as a list, and prepends timecolumns
 }
 \details{
-This function reads in a zipfile as exported by Nowatch. Then it extracts the zipfiles in a temporary folder
-and unzips them in the same temporary folder.
+This function reads in a zipfile with files exported by the Nowatch instrument,
+or a folder with the unzipped files. The files are expected to be csv files.
 
 The unzipped files are csv files.
 
@@ -27,5 +29,6 @@ The object contains a list with dataframes from the physiological signals.
 \dontrun{
  library(wearables)
  read_nowatch("yourpathtohezipfile.zip")
+ read_nowatch(folder = "/path/to/folder/with/files")
 }
 }
