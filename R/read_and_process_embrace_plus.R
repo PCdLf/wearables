@@ -23,7 +23,11 @@ read_and_process_embrace_plus <- function(zipfile, tz = Sys.timezone()) {
 #' @param data object from read_e4 function
 process_embrace_plus <- function(data) {
 
-  eda_filt <- process_eda(data$EDA)
+  # omitting NAs: TBD
+  # the Embrace Plus aggregated files have a lot of NAs,
+  # for example when the device wasn't able to record anything
+  # we need to decide how to handle these NAs
+  eda_filt <- process_eda(na.omit(data$EDA))
   flog.info("EDA data filtered.")
   
   eda_peaks <- find_peaks(eda_filt)
