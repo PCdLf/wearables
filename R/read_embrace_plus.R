@@ -193,7 +193,9 @@ read_aggregated_embrace_plus <- function(zipfile = NULL, folder = NULL, tz) {
     
     rename_cols <- list(c("timestamp_iso", "DateTime"),
                         c("timestamp_unix", "unix_timestamp"),
-                        c("eda_scl_usiemens", "EDA"))
+                        c("eda_scl_usiemens", "EDA"),
+                        c("temperature_celsius", "TEMP"),
+                        c("pulse_rate_bpm", "HR"))
     
     for (j in rename_cols) {
       if (j[[1]] %in% colnames(this_file)) {
