@@ -91,8 +91,8 @@ create_dataframes <- function(data, type, file, vars = c("x", "y", "z"),
 
 #' Read Embrace Plus data
 #' @description Reads in Embrace Plus data as a list (with EDA, HR, Temp, ACC, BVP, IBI as dataframes), and prepends timecolumns
-#' @details This function reads in a zipfile as exported by Embrace Plus. Then it extracts the zipfiles in a temporary folder
-#' and unzips them in the same temporary folder.
+#' @details This function reads in a zipfile with data from the Embrace Plus device, or
+#' a folder with unzipped files. The unzipped files are avro or csv files.
 #'
 #' The unzipped files are avro or csv files, where avro files are read in with using `sparklyr`, which sets up a local Spark cluster.
 #'
