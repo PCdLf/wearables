@@ -2,13 +2,31 @@
 #' @description Reads the raw ZIP file using `read_embrace_plus`,
 #'   performs analyses with `eda_analysis`.
 #' @param zipfile zip file with embrace plus data to be read
+#' @param folder A folder with the unzipped files. If this is provided, the zipfile is not used.
+#' @param type The type of data contained in the zip file. Either "raw" or "aggregated".
 #' @param tz timezone where data were recorded (default system timezone)
 #' @return An object with processed data and analyses, object of class 'embrace_plus_analysis'.
 #' @rdname read_and_process_embrace_plus
 #' @export
-read_and_process_embrace_plus <- function(zipfile, tz = Sys.timezone()) {
-  data <- read_embrace_plus(zipfile, tz)
-  data <- rbind_embrace_plus(data)
+read_and_process_embrace_plus <- function(zipfile = NULL, folder = NULL, type = "raw", tz = Sys.timezone()) {
+  
+  # Check if zipfile or folder is provided
+  if (is.null(zipfile) && is.null(folder)) {
+    cli_abort("Either zipfile or folder must be provided")
+  }
+  
+  if (!is.null(zipfile) && !is.null(folder)) {
+    cli_warning("Only folder will be processed, zipfile will be ignored")
+  }
+  
+  if (!is.null(zipfile)) {
+    data <- read_embrace_plus(zipfile = zipfile, type = type, tz = tz)
+    data <- rbind_embrace_plus(data)
+  } 
+  
+  if (!is.null(folder)) {
+    data <- read_embrace_plus(folder = folder, type = type, tz = tz)
+  }
   
   if (is.null(data)) {
     return(NULL)

@@ -101,7 +101,7 @@ create_dataframes <- function(data, type, file, vars = c("x", "y", "z"),
 #'
 #' @param zipfile A zip file as exported by the instrument. Can be aggregated data, or raw data.
 #' @param folder A folder with the unzipped files. If this is provided, the zipfile is not used.
-#' @param type The type of data contained in the zip file. Either "raw" or "aggregated".
+#' @param type The type of data contained in the zip file or folder. Either "raw" or "aggregated".
 #' @param tz The timezone used by the instrument (defaults to user timezone).
 #' @examples
 #' \dontrun{

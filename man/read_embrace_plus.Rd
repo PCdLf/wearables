@@ -16,7 +16,7 @@ read_embrace_plus(
 
 \item{folder}{A folder with the unzipped files. If this is provided, the zipfile is not used.}
 
-\item{type}{The type of data contained in the zip file. Either "raw" or "aggregated".}
+\item{type}{The type of data contained in the zip file or folder. Either "raw" or "aggregated".}
 
 \item{tz}{The timezone used by the instrument (defaults to user timezone).}
 }
