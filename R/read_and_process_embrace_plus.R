@@ -31,7 +31,7 @@ read_and_process_embrace_plus <- function(zipfile = NULL, folder = NULL, type = 
   if (is.null(data)) {
     return(NULL)
   } else {
-    flog.info("Raw data read and converted.")
+    flog.info(sprintf("%s data read and converted.", type))
     process_embrace_plus(data)
   }
 }
@@ -75,13 +75,34 @@ process_embrace_plus <- function(data) {
     TEMP_sd = sd(data$TEMP$TEMP)
   )
   
-  acc_summary <- list(
-    ACC_mean = mean(data$ACC$a),
-    ACC_median = median(data$ACC$a),
-    ACC_min = min(data$ACC$a),
-    ACC_max = max(data$ACC$a),
-    ACC_sd = sd(data$ACC$a)
-  )
+  # Determine if ACC is in the data, if not, look for MOVE, if not, set to NA
+  if ("ACC" %in% names(data)) {
+    acc_data <- "ACC"
+    acc_col <- "a"
+  } else if ("MOVE" %in% names(data)) {
+    acc_data <- "MOVE"
+    acc_col <- "accelerometers_std_g"
+  } else {
+    acc_data <- ""
+  }
+  
+  if(acc_data != "") {
+    acc_summary <- list(
+      ACC_mean = mean(data[[acc_data]][[acc_col]]),
+      ACC_median = median(data[[acc_data]][[acc_col]]),
+      ACC_min = min(data[[acc_data]][[acc_col]]),
+      ACC_max = max(data[[acc_data]][[acc_col]]),
+      ACC_sd = sd(data[[acc_data]][[acc_col]])
+    )
+  } else {
+    acc_summary <- list(
+      ACC_mean = NA,
+      ACC_median = NA,
+      ACC_min = NA,
+      ACC_max = NA,
+      ACC_sd = NA
+    )
+  }
   
   eda_clean <- dplyr::filter(eda_filt, .data$quality_flag == 1)
   
