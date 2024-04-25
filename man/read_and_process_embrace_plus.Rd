@@ -4,10 +4,19 @@
 \alias{read_and_process_embrace_plus}
 \title{Read, process and feature extraction of Embrace Plus data}
 \usage{
-read_and_process_embrace_plus(zipfile, tz = Sys.timezone())
+read_and_process_embrace_plus(
+  zipfile = NULL,
+  folder = NULL,
+  type = "raw",
+  tz = Sys.timezone()
+)
 }
 \arguments{
 \item{zipfile}{zip file with embrace plus data to be read}
+
+\item{folder}{A folder with the unzipped files. If this is provided, the zipfile is not used.}
+
+\item{type}{The type of data contained in the zip file. Either "raw" or "aggregated".}
 
 \item{tz}{timezone where data were recorded (default system timezone)}
 }

@@ -4,10 +4,19 @@
 \alias{read_embrace_plus}
 \title{Read Embrace Plus data}
 \usage{
-read_embrace_plus(zipfile, tz = Sys.timezone())
+read_embrace_plus(
+  zipfile = NULL,
+  folder = NULL,
+  type = "raw",
+  tz = Sys.timezone()
+)
 }
 \arguments{
-\item{zipfile}{A zip file as exported by the instrument}
+\item{zipfile}{A zip file as exported by the instrument. Can be aggregated data, or raw data.}
+
+\item{folder}{A folder with the unzipped files. If this is provided, the zipfile is not used.}
+
+\item{type}{The type of data contained in the zip file or folder. Either "raw" or "aggregated".}
 
 \item{tz}{The timezone used by the instrument (defaults to user timezone).}
 }
@@ -15,15 +24,18 @@ read_embrace_plus(zipfile, tz = Sys.timezone())
 Reads in Embrace Plus data as a list (with EDA, HR, Temp, ACC, BVP, IBI as dataframes), and prepends timecolumns
 }
 \details{
-This function reads in a zipfile as exported by Embrace Plus. Then it extracts the zipfiles in a temporary folder
-and unzips them in the same temporary folder.
+This function reads in a zipfile with data from the Embrace Plus device, or
+a folder with unzipped files. The unzipped files are avro or csv files.
 
-The unzipped files are avro files, and are read in with using `sparklyr`, which sets up a local Spark cluster.
+The unzipped files are avro or csv files, where avro files are read in with using `sparklyr`, which sets up a local Spark cluster.
 
 The function returns an object of class "embrace_plus_data" with a prepended datetime columns.
 The object contains a list with dataframes from the physiological signals.
 }
 \examples{
-library(wearables)
-# read_embrace_plus("yourpathtohezipfile.zip")
+\dontrun{
+ library(wearables)
+ read_embrace_plus(zipfile = "yourpathtohezipfile.zip")
+ read_embrace_plus(folder = "/path/to/folder/with/files", type = "aggregated")
+}
 }

@@ -2,18 +2,36 @@
 #' @description Reads the raw ZIP file using `read_embrace_plus`,
 #'   performs analyses with `eda_analysis`.
 #' @param zipfile zip file with embrace plus data to be read
+#' @param folder A folder with the unzipped files. If this is provided, the zipfile is not used.
+#' @param type The type of data contained in the zip file. Either "raw" or "aggregated".
 #' @param tz timezone where data were recorded (default system timezone)
 #' @return An object with processed data and analyses, object of class 'embrace_plus_analysis'.
 #' @rdname read_and_process_embrace_plus
 #' @export
-read_and_process_embrace_plus <- function(zipfile, tz = Sys.timezone()) {
-  data <- read_embrace_plus(zipfile, tz)
-  data <- rbind_embrace_plus(data)
+read_and_process_embrace_plus <- function(zipfile = NULL, folder = NULL, type = "raw", tz = Sys.timezone()) {
+  
+  # Check if zipfile or folder is provided
+  if (is.null(zipfile) && is.null(folder)) {
+    cli_abort("Either zipfile or folder must be provided")
+  }
+  
+  if (!is.null(zipfile) && !is.null(folder)) {
+    cli_warning("Only folder will be processed, zipfile will be ignored")
+  }
+  
+  if (!is.null(zipfile)) {
+    data <- read_embrace_plus(zipfile = zipfile, type = type, tz = tz)
+    data <- rbind_embrace_plus(data)
+  } 
+  
+  if (!is.null(folder)) {
+    data <- read_embrace_plus(folder = folder, type = type, tz = tz)
+  }
   
   if (is.null(data)) {
     return(NULL)
   } else {
-    flog.info("Raw data read and converted.")
+    flog.info(sprintf("%s data read and converted.", type))
     process_embrace_plus(data)
   }
 }
@@ -23,7 +41,11 @@ read_and_process_embrace_plus <- function(zipfile, tz = Sys.timezone()) {
 #' @param data object from read_e4 function
 process_embrace_plus <- function(data) {
 
-  eda_filt <- process_eda(data$EDA)
+  # omitting NAs: TBD
+  # the Embrace Plus aggregated files have a lot of NAs,
+  # for example when the device wasn't able to record anything
+  # we need to decide how to handle these NAs
+  eda_filt <- process_eda(na.omit(data$EDA))
   flog.info("EDA data filtered.")
   
   eda_peaks <- find_peaks(eda_filt)
@@ -53,13 +75,34 @@ process_embrace_plus <- function(data) {
     TEMP_sd = sd(data$TEMP$TEMP)
   )
   
-  acc_summary <- list(
-    ACC_mean = mean(data$ACC$a),
-    ACC_median = median(data$ACC$a),
-    ACC_min = min(data$ACC$a),
-    ACC_max = max(data$ACC$a),
-    ACC_sd = sd(data$ACC$a)
-  )
+  # Determine if ACC is in the data, if not, look for MOVE, if not, set to NA
+  if ("ACC" %in% names(data)) {
+    acc_data <- "ACC"
+    acc_col <- "a"
+  } else if ("MOVE" %in% names(data)) {
+    acc_data <- "MOVE"
+    acc_col <- "accelerometers_std_g"
+  } else {
+    acc_data <- ""
+  }
+  
+  if(acc_data != "") {
+    acc_summary <- list(
+      ACC_mean = mean(data[[acc_data]][[acc_col]]),
+      ACC_median = median(data[[acc_data]][[acc_col]]),
+      ACC_min = min(data[[acc_data]][[acc_col]]),
+      ACC_max = max(data[[acc_data]][[acc_col]]),
+      ACC_sd = sd(data[[acc_data]][[acc_col]])
+    )
+  } else {
+    acc_summary <- list(
+      ACC_mean = NA,
+      ACC_median = NA,
+      ACC_min = NA,
+      ACC_max = NA,
+      ACC_sd = NA
+    )
+  }
   
   eda_clean <- dplyr::filter(eda_filt, .data$quality_flag == 1)
   

@@ -1,3 +1,12 @@
+# wearables 0.11.0
+2024-04-18
+
+## New features
+* Added new function to read data from Nowatch: `read_nowatch()`. This function will return a list of dataframes with the data from the Nowatch. Both a zipfile and a folder are accepted as input. This function is intended for aggregated data, as the Nowatch does not provide raw data.
+* Added reading of aggregated data from Embrace Plus by adding a `type` argument in `read_embrace_plus()`. This argument can be set to `raw` or `aggregated` to read the raw or aggregated data from the Embrace Plus.
+* `read_embrace_plus()` gains additional argument `folder` to choose the folder where the data is stored. This prevents the user to have to navigate to compress the files before using this function. It is still possible to use a zip file as input with the `zipfile` argument.
+* `aggregate_data()` and friends (`aggregate_e4_data()`, `aggregate_embrace_plus_data()`, `aggregate_nowatch()`) now have a `interval` argument. It defaults to `"1 min"`, but can be changed if desired.
+
 # wearables 0.10.0
 2024-02-27
 

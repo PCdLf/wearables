@@ -112,3 +112,28 @@ create_empty_freq_list <- function() {
   return(freq_empty_list)
 }
 
+
+
+#' Unzip files and store files in temporary directory
+#' @description Extracts avro or csv files from a zip file
+#' @param zipfile path to the zip file
+#' @param type type of file to extract
+#' @keywords internal
+#' @noRd
+unzip_files <- function(zipfile, type) {
+  
+  # Extract files to a temporary folder
+  path <- paste0(tempdir(), "/extracted")
+  
+  # if path exists, remove content
+  if (dir.exists(path)) {
+    unlink(path, recursive = TRUE)
+  }
+  
+  unzip(zipfile = zipfile, 
+        exdir = path)
+  
+  files <- list.files(path, recursive = TRUE, pattern = sprintf("[.]%s$", type), full.names = TRUE)
+  
+  return(files)
+}

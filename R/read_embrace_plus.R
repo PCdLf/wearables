@@ -28,6 +28,9 @@ get_timestamp_column <- function(start_time, sampling_freq, len_list, tz) {
   return(timestamp_df)
 }
 
+
+
+
 #' Create dataframe for psychological factors
 #' @description Creates a dataframe for psychological factors
 #' @param data list of dataframes
@@ -83,32 +86,152 @@ create_dataframes <- function(data, type, file, vars = c("x", "y", "z"),
   return(df)
 }
 
+
+
+
 #' Read Embrace Plus data
 #' @description Reads in Embrace Plus data as a list (with EDA, HR, Temp, ACC, BVP, IBI as dataframes), and prepends timecolumns
-#' @details This function reads in a zipfile as exported by Embrace Plus. Then it extracts the zipfiles in a temporary folder
-#' and unzips them in the same temporary folder.
+#' @details This function reads in a zipfile with data from the Embrace Plus device, or
+#' a folder with unzipped files. The unzipped files are avro or csv files.
 #'
-#' The unzipped files are avro files, and are read in with using `sparklyr`, which sets up a local Spark cluster.
+#' The unzipped files are avro or csv files, where avro files are read in with using `sparklyr`, which sets up a local Spark cluster.
 #'
 #' The function returns an object of class "embrace_plus_data" with a prepended datetime columns.
 #' The object contains a list with dataframes from the physiological signals.
 #'
-#' @param zipfile A zip file as exported by the instrument
+#' @param zipfile A zip file as exported by the instrument. Can be aggregated data, or raw data.
+#' @param folder A folder with the unzipped files. If this is provided, the zipfile is not used.
+#' @param type The type of data contained in the zip file or folder. Either "raw" or "aggregated".
 #' @param tz The timezone used by the instrument (defaults to user timezone).
 #' @examples
-#' library(wearables)
-#' # read_embrace_plus("yourpathtohezipfile.zip")
+#' \dontrun{
+#'  library(wearables)
+#'  read_embrace_plus(zipfile = "yourpathtohezipfile.zip")
+#'  read_embrace_plus(folder = "/path/to/folder/with/files", type = "aggregated")
+#' }
 #' @export
-#' @import sparklyr
 #' @import cli
 #' @importFrom dplyr pull
-read_embrace_plus <- function(zipfile,
+read_embrace_plus <- function(zipfile = NULL,
+                              folder = NULL,
+                              type = "raw",
                               tz = Sys.timezone()) {
   
-  # Check if file exists
-  if (!file.exists(zipfile)) {
+  # Check if zipfile or folder is provided
+  if (is.null(zipfile) && is.null(folder)) {
+    cli_abort("Either zipfile or folder must be provided")
+  }
+  
+  # Check if file or folder exist
+  if (!is.null(zipfile) && !file.exists(zipfile)) {
     cli_abort("File does not exist")
   }
+  
+  if (!is.null(folder) && !dir.exists(folder)) {
+    cli_abort("Folder does not exist")
+  }
+  
+  # Check type
+  if (!type %in% c("raw", "aggregated")) {
+    cli_abort("type must be either 'raw' or 'aggregated'")
+  }
+  
+  if (type == "raw") {
+    return(read_raw_embrace_plus(zipfile, folder, tz))
+  }
+  
+  if (type == "aggregated") {
+    return(read_aggregated_embrace_plus(zipfile, folder, tz))
+  }
+  
+}
+
+
+
+
+#' Extract csv files from data
+#' @description Processes .csv files
+#' @param zipfile path to zipfile
+#' @param folder path to folder
+#' @param tz timezone
+#' @keywords internal
+#' @import cli
+#' @noRd
+read_aggregated_embrace_plus <- function(zipfile = NULL, folder = NULL, tz) {
+  
+  if (!is.null(zipfile)) {
+    csv_files <- unzip_files(zipfile, "csv")
+  }
+  
+  if (!is.null(folder)) {
+    # check if there is a subdirectory first
+    if (length(list.files(folder, full.names = TRUE)) == 1) {
+      folder <- list.files(folder, full.names = TRUE)
+    }
+    
+    csv_files <- list.files(folder, pattern = ".csv", full.names = TRUE)
+  }
+  
+  # Get the content before .csv and after the last _ (but include -)
+  dataset_names <- gsub(".*?([A-Za-z0-9\\-]+)[.]csv", "\\1", csv_files)
+  dataset_names <- toupper(dataset_names)
+  dataset_names <- gsub("TEMPERATURE", "TEMP", dataset_names)
+  dataset_names <- gsub("SLEEP-DETECTION", "SLEEP", dataset_names)
+  dataset_names <- gsub("PULSE-RATE", "HR", dataset_names)
+  dataset_names <- gsub("MOVEMENT-INTENSITY", "MOVE", dataset_names)
+  dataset_names <- gsub("RESPIRATORY-RATE", "RR", dataset_names)
+  dataset_names <- gsub("WEARING-DETECTION", "WEAR", dataset_names)
+  csv_files <- setNames(csv_files, dataset_names)
+  
+  csv_list <- list()
+  
+  for (i in 1:length(csv_files)) {
+    
+    file <- csv_files[i]
+    
+    this_file <- read.csv(file, stringsAsFactors = FALSE)
+    
+    rename_cols <- list(c("timestamp_iso", "DateTime"),
+                        c("timestamp_unix", "unix_timestamp"),
+                        c("eda_scl_usiemens", "EDA"),
+                        c("temperature_celsius", "TEMP"),
+                        c("pulse_rate_bpm", "HR"))
+    
+    for (j in rename_cols) {
+      if (j[[1]] %in% colnames(this_file)) {
+        names(this_file)[names(this_file) == j[[1]]] <- j[[2]]
+      }
+    }
+    
+    # further pre-processing
+    this_file$DateTime <- as.POSIXct(gsub("T|Z", " ", this_file$DateTime), tz = tz)
+    
+    csv_list[[names(file)]] <- this_file
+    
+  }
+  
+  return(    
+    structure(csv_list, 
+              class = "embraceplusdata",
+              zipfile = tools::file_path_sans_ext(zipfile),
+              tz = tz
+    )
+  )
+  
+}
+
+
+
+#' Extracts avro files from raw data
+#' @description Processes .avro files
+#' @param zipfile zip file
+#' @param folder folder
+#' @param tz timezone
+#' @keywords internal
+#' @import sparklyr
+#' @import cli
+#' @noRd
+read_raw_embrace_plus <- function(zipfile = NULL, folder = NULL , tz) {
   
   # Check for already installed Spark versions
   # if none available, install the latest version
@@ -125,18 +248,13 @@ read_embrace_plus <- function(zipfile,
                       packages = "org.apache.spark:spark-avro_2.12:3.5.0")
   cli_alert_success("Connected!")
   
-  # Extract files to a temporary folder
-  path <- paste0(tempdir(), "/extracted")
-  
-  # if path exists, remove content
-  if (dir.exists(path)) {
-    unlink(path, recursive = TRUE)
+  if (!is.null(zipfile)) {
+    avro_files <- unzip_files(zipfile, type = "avro")
   }
   
-  unzip(zipfile = zipfile, 
-        exdir = path)
-  
-  avro_files <- list.files(path, recursive = TRUE, pattern = "[.]avro$", full.names = TRUE)
+  if (!is.null(folder)) {
+    avro_files <- list.files(folder, pattern = ".avro", full.names = TRUE)
+  }
   
   cli_alert_info("About to start processing {length(avro_files)} avro file{?s}")
   
@@ -244,11 +362,6 @@ read_embrace_plus <- function(zipfile,
   # Disconnect from the Spark cluster
   spark_disconnect(sc)
   
-  return(
-    structure(avro_list, 
-              class = "embraceplusdata",
-              zipfile = tools::file_path_sans_ext(zipfile),
-              tz = tz
-    )
-  )
+  return(avro_list)
+  
 }
