@@ -164,12 +164,10 @@ read_aggregated_embrace_plus <- function(zipfile = NULL, folder = NULL, tz) {
   }
   
   if (!is.null(folder)) {
-    # check if there is a subdirectory first
-    if (length(list.files(folder, full.names = TRUE)) == 1) {
-      folder <- list.files(folder, full.names = TRUE)
-    }
-    
-    csv_files <- list.files(folder, pattern = ".csv", full.names = TRUE)
+    csv_files <- list.files(folder, 
+                            pattern = ".csv", 
+                            full.names = TRUE,
+                            recursive = TRUE)
   }
   
   # Get the content before .csv and after the last _ (but include -)
@@ -253,7 +251,10 @@ read_raw_embrace_plus <- function(zipfile = NULL, folder = NULL , tz) {
   }
   
   if (!is.null(folder)) {
-    avro_files <- list.files(folder, pattern = ".avro", full.names = TRUE)
+    avro_files <- list.files(folder, 
+                             pattern = ".avro", 
+                             full.names = TRUE,
+                             recursive = TRUE)
   }
   
   cli_alert_info("About to start processing {length(avro_files)} avro file{?s}")
