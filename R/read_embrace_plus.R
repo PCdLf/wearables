@@ -202,7 +202,9 @@ read_aggregated_embrace_plus <- function(zipfile = NULL, folder = NULL, tz) {
     }
     
     # further pre-processing
-    this_file$DateTime <- as.POSIXct(gsub("T|Z", " ", this_file$DateTime), tz = tz)
+    this_file$DateTime <- as.POSIXct(this_file$unix_timestamp / 1000, 
+                                     origin = "1970-01-01", 
+                                     tz = tz)
     
     csv_list[[names(file)]] <- this_file
     
