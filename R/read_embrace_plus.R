@@ -117,6 +117,7 @@ read_embrace_plus <- function(zipfile = NULL,
                               type = "raw",
                               tz = Sys.timezone()) {
   
+  # test
   # Check if zipfile or folder is provided
   if (is.null(zipfile) && is.null(folder)) {
     cli_abort("Either zipfile or folder must be provided")
