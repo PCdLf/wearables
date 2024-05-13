@@ -170,6 +170,10 @@ read_aggregated_embrace_plus <- function(zipfile = NULL, folder = NULL, tz) {
                             recursive = TRUE)
   }
   
+  # Only keep files that contain "digital_biomarkers" in name -
+  # prevents top levelsfiles from being read
+  csv_files <- csv_files[grep("digital_biomarkers", csv_files)]
+  
   # Get the content before .csv and after the last _ (but include -)
   dataset_names <- gsub(".*?([A-Za-z0-9\\-]+)[.]csv", "\\1", csv_files)
   dataset_names <- toupper(dataset_names)
@@ -206,8 +210,12 @@ read_aggregated_embrace_plus <- function(zipfile = NULL, folder = NULL, tz) {
                                      origin = "1970-01-01", 
                                      tz = tz)
     
-    csv_list[[names(file)]] <- this_file
-    
+    # If names(file) already exists in csv_list, append to it
+    if (names(file) %in% names(csv_list)) {
+      csv_list[[names(file)]] <- rbind(csv_list[[names(file)]], this_file)
+    } else {
+      csv_list[[names(file)]] <- this_file
+    }
   }
   
   return(    
