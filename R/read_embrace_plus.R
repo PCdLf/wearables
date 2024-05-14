@@ -70,6 +70,15 @@ create_dataframes <- function(data, type, file, vars = c("x", "y", "z"),
       df[[var]] <- data[[type]][[var_names[which(vars == var)]]]
     }
     
+    # Handle imuParams
+    if (!is.null(data[[type]]$imuParams)) {
+      imu_params <- data[[type]]$imuParams
+      # Flatten imuParams and add as columns
+      for (param_name in names(imu_params)) {
+        df[[paste0("imu_", param_name)]] <- imu_params[[param_name]]
+      }
+    }
+    
     if (!is.null(timestamp_start)) {
       if (length (timestamp_start) != 3) {
         stop("timestamp_start must be a vector of length 3")
@@ -297,7 +306,12 @@ read_raw_embrace_plus <- function(zipfile = NULL, folder = NULL , tz) {
                                   timestamp_start = c("timestampStart", "samplingFrequency", "x"),
                                   tz = tz)
     # For ACC, add the geometric mean acceleration
-    acc_data$a <- sqrt(acc_data$x^2 + acc_data$y^2 + acc_data$z^2) / 64
+    delta_physical <- acc_data$imu_physicalMax - acc_data$imu_physicalMin
+    delta_digital <- acc_data$imu_digitalMax - acc_data$imu_digitalMin
+    acc_data$x_g = acc_data$x * (delta_physical/delta_digital)
+    acc_data$y_g = acc_data$y * (delta_physical/delta_digital)
+    acc_data$z_g = acc_data$z * (delta_physical/delta_digital)
+    acc_data$a <- sqrt(acc_data$x_g^2 + acc_data$y_g^2 + acc_data$z_g^2) 
     
     gy_data <- create_dataframes(raw_data, 
                                  type = "gyroscope", 
