@@ -31,6 +31,3 @@ jobs:
           rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "error")
         shell: Rscript {0}
         
-runs:
-  using: 'node20'
-  main: 'main.js'
