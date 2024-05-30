@@ -22,7 +22,7 @@ or a folder with the unzipped files. The files are expected to be csv files.
 
 The unzipped files are csv files.
 
-The function returns an object of class "nowatch_data" with a prepended datetime columns.
+The function returns an object of class "nowatchdata" with a prepended datetime columns.
 The object contains a list with dataframes from the physiological signals.
 }
 \examples{

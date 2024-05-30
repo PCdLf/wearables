@@ -5,7 +5,7 @@
 #'
 #' The unzipped files are csv files.
 #'
-#' The function returns an object of class "nowatch_data" with a prepended datetime columns.
+#' The function returns an object of class "nowatchdata" with a prepended datetime columns.
 #' The object contains a list with dataframes from the physiological signals.
 #'
 #' @param zipfile A zip file as exported by the instrument. Only aggregated data supported.
@@ -47,18 +47,20 @@ read_nowatch <- function(zipfile = NULL,
     csv_files <- list.files(folder, full.names = TRUE)
   }
   
-  # Get the content before .csv and after the last _ (but include -)
-  dataset_names <- gsub(".*?([A-Za-z0-9\\-]+)[.]csv", "\\1", csv_files)
+  # Get the content before .csv and after the last /
+  dataset_names <- gsub(".csv", "", basename(csv_files))
   dataset_names <- toupper(dataset_names)
-  dataset_names <- gsub("ACTIVITYTYPE", "ACT", dataset_names)
-  dataset_names <- gsub("CADENCE", "CAD", dataset_names)
+  dataset_names <- gsub("ACTIVITY_TYPE", "ACT", dataset_names)
+  dataset_names <- gsub("ACTIVITY_CADENCE", "CAD", dataset_names)
+  dataset_names <- gsub("ACTIVITY_COUNT", "COUNT", dataset_names)
   dataset_names <- gsub("TEMPERATURE", "TEMP", dataset_names)
   dataset_names <- gsub("CORTISOLLEVELS", "CORTL", dataset_names)
-  dataset_names <- gsub("HEARTBEATS", "HBR", dataset_names)
-  dataset_names <- gsub("HEARTRATE", "HR", dataset_names)
-  dataset_names <- gsub("RESPIRATIONRATE", "RR", dataset_names)
-  dataset_names <- gsub("SLEEPSESSION", "SLEEP", dataset_names)
-  dataset_names <- gsub("STRESSLEVEL", "STRESS", dataset_names)
+  dataset_names <- gsub("HEARTBEATS", "HB", dataset_names)
+  dataset_names <- gsub("HEART_RATE", "HR", dataset_names)
+  dataset_names <- gsub("RESTING_HEART_RATE", "RHR", dataset_names)
+  dataset_names <- gsub("RESPIRATION_RATE", "RR", dataset_names)
+  dataset_names <- gsub("SLEEP_SESSION", "SLEEP", dataset_names)
+  dataset_names <- gsub("STRESS_LEVEL", "STRESS", dataset_names)
   csv_files <- setNames(csv_files, dataset_names)
   
   csv_list <- list()
