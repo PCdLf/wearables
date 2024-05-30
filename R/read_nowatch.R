@@ -48,7 +48,7 @@ read_nowatch <- function(zipfile = NULL,
   }
   
   # Get the content before .csv and after the last /
-  dataset_names <- gsub(".csv", "", basename(csv_files))
+  dataset_names <- gsub(".csv|.json", "", basename(csv_files))
   dataset_names <- toupper(dataset_names)
   dataset_names <- gsub("ACTIVITY_TYPE", "ACT", dataset_names)
   dataset_names <- gsub("ACTIVITY_CADENCE", "CAD", dataset_names)
@@ -69,7 +69,15 @@ read_nowatch <- function(zipfile = NULL,
     
     file <- csv_files[i]
     
-    this_file <- read.csv(file, stringsAsFactors = FALSE)
+    # if json file, parse json
+    if (grepl(".json", file)) {
+      this_file <- jsonlite::fromJSON(file)
+      if ("system_events" %in% names(this_file)) {
+        this_file <- this_file$system_events
+      }
+    } else {
+      this_file <- read.csv(file, stringsAsFactors = FALSE)
+    }
     
     rename_cols <- list(c("timestamp", "unix_timestamp"),
                         c("value", names(file)))
