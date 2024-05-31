@@ -44,6 +44,7 @@ rbind_embrace_plus <- function(data) {
 #' @description This function takes a list of NOWATCH datasets and row-binds them
 #' together.
 #' @param data An object read in by \code{\link{read_nowatch}}
+#' @export
 rbind_nowatch <- function(data) {
   rbind_data(data)
 }
