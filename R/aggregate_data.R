@@ -34,7 +34,7 @@ aggregate_data <- function(x, interval = "1 min") {
 #' @export
 aggregate_e4_data <- function(x, interval = "1 min") {
   
-  if (is.null(x$EDA)) {
+  if (is.null(x$EDA) && is.null(x$TEMP) && is.null(x$HR)) {
     warning("Data not found. Did you run rbind_e4()?")
   }
   
@@ -49,7 +49,7 @@ aggregate_e4_data <- function(x, interval = "1 min") {
 #' @export
 aggregate_embrace_plus_data <- function(x, interval = "1 min") {
   
-  if (is.null(x$EDA)) {
+  if (is.null(x$EDA) && is.null(x$TEMP) && is.null(x$HR)) {
     warning("Data not found. Did you run rbind_embrace_plus()?")
   }
   
