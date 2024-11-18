@@ -1,3 +1,9 @@
+# wearables 0.11.1
+2024-11-13
+
+## Bug fixes
+* Added extended check in `aggregate_nowatch_data` to not only check for the presence of activity (ACT) data, but also other common datasets like HR and TEMP. The check for ACT only caused too many false positives, as the ACT data can't be expected to always be present in exports.
+
 # wearables 0.11.0
 2024-04-18
 
