@@ -2,6 +2,7 @@
 #' @param x An object read by \code{\link{read_e4}}, \code{\link{read_embrace_plus}} or \code{\link{read_nowatch}}.
 #' @param interval The interval to aggregate the data. Default is 1 min.
 #' @export
+#' @importFrom rlang .data
 aggregate_data <- function(x, interval = "1 min") {
   
   for (name in names(x)) {
@@ -14,9 +15,9 @@ aggregate_data <- function(x, interval = "1 min") {
                                interval = interval,
                                colname = "datetime_1min"
     ) %>%
-      dplyr::group_by(datetime_1min) %>%
-      dplyr::summarise(across(where(is.numeric), mean)) %>%
-      dplyr::rename(DateTime = datetime_1min)
+      dplyr::group_by(.data$datetime_1min) %>%
+      dplyr::summarise(dplyr::across(dplyr::where(is.numeric), mean), .groups = "drop") %>%
+      dplyr::rename(DateTime = .data$datetime_1min)
   }
   
   x$BVP <- NULL

@@ -8,3 +8,5 @@ tmp/
 ^\.github$
 ^revdep$
 ^CRAN-RELEASE$
+^docs$
+^logs$

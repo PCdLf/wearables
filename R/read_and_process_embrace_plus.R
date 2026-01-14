@@ -16,7 +16,7 @@ read_and_process_embrace_plus <- function(zipfile = NULL, folder = NULL, type = 
   }
   
   if (!is.null(zipfile) && !is.null(folder)) {
-    cli_warning("Only folder will be processed, zipfile will be ignored")
+    cli_warn("Only folder will be processed, zipfile will be ignored")
   }
   
   if (!is.null(zipfile)) {
@@ -31,7 +31,7 @@ read_and_process_embrace_plus <- function(zipfile = NULL, folder = NULL, type = 
   if (is.null(data)) {
     return(NULL)
   } else {
-    flog.info(sprintf("%s data read and converted.", type))
+    .log_info(sprintf("%s data read and converted.", type))
     process_embrace_plus(data)
   }
 }
@@ -39,6 +39,7 @@ read_and_process_embrace_plus <- function(zipfile = NULL, folder = NULL, type = 
 #' @rdname read_and_process_e4
 #' @export
 #' @param data object from read_e4 function
+#' @importFrom stats na.omit
 process_embrace_plus <- function(data) {
 
   # omitting NAs: TBD
@@ -46,17 +47,17 @@ process_embrace_plus <- function(data) {
   # for example when the device wasn't able to record anything
   # we need to decide how to handle these NAs
   eda_filt <- process_eda(na.omit(data$EDA))
-  flog.info("EDA data filtered.")
+  .log_info("EDA data filtered.")
   
   eda_peaks <- find_peaks(eda_filt)
-  flog.info("Peak detection complete.")
+  .log_info("Peak detection complete.")
   
   eda_feat <- compute_features2(eda_filt)
-  flog.info("EDA Features computed")
+  .log_info("EDA Features computed")
   
   eda_bin_pred <- predict_binary_classifier(eda_feat)
   eda_mc_pred <- predict_multiclass_classifier(eda_feat)
-  flog.info("Model predictions generated, artifacts classified.")
+  .log_info("Model predictions generated, artifacts classified.")
   
   # Add quality flags to data
   eda_filt <- join_eda_bin(eda_filt, eda_bin_pred)

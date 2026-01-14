@@ -15,7 +15,7 @@ read_and_process_e4 <- function(zipfile, tz = Sys.timezone()) {
   if (is.null(data)) {
     return(NULL)
   } else {
-    flog.info("Raw data read and converted.")
+    .log_info("Raw data read and converted.")
     process_e4(data)
   }
 }
@@ -81,20 +81,20 @@ process_e4 <- function(data) {
       ibi <- ibi_analysis(data$IBI)
     })
   })
-  flog.info("IBI data analyzed.")
+  .log_info("IBI data analyzed.")
   
   eda_filt <- wearables::process_eda(data$EDA)
-  flog.info("EDA data filtered.")
+  .log_info("EDA data filtered.")
   
   eda_peaks <- find_peaks(eda_filt)
-  flog.info("Peak detection complete.")
+  .log_info("Peak detection complete.")
   
   eda_feat <- compute_features2(eda_filt)
-  flog.info("EDA Features computed")
+  .log_info("EDA Features computed")
   
   eda_bin_pred <- predict_binary_classifier(eda_feat)
   eda_mc_pred <- predict_multiclass_classifier(eda_feat)
-  flog.info("Model predictions generated, artifacts classified.")
+  .log_info("Model predictions generated, artifacts classified.")
   
   # Add quality flags to data
   eda_filt <- join_eda_bin(eda_filt, eda_bin_pred)
