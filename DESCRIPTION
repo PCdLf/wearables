@@ -1,8 +1,8 @@
 Type: Package
 Package: wearables
 Title: Tools to Read and Convert Wearables Data
-Version: 0.11.2
-Date: 2026-01-08
+Version: 0.11.3
+Date: 2026-01-15
 Authors@R: c(
     person("Peter", "de Looff", , "peterdelooff@gmail.com", role = c("aut", "cre")),
     person("Remko", "Duursma", role = "aut"),

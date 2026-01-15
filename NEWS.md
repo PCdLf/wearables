@@ -1,3 +1,8 @@
+# wearables 0.11.3 (2026-01-15)
+
+## URL fixes
+* Fixed two broken URLS.
+
 # wearables 0.11.2 (2026-01-08)
 
 ## Bug fixes

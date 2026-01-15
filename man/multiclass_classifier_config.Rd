@@ -14,7 +14,10 @@ multiclass_classifier_config
 Configuration of the SVM algorithm for ternary classification
 }
 \references{
-\url{https://eda-explorer.media.mit.edu/}
+Taylor, S., Jaques, N., Chen, W., Fedor, S., Sano, A., & Picard, R. (2015).
+Automatic identification of artifacts in electrodermal activity data.
+In *Proceedings of the 37th Annual International Conference of the IEEE
+Engineering in Medicine and Biology Society (EMBS)*.
 }
 \author{
 Sara Taylor \email{sataylor@mit.edu}

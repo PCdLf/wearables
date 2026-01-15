@@ -1,6 +1,6 @@
 ## Overview
 ### wearables
-Functions for analyzing empatica e4 data, pre-process the signals, detect artifacts
+Functions for analyzing empatica e4, empatica embraceplus, and nowatch data, pre-process the signals, detect artifacts
 and create several features for analysis.
 
 We are working on functionality to also process Empatica EmbracePlus and Nowatch data.
@@ -21,8 +21,8 @@ analysis.
 - 'read_and_process()' is a function to perform analyses on the heart rate, electrodermal activity, accelerometry and temperature data.
 
 
-If you are new to Empatica E4, the best place to start is the [website from Empatica ](https://www.empatica.com/research/e4/) or the accompanying website for the [Shiny tool
-](https://pcdlf.shinyapps.io/e4dashboard/).
+If you are new to Empatica, the best place to start is the [website from Empatica ](https://www.empatica.com/research/e4) or the accompanying website for the [Shiny tool
+](https://github.com/PCdLf/wearalyze).
 
 [![R-CMD-check](https://github.com/PCdLf/wearables/workflows/R-CMD-check/badge.svg)](https://github.com/PCdLf/wearables/actions)
 
